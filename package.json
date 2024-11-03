@@ -1,0 +1,37 @@
+{
+  "name": "distribunity-api",
+  "version": "1.0.0",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "generate": "tsx scripts/generate.ts",
+    "dev": "tsx watch src/server.ts --clear-screen=false",
+    "build": "rimraf dist && tsc --project tsconfig.json",
+    "start": "node dist/server.js",
+    "test:dev": "vitest",
+    "test:prod": "vitest run"
+  },
+  "author": "Alan Burić",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "argon2": "^0.41.1",
+    "dotenv": "^16.4.5",
+    "express": "^5.0.1",
+    "express-validator": "^7.2.0",
+    "http-status-codes": "^2.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "lowdb": "^7.0.1",
+    "ms": "^3.0.0-canary.1",
+    "rimraf": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.8.6",
+    "@types/supertest": "^6.0.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}
