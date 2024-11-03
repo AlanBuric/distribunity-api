@@ -10,7 +10,7 @@ roles' permissions and the roles assigned to the members.
 ## Web Applications class
 
 --------------------
-**Kolegij:** [_Web aplikacija_](http://ntankovic.unipu.hr/wa)  
+**Kolegij:** [_Web aplikacije_](http://ntankovic.unipu.hr/wa)  
 **Mentor:** _doc. dr. sc. Nikola Tanković_  
 **Student:** _Alan Burić (TFPU)_
 
