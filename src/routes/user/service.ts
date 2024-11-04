@@ -9,7 +9,11 @@ import SessionService from "../session/service.js";
 
 export default class UserService {
     public static async registerUser(registration: UserRegistrationRequest) {
-        UserService.getUserByEmail(registration.email).then(() => Promise.reject(new RequestError(StatusCodes.BAD_REQUEST, `E-mail ${registration.email} is already taken`))).catch(() => {});
+        const exists = await UserService.getUserByEmail(registration.email).then(() => true).catch(() => false);
+
+        if (exists) {
+            throw new RequestError(StatusCodes.BAD_REQUEST, `E-mail ${registration.email} is already taken`);
+        }
 
         const hashedPassword = await SessionService.hashPassword(registration.password);
 
