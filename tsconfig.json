@@ -9,14 +9,16 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "composite": true
+    "composite": true,
+    "declaration": false
   },
   "include": [
     "src"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "tests"
   ],
   "references": [
     {
