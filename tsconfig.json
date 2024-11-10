@@ -9,7 +9,6 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "composite": true,
     "declaration": false
   },
   "include": [
@@ -19,10 +18,5 @@
     "node_modules",
     "dist",
     "tests"
-  ],
-  "references": [
-    {
-      "path": "tsconfig.test.json"
-    }
   ]
 }
