@@ -16,9 +16,7 @@ import {
 const INVALID_EMAIL = "Invalid e-mail format";
 const MISSING_PASSWORD = "Missing password field";
 
-// TODO: attach refresh cookie to client
-
-const sessionController = Router()
+const SessionRouter = Router()
     .post("/register",
         body("firstName")
             .isString()
@@ -34,7 +32,7 @@ const sessionController = Router()
             .isString()
             .withMessage(MISSING_PASSWORD)
             .isStrongPassword()
-            .withMessage("A strong password needs to be at least 8 characters long, at least 1 lowercase and uppercase character, at least 1 number, and at least 1 symbol."),
+            .withMessage("A strong password needs to be at least 8 characters long, at least 1 lowercase and uppercase character, at least 1 number, and at least 1 symbol"),
         handleValidationResults,
         (request: express.Request<{}, {}, UserRegistrationRequest>, response: express.Response): Promise<any> =>
             UserService.registerUser(request.body).then(() => response.sendStatus(StatusCodes.CREATED)))
@@ -52,18 +50,21 @@ const sessionController = Router()
 
             if (await SessionService.verifyPassword(request.body.password, fullUser.hashedPassword)) {
                 const {hashedPassword, email, ...user} = fullUser;
-                const generatedToken = await SessionService.generateJwtToken(id, TokenType.ACCESS);
+                const generatedAccessToken = await SessionService.generateJwtToken(id, TokenType.ACCESS);
+                const generatedRefreshToken = await SessionService.generateJwtToken(id, TokenType.REFRESH);
 
                 const loginResponse: UserLoginResponse = {
-                    accessToken: generatedToken.token,
-                    expiration: generatedToken.expiration,
+                    accessToken: generatedAccessToken.token,
+                    expiration: generatedAccessToken.expiration,
                     user: {
                         ...user,
                         id
                     }
                 };
 
-                return response.send(loginResponse);
+                return response.cookie("refresh", generatedRefreshToken.token, {
+                    maxAge: generatedRefreshToken.expiration
+                }).send(loginResponse);
             }
 
             response.status(StatusCodes.BAD_REQUEST).send({error: "Incorrect password"})
@@ -90,6 +91,8 @@ const sessionController = Router()
 
         return response.send(loginResponse);
     })
+    // TODO: token denylist
+    .post("/logout", (request: express.Request, response: express.Response): any => response.clearCookie("refresh"))
     .use(async (request: express.Request, response: express.Response<{}, AuthorizedLocals>, next: express.NextFunction): Promise<any> => {
         const accessToken = request.header("Authorization")?.split(" ")[1];
 
@@ -108,4 +111,4 @@ const sessionController = Router()
         next();
     });
 
-export default sessionController;
+export default SessionRouter;
