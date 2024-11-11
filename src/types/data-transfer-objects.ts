@@ -9,8 +9,8 @@ export type OrganizationResponse = Omit<Organization, "folders" | "roles" | "mem
 }
 
 export type AuthorizedLocals = {
-    user: User;
     userId: UUID;
+    user: User;
 }
 
 export type ErrorResponse = {

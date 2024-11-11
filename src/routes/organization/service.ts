@@ -1,4 +1,4 @@
-import {Organization} from "../../types/database-types.js";
+import {Member, Organization, Permission} from "../../types/database-types.js";
 import {UUID} from "crypto";
 import getDatabase from "../../database/database.js";
 import RequestError from "../../utils/RequestError.js";
@@ -13,5 +13,9 @@ export default class OrganizationService {
         }
 
         return organization;
+    }
+
+    public static hasPermission(organization: Organization, member: Member, permission: Permission): boolean {
+        return member.roles.find(roleId => organization.roles[roleId].permissions.includes(permission)) != null;
     }
 }

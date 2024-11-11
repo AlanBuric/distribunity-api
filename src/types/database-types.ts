@@ -34,6 +34,7 @@ export type Permission = typeof ALL_PERMISSIONS[number];
 
 export type Role = {
     name: string;
+    description: string;
     permissions: Permission[];
 }
 
@@ -53,6 +54,7 @@ export type Inventory = Named & Created & {
 export type Folder = Named & Created & {
     folders: Folder[];
     inventories: Inventory[];
+    level: number;
 }
 
 export type Member = Created & {
