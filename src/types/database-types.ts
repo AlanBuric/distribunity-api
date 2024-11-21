@@ -51,12 +51,6 @@ export type Inventory = Named & Created & {
     items: Item[];
 }
 
-export type Folder = Named & Created & {
-    folders: Folder[];
-    inventories: Inventory[];
-    level: number;
-}
-
 export type Member = Created & {
     roles: UUID[];
 }
@@ -66,7 +60,7 @@ export type Organization = Named & Created & {
     countryCode: string;
     inviteCodes: string[];
     members: Record<UUID, Member>;
-    folders: Folder[];
+    inventories: Inventory[];
 }
 
 export type User = Created & {

@@ -20,7 +20,7 @@ function createOrganizationResponse(organizationId: UUID, userId: UUID): Organiz
         creationTimestamp: organization.creationTimestamp,
         name: organization.name,
         joinDate: organization.members[userId].creationTimestamp,
-        folders: organization.folders.length,
+        inventories: organization.inventories.length,
         roles: Object.keys(organization.roles).length,
         members: Object.keys(organization.members).length,
         countryCode: organization.countryCode
