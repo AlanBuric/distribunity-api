@@ -16,9 +16,9 @@
   "description": "",
   "dependencies": {
     "argon2": "^0.41.1",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "express": "^5.0.1",
-    "express-validator": "^7.2.0",
+    "express-validator": "^7.2.1",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.2",
     "lowdb": "^7.0.1",
@@ -28,10 +28,10 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^22.8.7",
+    "@types/node": "^22.10.3",
     "@types/supertest": "^6.0.2",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3",
-    "vitest": "^2.1.4"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   }
 }
