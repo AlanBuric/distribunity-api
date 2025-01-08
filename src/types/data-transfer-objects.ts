@@ -1,10 +1,9 @@
 import {Organization, User} from "./database-types.js";
 import {UUID} from "crypto";
 
-export type OrganizationResponse = Omit<Organization, "roles" | "members" | "inviteCodes" | "inventories"> & {
+export type OrganizationResponse = Omit<Organization, "roles" | "members" | "inviteCodes" | "inventories" | "items"> & {
     joinDate: number;
     inventories: number;
-    roles: number;
     members: number;
 }
 

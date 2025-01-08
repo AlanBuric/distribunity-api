@@ -36,32 +36,39 @@ export type Role = {
     name: string;
     description: string;
     permissions: Permission[];
-}
+};
 
 export type Country = {
     name: string;
-}
+};
 
 export type Item = Named & Created & {
     unit: string;
+    iconURL: string
+    unitPrice: number
+    attributes: (Record<string, string> | Record<string, number> | string)[]
+};
+
+export type InventoryItem = {
     quantity: number;
-}
+};
 
 export type Inventory = Named & Created & {
-    items: Item[];
-}
+    items: Record<UUID, InventoryItem>;
+};
 
 export type Member = Created & {
     roles: UUID[];
-}
+};
 
 export type Organization = Named & Created & {
     roles: Record<UUID, Role>;
+    members: Record<UUID, Member>;
     countryCode: string;
     inviteCodes: string[];
-    members: Record<UUID, Member>;
-    inventories: Inventory[];
-}
+    inventories: Record<UUID, Inventory>;
+    items: Record<UUID, Item>;
+};
 
 export type User = Created & {
     firstName: string;
@@ -69,4 +76,4 @@ export type User = Created & {
     email: string;
     organizations: UUID[];
     hashedPassword: string;
-}
+};

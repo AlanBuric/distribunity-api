@@ -1,17 +1,14 @@
 import {NextFunction, Request, Response, Router} from "express";
-import {
-    AuthorizedLocals,
-    ErrorResponse,
-    OrganizationResponse
-} from "../../types/data-transfer-objects.js";
+import {AuthorizedLocals, ErrorResponse, OrganizationResponse} from "../../types/data-transfer-objects.js";
 import UserService from "../user/service.js";
 import OrganizationService from "./service.js";
 import {matchedData, param} from "express-validator";
 import {handleValidationResults} from "../middleware/validation.js";
 import {UUID} from "crypto";
 import {StatusCodes} from "http-status-codes";
-import RoleRouter from "../role/router.js";
-import MemberRouter from "../member/router.js";
+import RoleRouter from "./role/router.js";
+import MemberRouter from "./member/router.js";
+import ItemRouter from "./item/router.js";
 
 function createOrganizationResponse(organizationId: UUID, userId: UUID): OrganizationResponse {
     const organization = OrganizationService.getOrganizationById(organizationId);
@@ -20,8 +17,7 @@ function createOrganizationResponse(organizationId: UUID, userId: UUID): Organiz
         creationTimestamp: organization.creationTimestamp,
         name: organization.name,
         joinDate: organization.members[userId].creationTimestamp,
-        inventories: organization.inventories.length,
-        roles: Object.keys(organization.roles).length,
+        inventories: Object.keys(organization.inventories).length,
         members: Object.keys(organization.members).length,
         countryCode: organization.countryCode
     };
@@ -54,6 +50,7 @@ const OrganizationRouter = Router()
                     response.send(createOrganizationResponse(organizationId, response.locals.userId));
                 })
             .use("/role", RoleRouter)
-            .use("/member", MemberRouter));
+            .use("/member", MemberRouter)
+            .use("/items", ItemRouter));
 
 export default OrganizationRouter;

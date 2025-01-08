@@ -29,19 +29,26 @@ const SessionRouter = Router()
             .toLowerCase()
             .withMessage(INVALID_EMAIL),
         body("password")
+            .exists()
+            .withMessage(MISSING_PASSWORD)
             .isString()
             .withMessage(MISSING_PASSWORD)
             .isStrongPassword()
             .withMessage("A strong password needs to be at least 8 characters long, at least 1 lowercase and uppercase character, at least 1 number, and at least 1 symbol"),
         handleValidationResults,
         (request: express.Request<{}, {}, UserRegistrationRequest>, response: express.Response): Promise<any> =>
-            UserService.registerUser(request.body).then(() => response.sendStatus(StatusCodes.CREATED)))
+            UserService.registerUser(request.body).then((id) => response.status(StatusCodes.CREATED).send({id})))
     .post("/login",
         body("email")
+            .exists()
+            .withMessage(INVALID_EMAIL)
             .isEmail()
-            .toLowerCase()
-            .withMessage(INVALID_EMAIL),
+            .withMessage(INVALID_EMAIL)
+            .bail()
+            .toLowerCase(),
         body("password")
+            .exists()
+            .withMessage(MISSING_PASSWORD)
             .isString()
             .withMessage(MISSING_PASSWORD),
         handleValidationResults,

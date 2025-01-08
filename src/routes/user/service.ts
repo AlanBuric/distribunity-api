@@ -8,7 +8,7 @@ import {randomUUID} from "node:crypto";
 import SessionService from "../session/service.js";
 
 export default class UserService {
-    public static async registerUser(registration: UserRegistrationRequest) {
+    public static async registerUser(registration: UserRegistrationRequest): Promise<UUID> {
         const exists = await UserService.getUserByEmail(registration.email).then(() => true).catch(() => false);
 
         if (exists) {
@@ -16,9 +16,10 @@ export default class UserService {
         }
 
         const hashedPassword = await SessionService.hashPassword(registration.password);
+        const id = randomUUID();
 
-        return getDatabase().update(({users}) => {
-            users[randomUUID()] = {
+        await getDatabase().update(({users}) => {
+            users[id] = {
                 creationTimestamp: Date.now(),
                 firstName: registration.firstName,
                 lastName: registration.lastName,
@@ -27,6 +28,8 @@ export default class UserService {
                 hashedPassword
             };
         });
+
+        return id;
     }
 
     public static getUserById(id: UUID): User {

@@ -1,13 +1,13 @@
 import {Request, Response, Router} from "express";
-import {handleValidationResults} from "../middleware/validation.js";
-import {AuthorizedLocals, ErrorResponse, WithUUID} from "../../types/data-transfer-objects.js";
+import {handleValidationResults} from "../../middleware/validation.js";
+import {AuthorizedLocals, ErrorResponse, WithUUID} from "../../../types/data-transfer-objects.js";
 import {body, matchedData} from "express-validator";
-import {ALL_PERMISSIONS, Role} from "../../types/database-types.js";
+import {ALL_PERMISSIONS, Role} from "../../../types/database-types.js";
 import {UUID} from "crypto";
-import OrganizationService from "../organization/service.js";
+import OrganizationService from "../../organization/service.js";
 import {StatusCodes} from "http-status-codes";
 import {randomUUID} from "node:crypto";
-import {deleteFromArray} from "../../utils/collections.js";
+import {deleteFromArray} from "../../../utils/collections.js";
 
 function buildRoleValidator(optional?: boolean) {
     const result = [
