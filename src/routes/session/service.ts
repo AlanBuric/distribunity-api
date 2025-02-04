@@ -5,7 +5,7 @@ import {UUID} from "crypto";
 import {StatusCodes} from "http-status-codes";
 import {validateConfigValue} from "../../utils/config.js";
 // @ts-ignore
-import ms from "ms";
+import ms, {StringValue} from "ms";
 
 // Specification: https://datatracker.ietf.org/doc/html/rfc6749
 
@@ -27,7 +27,7 @@ export default class SessionService {
         const tokenExpiration = validateConfigValue(`${type}_TOKEN_EXPIRATION`);
 
         return new Promise<GeneratedToken>((resolve, reject) => {
-            jwt.sign({id: userId}, tokenSecret, {expiresIn: tokenExpiration}, async (err, token) => {
+            jwt.sign({id: userId}, tokenSecret, {expiresIn: tokenExpiration as StringValue}, async (err, token) => {
                 if (err) {
                     return reject(err);
                 } else if (!token) {
@@ -36,7 +36,7 @@ export default class SessionService {
 
                 resolve({
                     token,
-                    expiration: ms(tokenExpiration) * 1000
+                    expiration: ms(tokenExpiration as StringValue) * 1000
                 });
             })
         });
