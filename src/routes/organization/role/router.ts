@@ -12,14 +12,12 @@ import {deleteFromArray} from "../../../utils/collections.js";
 function buildRoleValidator(optional?: boolean) {
     const result = [
         body("name")
-            .isString()
-            .withMessage("Role name must be a string")
             .isLength({min: 1})
             .withMessage("Role name must be minimally 1 character long"),
         body("description")
-            .isString()
             .trim()
             .default("")
+            .isString()
             .withMessage("Description needs to be a valid string or none"),
         body("permissions")
             .isArray()

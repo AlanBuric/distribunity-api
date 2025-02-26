@@ -19,19 +19,23 @@ const MISSING_PASSWORD = "Missing password field";
 const SessionRouter = Router()
     .post("/register",
         body("firstName")
-            .isString()
             .trim()
             .isLength({min: 1})
-            .withMessage("First name needs to be at least 1 character long"),
-        body("lastName").isString().trim(),
+            .withMessage("First name needs to be at least 1 character long")
+            .isAlpha(undefined, {ignore: "'"})
+            .withMessage("First name needs to consist only of letters"),
+        body("lastName")
+            .trim()
+            .isLength({min: 1})
+            .withMessage("Last name needs to be at least 1 character long")
+            .isAlpha(undefined, {ignore: "'"})
+            .withMessage("Last name needs to consist only of letters"),
         body("email")
             .isEmail()
             .toLowerCase()
             .withMessage(INVALID_EMAIL),
         body("password")
             .exists()
-            .withMessage(MISSING_PASSWORD)
-            .isString()
             .withMessage(MISSING_PASSWORD)
             .isStrongPassword()
             .withMessage("A strong password needs to be at least 8 characters long, at least 1 lowercase and uppercase character, at least 1 number, and at least 1 symbol"),
@@ -41,15 +45,13 @@ const SessionRouter = Router()
     .post("/login",
         body("email")
             .exists()
-            .withMessage(INVALID_EMAIL)
+            .withMessage("Missing e-mail")
             .isEmail()
             .withMessage(INVALID_EMAIL)
             .bail()
             .toLowerCase(),
         body("password")
-            .exists()
-            .withMessage(MISSING_PASSWORD)
-            .isString()
+            .notEmpty()
             .withMessage(MISSING_PASSWORD),
         handleValidationResults,
         async (request: express.Request<{}, {}, UserLoginRequest, {}>, response: express.Response<UserLoginResponse | ErrorResponse>): Promise<any> => {

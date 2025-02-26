@@ -14,16 +14,12 @@ const maxUnitNameLength: MinMaxOptions = {max: 32};
 
 const itemValidatorChain = [
     body("name")
-        .isString()
-        .withMessage("Item name isn't a string")
         .isLength(minMaxItemNameLength)
         .withMessage(`Item name needs to be between ${minMaxItemNameLength.min} and ${minMaxItemNameLength.max} characters long`),
     body("unit")
         .default("")
-        .isString()
-        .withMessage("Unit name isn't a string")
         .isLength({max: 32})
-        .withMessage(`Item unit needs to be between at most ${maxUnitNameLength.max} characters long`),
+        .withMessage(`Item unit needs to be at most ${maxUnitNameLength.max} characters long`),
     body("iconURL")
         .default("")
         .isURL()

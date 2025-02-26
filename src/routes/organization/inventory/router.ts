@@ -16,8 +16,6 @@ const InventoryRouter = Router({mergeParams: true})
             .isUUID()
             .withMessage("Inventory ID isn't a valid UUID"),
         body("name")
-            .isString()
-            .withMessage("Inventory name isn't a string")
             .isLength(minMaxInventoryNameLength)
             .withMessage(`Inventory name needs to be between ${minMaxInventoryNameLength.min} and ${minMaxInventoryNameLength.max} characters long`),
         handleValidationResults,
@@ -40,8 +38,6 @@ const InventoryRouter = Router({mergeParams: true})
         })
     .post("",
         body("name")
-            .isString()
-            .withMessage("Inventory name isn't a string")
             .isLength(minMaxInventoryNameLength)
             .withMessage(`Inventory name needs to be between ${minMaxInventoryNameLength.min} and ${minMaxInventoryNameLength.max} characters long`),
         handleValidationResults,
