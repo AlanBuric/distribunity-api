@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {validationResult} from "express-validator";
 import {StatusCodes} from "http-status-codes";
+import getLoggingPrefix from "../../utils/logging.js";
 
 export function handleValidationResults(request: Request, response: Response, next: NextFunction) {
     const result = validationResult(request);
@@ -13,7 +14,7 @@ export function handleValidationResults(request: Request, response: Response, ne
     let errorMsg = error.msg;
 
     if (error.msg == "Invalid value") {
-        console.warn("Express-validator response not handled: ", error);
+        console.warn(`${getLoggingPrefix} Express-validator response not handled: `, error);
 
         if (error.type === "field") {
             errorMsg += ` for field ${error.path} in the ${error.location}`;
