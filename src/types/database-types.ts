@@ -4,8 +4,12 @@ export type Named = {
 	name: string;
 };
 
-export type Created = {
-	creationTimestamp: number;
+export type CreatedAt = {
+	createdAt: number;
+};
+
+export type CreatedBy = {
+	createdBy: UUID;
 };
 
 export const ALL_PERMISSIONS = [
@@ -43,7 +47,7 @@ export type Country = {
 };
 
 export type Item = Named &
-	Created & {
+	CreatedAt & {
 		unit: string;
 		iconURL: string;
 		unitPrice: number;
@@ -55,16 +59,22 @@ export type InventoryItem = {
 };
 
 export type Inventory = Named &
-	Created & {
+	CreatedAt & {
 		items: Record<UUID, InventoryItem>;
 	};
 
-export type Member = Created & {
+export type Member = CreatedAt & {
 	roles: UUID[];
+	profilePhotoUrl: string;
 };
 
+export type InviteCode = CreatedAt &
+	CreatedBy & {
+		code: string;
+	};
+
 export type Organization = Named &
-	Created & {
+	CreatedAt & {
 		roles: Record<UUID, Role>;
 		members: Record<UUID, Member>;
 		countryCode: string;
@@ -73,7 +83,7 @@ export type Organization = Named &
 		items: Record<UUID, Item>;
 	};
 
-export type User = Created & {
+export type User = CreatedAt & {
 	firstName: string;
 	lastName: string;
 	email: string;

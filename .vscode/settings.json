@@ -1,4 +1,5 @@
 {
 	"editor.defaultFormatter": "biomejs.biome",
-	"files.eol": "\n"
+	"files.eol": "\n",
+	"typescript.preferences.preferTypeOnlyAutoImports": true
 }

@@ -16,11 +16,12 @@ export function getOrganizationById(id: UUID): Organization {
 
 export function hasPermission(
 	organization: Organization,
-	member: Member,
+	userId: UUID,
 	permission: Permission,
 ): boolean {
 	return (
-		member.roles.find((roleId) => organization.roles[roleId].permissions.includes(permission)) !=
-		null
+		organization.members[userId].roles.find((roleId) =>
+			organization.roles[roleId].permissions.includes(permission),
+		) != null
 	);
 }

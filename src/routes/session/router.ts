@@ -1,5 +1,5 @@
 import type { UUID } from "node:crypto";
-import type express from "express";
+import type { NextFunction, Request, Response } from "express";
 import { Router } from "express";
 import { body } from "express-validator";
 import { StatusCodes } from "http-status-codes";
@@ -42,12 +42,8 @@ const SessionRouter = Router()
 			),
 		handleValidationResults,
 		(
-			request: express.Request<
-				Record<string, never>,
-				Record<string, never>,
-				UserRegistrationRequest
-			>,
-			response: express.Response,
+			request: Request<Record<string, never>, Record<string, never>, UserRegistrationRequest>,
+			response: Response,
 		): Promise<any> =>
 			UserService.registerUser(request.body).then((id) =>
 				response.status(StatusCodes.CREATED).send({ id }),
@@ -65,13 +61,13 @@ const SessionRouter = Router()
 		body("password").notEmpty().withMessage(MISSING_PASSWORD),
 		handleValidationResults,
 		async (
-			request: express.Request<
+			request: Request<
 				Record<string, never>,
 				Record<string, never>,
 				UserLoginRequest,
 				Record<string, never>
 			>,
-			response: express.Response<UserLoginResponse | ErrorResponse>,
+			response: Response<UserLoginResponse | ErrorResponse>,
 		): Promise<any> => {
 			const [id, fullUser] = await UserService.getUserByEmail(request.body.email);
 
@@ -105,45 +101,47 @@ const SessionRouter = Router()
 			response.status(StatusCodes.BAD_REQUEST).send({ error: "Incorrect password" });
 		},
 	)
-	.post("/refresh", async (request: express.Request, response: express.Response): Promise<any> => {
-		const refreshToken = request.cookies.refresh;
+	.post(
+		"/refresh",
+		async (
+			request: Request,
+			response: Response<UserLoginResponse | ErrorResponse>,
+		): Promise<any> => {
+			const refreshToken = request.cookies.refresh;
 
-		if (!refreshToken) {
-			return response.status(StatusCodes.BAD_REQUEST).send({
-				error: "Missing refresh token in the request cookies.",
+			if (!refreshToken) {
+				return response.status(StatusCodes.BAD_REQUEST).send({
+					error: "Missing refresh token in the request cookies.",
+				});
+			}
+
+			const userId = (await SessionService.getUserIdFromToken(
+				refreshToken,
+				SessionService.TokenType.REFRESH,
+			)) as UUID;
+			const { hashedPassword, email, ...user } = UserService.getUserById(userId);
+			const generatedToken = await SessionService.generateJwtToken(
+				userId,
+				SessionService.TokenType.ACCESS,
+			);
+
+			return response.send({
+				accessToken: generatedToken.token,
+				expiration: generatedToken.expiration,
+				user: {
+					...user,
+					id: userId,
+				},
 			});
-		}
-
-		const userId = (await SessionService.getUserIdFromToken(
-			refreshToken,
-			SessionService.TokenType.REFRESH,
-		)) as UUID;
-		const { hashedPassword, email, ...user } = UserService.getUserById(userId);
-		const generatedToken = await SessionService.generateJwtToken(
-			userId,
-			SessionService.TokenType.ACCESS,
-		);
-
-		const loginResponse: UserLoginResponse = {
-			accessToken: generatedToken.token,
-			expiration: generatedToken.expiration,
-			user: {
-				...user,
-				id: userId,
-			},
-		};
-
-		return response.send(loginResponse);
-	})
-	// TODO: token denylist
-	.post("/logout", (request: express.Request, response: express.Response): any =>
-		response.clearCookie("refresh"),
+		},
 	)
+	// TODO: token denylist
+	.post("/logout", (request: Request, response: Response): any => response.clearCookie("refresh"))
 	.use(
 		async (
-			request: express.Request,
-			response: express.Response<ErrorResponse, AuthorizedLocals>,
-			next: express.NextFunction,
+			request: Request,
+			response: Response<ErrorResponse, AuthorizedLocals>,
+			next: NextFunction,
 		): Promise<any> => {
 			const accessToken = request.header("Authorization")?.split(" ")[1];
 
@@ -159,10 +157,8 @@ const SessionRouter = Router()
 			)) as UUID;
 			const user = UserService.getUserById(userId);
 
-			response.locals = {
-				user,
-				userId,
-			};
+			response.locals.user = user;
+			response.locals.userId = userId;
 
 			next();
 		},

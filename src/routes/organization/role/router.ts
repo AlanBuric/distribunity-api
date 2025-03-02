@@ -1,30 +1,32 @@
-import type { UUID } from "node:crypto";
-import { randomUUID } from "node:crypto";
-import { type Request, type Response, Router } from "express";
-import { body, matchedData } from "express-validator";
-import { StatusCodes } from "http-status-codes";
-import type {
-	AuthorizedLocals,
-	ErrorResponse,
-	WithUUID,
-} from "../../../types/data-transfer-objects.js";
-import { ALL_PERMISSIONS, type Role } from "../../../types/database-types.js";
-import { deleteFromArray } from "../../../utils/collections.js";
+import { Router } from "express";
+import { body } from "express-validator";
+import type { MinMaxOptions } from "express-validator/lib/options.js";
+import { ALL_PERMISSIONS } from "../../../types/database-types.js";
 import { handleValidationResults } from "../../middleware/validation.js";
-import * as OrganizationService from "../../organization/service.js";
+import { requirePermission } from "../controller.js";
+import { DELETE, PATCH, POST } from "./controller.js";
+
+const minMaxRoleNameLength: MinMaxOptions = { min: 1, max: 32 };
 
 function buildRoleValidator(optional?: boolean) {
 	const result = [
-		body("name").isLength({ min: 1 }).withMessage("Role name must be minimally 1 character long"),
+		body("name")
+			.isLength(minMaxRoleNameLength)
+			.withMessage(
+				`Role name must be between ${minMaxRoleNameLength.min} and ${minMaxRoleNameLength} characters long`,
+			),
 		body("description")
 			.trim()
 			.default("")
-			.isString()
-			.withMessage("Description needs to be a valid string or none"),
-		body("permissions")
-			.isArray()
-			.withMessage("Permissions must be an array")
-			.custom((input) => !ALL_PERMISSIONS.includes(input)),
+			.isLength({ max: 100 })
+			.withMessage("Role description must be at most 100 characters long"),
+		body("permissions").isArray().withMessage("Missing array of permissions"),
+		body("permissions.*")
+			.isIn(ALL_PERMISSIONS)
+			.withMessage(
+				(invalidPermission) =>
+					`Invalid permission ${invalidPermission}, valid ones are ${ALL_PERMISSIONS.join(", ")}`,
+			),
 	];
 
 	if (optional) {
@@ -40,78 +42,16 @@ const RoleRouter = Router({ mergeParams: true })
 		"",
 		buildRoleValidator(),
 		handleValidationResults,
-		(request: Request, response: Response<WithUUID | ErrorResponse, AuthorizedLocals>): any => {
-			const { organizationId, ...role } = matchedData<Role & { organizationId: UUID }>(request);
-
-			const organization = OrganizationService.getOrganizationById(organizationId);
-
-			if (
-				Object.values(organization.roles)
-					.map((role) => role.name)
-					.includes(role.name)
-			) {
-				return response
-					.status(StatusCodes.BAD_REQUEST)
-					.send({ error: "Role with that name already exists" });
-			}
-
-			const roleId = randomUUID();
-
-			organization.roles[roleId] = role;
-
-			response.status(StatusCodes.CREATED).send({ id: roleId });
-		},
+		requirePermission("organization.roles.create"),
+		POST,
 	)
-	.delete(
-		"/:roleId",
-		(request: Request, response: Response<ErrorResponse, AuthorizedLocals>): any => {
-			const { organizationId, roleId } = matchedData<{
-				organizationId: UUID;
-				roleId: UUID;
-			}>(request);
-
-			const organization = OrganizationService.getOrganizationById(organizationId);
-
-			if (!delete organization.roles[roleId]) {
-				return response.sendStatus(StatusCodes.NOT_FOUND);
-			}
-
-			Object.values(organization.members).forEach((member) =>
-				deleteFromArray(member.roles, roleId),
-			);
-
-			response.sendStatus(StatusCodes.OK);
-		},
-	)
+	.delete("/:roleId", requirePermission("organization.roles.delete"), DELETE)
 	.patch(
 		"/:roleId",
 		buildRoleValidator(true),
 		handleValidationResults,
-		(request: Request, response: Response<WithUUID | ErrorResponse, AuthorizedLocals>): any => {
-			const { organizationId, roleId, ...role } = matchedData<
-				Partial<Role> & {
-					organizationId: UUID;
-					roleId: UUID;
-				}
-			>(request);
-
-			const organization = OrganizationService.getOrganizationById(organizationId);
-
-			if (
-				role.name &&
-				Object.values(organization.roles)
-					.map((role) => role.name)
-					.includes(role.name)
-			) {
-				return response
-					.status(StatusCodes.BAD_REQUEST)
-					.send({ error: "Role with that name already exists" });
-			}
-
-			Object.assign(organization.roles[roleId], role);
-
-			response.sendStatus(StatusCodes.OK);
-		},
+		requirePermission("organization.roles.create"),
+		PATCH,
 	);
 
 export default RoleRouter;

@@ -1,6 +1,10 @@
 import type { UUID } from "node:crypto";
 import type { Organization, User } from "./database-types.js";
 
+export type InventoryParams = {
+	inventoryId: UUID;
+};
+
 export type OrganizationResponse = Omit<
 	Organization,
 	"roles" | "members" | "inviteCodes" | "inventories" | "items"
@@ -13,6 +17,10 @@ export type OrganizationResponse = Omit<
 export type AuthorizedLocals = {
 	userId: UUID;
 	user: User;
+};
+
+export type OrganizationLocals = AuthorizedLocals & {
+	organization: Organization;
 };
 
 export type ErrorResponse = {

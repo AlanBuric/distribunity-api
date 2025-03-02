@@ -24,7 +24,7 @@ export async function registerUser(registration: UserRegistrationRequest): Promi
 
 	await getDatabase().update(({ users }) => {
 		users[id] = {
-			creationTimestamp: Date.now(),
+			createdAt: Date.now(),
 			firstName: registration.firstName,
 			lastName: registration.lastName,
 			email: registration.email,
