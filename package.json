@@ -9,7 +9,8 @@
 		"build": "rimraf dist && tsc -b",
 		"start": "node dist/server.js",
 		"test:dev": "vitest",
-		"test:prod": "vitest run"
+		"test:prod": "vitest run",
+		"check": "npx @biomejs/biome check --write src tests"
 	},
 	"author": "Alan Burić",
 	"license": "MIT",
