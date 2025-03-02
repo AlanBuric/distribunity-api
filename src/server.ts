@@ -9,10 +9,10 @@ const port = validateConfigValue("PORT");
 await connectDatabase();
 
 application.listen(port, () =>
-	console.info(
-		styleText(
-			["blueBright"],
-			`${getLoggingPrefix()} Distribunity API server started on http://localhost:${port}/api/v1`,
-		),
-	),
+  console.info(
+    styleText(
+      ["blueBright"],
+      `${getLoggingPrefix()} Distribunity API server started on http://localhost:${port}/api/v1`,
+    ),
+  ),
 );

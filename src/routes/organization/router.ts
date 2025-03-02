@@ -7,17 +7,17 @@ import MemberRouter from "./member/router.js";
 import RoleRouter from "./role/router.js";
 
 const OrganizationRouter = Router()
-	.get("", GET)
-	.use(
-		"/:organizationId",
-		param("organizationId").isUUID(),
-		handleValidationResults,
-		Router({ mergeParams: true })
-			.use(requireUserBelongsToTargetOrganization)
-			.get("", GET_BY_ID)
-			.use("/role", RoleRouter)
-			.use("/member", MemberRouter)
-			.use("/items", ItemRouter),
-	);
+  .get("", GET)
+  .use(
+    "/:organizationId",
+    param("organizationId").isUUID(),
+    handleValidationResults,
+    Router({ mergeParams: true })
+      .use(requireUserBelongsToTargetOrganization)
+      .get("", GET_BY_ID)
+      .use("/role", RoleRouter)
+      .use("/member", MemberRouter)
+      .use("/items", ItemRouter),
+  );
 
 export default OrganizationRouter;

@@ -5,23 +5,23 @@ import type { Member, Organization, Permission } from "../../types/database-type
 import RequestError from "../../utils/RequestError.js";
 
 export function getOrganizationById(id: UUID): Organization {
-	const organization = getDatabase().data.organizations[id];
+  const organization = getDatabase().data.organizations[id];
 
-	if (!organization) {
-		throw new RequestError(StatusCodes.NOT_FOUND, `Organization with ID ${id} not found`);
-	}
+  if (!organization) {
+    throw new RequestError(StatusCodes.NOT_FOUND, `Organization with ID ${id} not found`);
+  }
 
-	return organization;
+  return organization;
 }
 
 export function hasPermission(
-	organization: Organization,
-	userId: UUID,
-	permission: Permission,
+  organization: Organization,
+  userId: UUID,
+  permission: Permission,
 ): boolean {
-	return (
-		organization.members[userId].roles.find((roleId) =>
-			organization.roles[roleId].permissions.includes(permission),
-		) != null
-	);
+  return (
+    organization.members[userId].roles.find((roleId) =>
+      organization.roles[roleId].permissions.includes(permission),
+    ) != null
+  );
 }
