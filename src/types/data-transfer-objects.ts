@@ -14,6 +14,8 @@ export type OrganizationResponse = Omit<
   members: number;
 };
 
+export type OrganizationCreationRequest = Pick<Organization, "name" | "countryCode">;
+
 export type AuthorizedLocals = {
   userId: UUID;
   user: User;

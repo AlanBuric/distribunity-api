@@ -1,16 +1,18 @@
-import type { UUID } from "node:crypto";
+import { randomUUID, type UUID } from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 import type {
   AuthorizedLocals,
   ErrorResponse,
+  OrganizationCreationRequest,
   OrganizationLocals,
   OrganizationResponse,
 } from "../../types/data-transfer-objects.js";
-import type { Permission } from "../../types/database-types.js";
+import type { Organization, Permission } from "../../types/database-types.js";
 import * as UserService from "../user/service.js";
 import * as OrganizationService from "./service.js";
+import getDatabase from "../../database/database.js";
 
 export function requirePermission(permission: Permission) {
   return (request: Request, response: Response<any, OrganizationLocals>, next: NextFunction) => {
@@ -74,4 +76,33 @@ export function GET_BY_ID(
 ): any {
   const { organizationId } = matchedData(request);
   response.send(mapToOrganizationResponse(organizationId, response.locals.userId));
+}
+
+export function PATCH(request: Request, response: Response<Organization, AuthorizedLocals>): any {
+  const { name, countryCode, organizationId } = matchedData<
+    OrganizationCreationRequest & { organizationId: UUID }
+  >(request);
+  const organization = getDatabase().data.organizations[organizationId];
+
+  Object.assign(organization, { name, countryCode });
+  response.sendStatus(StatusCodes.OK);
+}
+
+export function POST(request: Request, response: Response<Organization, AuthorizedLocals>): any {
+  const { name, countryCode } = matchedData<OrganizationCreationRequest>(request);
+  const organizationId = randomUUID();
+
+  const organization = (getDatabase().data.organizations[organizationId] = {
+    name,
+    createdAt: Date.now(),
+    roles: {},
+    members: {},
+    countryCode,
+    inviteCodes: [],
+    inventories: {},
+    items: {},
+  });
+
+  response.locals.user.organizations.push(organizationId);
+  response.send(organization);
 }

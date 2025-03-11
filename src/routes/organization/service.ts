@@ -1,7 +1,7 @@
 import type { UUID } from "node:crypto";
 import { StatusCodes } from "http-status-codes";
 import getDatabase from "../../database/database.js";
-import type { Member, Organization, Permission } from "../../types/database-types.js";
+import type { Organization, Permission } from "../../types/database-types.js";
 import RequestError from "../../utils/RequestError.js";
 
 export function getOrganizationById(id: UUID): Organization {
