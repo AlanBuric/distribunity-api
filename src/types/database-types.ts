@@ -58,27 +58,21 @@ export type InventoryItem = {
   quantity: number;
 };
 
-export type Inventory = Named &
-  CreatedAt & {
-    items: Record<UUID, InventoryItem>;
-  };
+export type Inventory = Named & CreatedAt & { items: Record<UUID, InventoryItem> };
 
 export type Member = CreatedAt & {
   roles: UUID[];
   profilePhotoUrl: string;
 };
 
-export type InviteCode = CreatedAt &
-  CreatedBy & {
-    code: string;
-  };
+export type Invitation = CreatedAt & CreatedBy;
 
 export type Organization = Named &
   CreatedAt & {
     roles: Record<UUID, Role>;
     members: Record<UUID, Member>;
     countryCode: string;
-    inviteCodes: string[];
+    invitations: Record<UUID, Invitation>;
     inventories: Record<UUID, Inventory>;
     items: Record<UUID, Item>;
   };

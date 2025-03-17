@@ -7,7 +7,7 @@ export type InventoryParams = {
 
 export type OrganizationResponse = Omit<
   Organization,
-  "roles" | "members" | "inviteCodes" | "inventories" | "items"
+  "roles" | "members" | "invitations" | "inventories" | "items"
 > & {
   joinDate: number;
   inventories: number;

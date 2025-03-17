@@ -6,6 +6,7 @@ import {
   GET_BY_ID,
   PATCH,
   POST,
+  POST_JOIN,
   requirePermission,
   requireUserBelongsToTargetOrganization,
 } from "./controller.js";
@@ -40,6 +41,7 @@ const OrganizationRouter = Router()
     param("organizationId").isUUID(),
     handleValidationResults,
     Router({ mergeParams: true })
+      .post("/join", POST_JOIN)
       .use(requireUserBelongsToTargetOrganization)
       .get("", GET_BY_ID)
       .patch(

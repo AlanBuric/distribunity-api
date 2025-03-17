@@ -30,9 +30,7 @@ export function requirePermission(permission: Permission) {
   };
 }
 
-function mapToOrganizationResponse(organizationId: UUID, userId: UUID): OrganizationResponse {
-  const organization = OrganizationService.getOrganizationById(organizationId);
-
+function mapToOrganizationResponse(organization: Organization, userId: UUID): OrganizationResponse {
   return {
     createdAt: organization.createdAt,
     name: organization.name,
@@ -65,7 +63,10 @@ export function GET(
 ): any {
   response.send(
     UserService.getUserById(response.locals.userId).organizations.map((organizationId) =>
-      mapToOrganizationResponse(organizationId, response.locals.userId),
+      mapToOrganizationResponse(
+        OrganizationService.getOrganizationById(organizationId),
+        response.locals.userId,
+      ),
     ),
   );
 }
@@ -91,18 +92,49 @@ export function PATCH(request: Request, response: Response<Organization, Authori
 export function POST(request: Request, response: Response<Organization, AuthorizedLocals>): any {
   const { name, countryCode } = matchedData<OrganizationCreationRequest>(request);
   const organizationId = randomUUID();
+  const createdAt = Date.now();
 
   const organization = (getDatabase().data.organizations[organizationId] = {
     name,
-    createdAt: Date.now(),
+    createdAt,
     roles: {},
-    members: {},
+    members: {
+      [response.locals.userId]: {
+        createdAt,
+        profilePhotoUrl: "",
+        roles: [],
+      },
+    },
     countryCode,
-    inviteCodes: [],
+    invitations: {},
     inventories: {},
     items: {},
   });
 
   response.locals.user.organizations.push(organizationId);
   response.send(organization);
+}
+
+export function POST_JOIN(
+  request: Request,
+  response: Response<OrganizationResponse, OrganizationLocals>,
+): any {
+  const { organizationId } = matchedData<{ organizationId: UUID }>(request);
+
+  if (!response.locals.organization) {
+    response.locals.organization = OrganizationService.getOrganizationById(organizationId);
+  }
+
+  if (delete response.locals.organization.invitations[response.locals.userId]) {
+    response.locals.user.organizations.push(organizationId);
+    response.locals.organization.members[response.locals.userId] = {
+      profilePhotoUrl: "",
+      createdAt: Date.now(),
+      roles: [],
+    };
+
+    return response
+      .status(StatusCodes.CREATED)
+      .send(mapToOrganizationResponse(response.locals.organization, response.locals.userId));
+  }
 }
