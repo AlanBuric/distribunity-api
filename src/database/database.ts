@@ -1,8 +1,9 @@
-import { Pool } from "pg";
+import "dotenv/config";
+import pg from "pg";
 import { ALL_PERMISSIONS } from "../types/database-types.js";
 import getLoggingPrefix from "../utils/logging.js";
 
-const database = new Pool();
+const database = new pg.Pool();
 
 database.on("error", (error) => {
   console.error("Unexpected error on idle client", error);
@@ -33,7 +34,11 @@ await database
     "INSERT INTO permission (name) SELECT unnest($1::text[]) AS name ON CONFLICT (name) DO NOTHING;",
     [ALL_PERMISSIONS]
   )
-  .then(() => console.info(`${getLoggingPrefix()} Database permissions seeded`))
+  .then(({ rowCount }) => {
+    if (rowCount) {
+      console.info(`${getLoggingPrefix()} Database permissions seeded`);
+    }
+  })
   .catch((error) => {
     console.error(`${getLoggingPrefix()} Error seeding permissions`, error);
     process.exit(1);

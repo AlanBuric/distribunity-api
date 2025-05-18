@@ -55,8 +55,8 @@ const SessionRouter = Router()
       >,
       response: Response
     ): Promise<any> =>
-      UserService.registerUser(request.body).then((id) =>
-        response.status(StatusCodes.CREATED).send({ id })
+      UserService.registerUser(request.body).then((user) =>
+        response.status(StatusCodes.CREATED).send(user)
       )
   )
   .post(
@@ -82,7 +82,7 @@ const SessionRouter = Router()
       const { email, password } = matchedData(request);
 
       const result = await database.query(
-        "SELECT * FROM users WHERE email = $1",
+        'SELECT * FROM "user" WHERE email = $1',
         [email]
       );
 

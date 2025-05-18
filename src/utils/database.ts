@@ -1,5 +1,9 @@
-function toCamelCase(name: string) {
-  return name.at(0)?.toUpperCase() + name.slice(1);
+function toCamelCase(str: string) {
+  return str
+    .toLowerCase()
+    .replace(/([-_][a-z])/g, (group) =>
+      group.toUpperCase().replace("-", "").replace("_", "")
+    );
 }
 
 export function camelCaseify<T2 extends object>(object: object): T2 {

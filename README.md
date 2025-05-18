@@ -29,8 +29,12 @@ npm ci
 ```
 docker compose up database
 ```
+2. Configure in .env `PGHOST=localhost`
 
-2. Start the server locally:
+The PostgreSQL database will be running in a Docker container, and so the server
+needs to connect to it through your host machine's own network.
+
+3. Start the server locally:
 
 ```
 npm run dev
