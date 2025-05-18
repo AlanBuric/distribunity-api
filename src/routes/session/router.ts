@@ -1,18 +1,24 @@
-import type { UUID } from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
 import { Router } from "express";
-import { body } from "express-validator";
+import { body, matchedData } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 import type {
   AuthorizedLocals,
   ErrorResponse,
-  UserLoginRequest,
   UserLoginResponse,
   UserRegistrationRequest,
 } from "../../types/data-transfer-objects.js";
 import { handleValidationResults } from "../middleware/validation.js";
 import * as UserService from "../user/service.js";
 import * as SessionService from "./service.js";
+import database from "../../database/database.js";
+import { camelCaseify } from "../../utils/database.js";
+import type { User } from "../../types/database-types.js";
+
+type UserLoginRequest = {
+  email: string;
+  password: string;
+};
 
 const INVALID_EMAIL = "Invalid e-mail format";
 const MISSING_PASSWORD = "Missing password field";
@@ -38,16 +44,20 @@ const SessionRouter = Router()
       .withMessage(MISSING_PASSWORD)
       .isStrongPassword()
       .withMessage(
-        "A strong password needs to be at least 8 characters long, at least 1 lowercase and uppercase character, at least 1 number, and at least 1 symbol",
+        "A strong password needs to be at least 8 characters long, at least 1 lowercase and uppercase character, at least 1 number, and at least 1 symbol"
       ),
     handleValidationResults,
     (
-      request: Request<Record<string, never>, Record<string, never>, UserRegistrationRequest>,
-      response: Response,
+      request: Request<
+        Record<string, never>,
+        Record<string, never>,
+        UserRegistrationRequest
+      >,
+      response: Response
     ): Promise<any> =>
       UserService.registerUser(request.body).then((id) =>
-        response.status(StatusCodes.CREATED).send({ id }),
-      ),
+        response.status(StatusCodes.CREATED).send({ id })
+      )
   )
   .post(
     "/login",
@@ -67,45 +77,57 @@ const SessionRouter = Router()
         UserLoginRequest,
         Record<string, never>
       >,
-      response: Response<UserLoginResponse | ErrorResponse>,
+      response: Response<UserLoginResponse | ErrorResponse>
     ): Promise<any> => {
-      const [id, fullUser] = await UserService.getUserByEmail(request.body.email);
+      const { email, password } = matchedData(request);
 
-      if (await SessionService.verifyPassword(request.body.password, fullUser.hashedPassword)) {
-        const { hashedPassword, email, ...user } = fullUser;
+      const result = await database.query(
+        "SELECT * FROM users WHERE email = $1",
+        [email]
+      );
+
+      if (result.rows.length === 0) {
+        return response
+          .status(StatusCodes.NOT_FOUND)
+          .send({ error: "User not found" });
+      }
+
+      const fullUser = camelCaseify<User>(result.rows[0]);
+
+      if (
+        await SessionService.verifyPassword(password, fullUser.passwordHash!)
+      ) {
+        const { passwordHash, ...user } = fullUser;
         const generatedAccessToken = await SessionService.generateJwtToken(
-          id,
-          SessionService.TokenType.ACCESS,
+          user.userId,
+          SessionService.TokenType.ACCESS
         );
         const generatedRefreshToken = await SessionService.generateJwtToken(
-          id,
-          SessionService.TokenType.REFRESH,
+          user.userId,
+          SessionService.TokenType.REFRESH
         );
-
-        const loginResponse: UserLoginResponse = {
-          accessToken: generatedAccessToken.token,
-          expiration: generatedAccessToken.expiration,
-          user: {
-            ...user,
-            id,
-          },
-        };
 
         return response
           .cookie("refresh", generatedRefreshToken.token, {
             maxAge: generatedRefreshToken.expiration,
           })
-          .send(loginResponse);
+          .send({
+            accessToken: generatedAccessToken.token,
+            expiration: generatedAccessToken.expiration,
+            user,
+          });
       }
 
-      response.status(StatusCodes.BAD_REQUEST).send({ error: "Incorrect password" });
-    },
+      response
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ error: "Incorrect password" });
+    }
   )
   .post(
     "/refresh",
     async (
       request: Request,
-      response: Response<UserLoginResponse | ErrorResponse>,
+      response: Response<UserLoginResponse | ErrorResponse>
     ): Promise<any> => {
       const refreshToken = request.cookies.refresh;
 
@@ -115,33 +137,32 @@ const SessionRouter = Router()
         });
       }
 
-      const userId = (await SessionService.getUserIdFromToken(
+      const userId = await SessionService.getUserIdFromToken(
         refreshToken,
-        SessionService.TokenType.REFRESH,
-      )) as UUID;
-      const { hashedPassword, email, ...user } = UserService.getUserById(userId);
+        SessionService.TokenType.REFRESH
+      );
+      const { passwordHash, ...user } = await UserService.getUserById(userId);
       const generatedToken = await SessionService.generateJwtToken(
         userId,
-        SessionService.TokenType.ACCESS,
+        SessionService.TokenType.ACCESS
       );
 
       return response.send({
         accessToken: generatedToken.token,
         expiration: generatedToken.expiration,
-        user: {
-          ...user,
-          id: userId,
-        },
+        user,
       });
-    },
+    }
   )
-  // TODO: token denylist
-  .post("/logout", (request: Request, response: Response): any => response.clearCookie("refresh"))
+  // TODO: Redis token denylist
+  .post("/logout", (request: Request, response: Response): any =>
+    response.clearCookie("refresh")
+  )
   .use(
     async (
       request: Request,
       response: Response<ErrorResponse, AuthorizedLocals>,
-      next: NextFunction,
+      next: NextFunction
     ): Promise<any> => {
       const accessToken = request.header("Authorization")?.split(" ")[1];
 
@@ -151,17 +172,16 @@ const SessionRouter = Router()
         });
       }
 
-      const userId = (await SessionService.getUserIdFromToken(
+      const userId = await SessionService.getUserIdFromToken(
         accessToken,
-        SessionService.TokenType.ACCESS,
-      )) as UUID;
-      const user = UserService.getUserById(userId);
+        SessionService.TokenType.ACCESS
+      );
 
-      response.locals.user = user;
+      response.locals.user = await UserService.getUserById(userId);
       response.locals.userId = userId;
 
       next();
-    },
+    }
   );
 
 export default SessionRouter;

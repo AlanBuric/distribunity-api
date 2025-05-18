@@ -1,102 +1,132 @@
-import { type UUID, randomUUID } from "node:crypto";
+import type { UUID } from "node:crypto";
 import type { Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { StatusCodes } from "http-status-codes";
+import database from "../../../database/database.js";
 import type {
   ErrorResponse,
-  InventoryParams,
   OrganizationLocals,
 } from "../../../types/data-transfer-objects.js";
 import type { Inventory } from "../../../types/database-types.js";
+import { camelCaseify } from "../../../utils/database.js";
+import type { InternalRequest } from "express-validator/lib/base.js";
 
-function mapInventoryToView(inventory: Inventory) {
-  const copy: Partial<Inventory> = { ...inventory };
-
-  // biome-ignore lint/performance/noDelete: object property deletion
-  delete copy.items;
-
-  return copy;
-}
-
-export function GET(_request: Request, response: Response<any, OrganizationLocals>): any {
-  response.send(
-    Object.fromEntries(
-      Object.entries(response.locals.organization.inventories).map(([id, inventory]) => [
-        id,
-        mapInventoryToView(inventory),
-      ]),
-    ),
+async function checkIsInventoryNameTaken(
+  organizationId: number,
+  name: string,
+  response: Response
+) {
+  const { rowCount } = await database.query(
+    "SELECT 1 FROM inventory WHERE organization_id = $1 AND name = $2",
+    [organizationId, name]
   );
-}
 
-export function POST(
-  request: Request<InventoryParams>,
-  response: Response<ErrorResponse | UUID, OrganizationLocals>,
-): any {
-  const { name } = matchedData<{ name: string }>(request);
-
-  if (
-    Object.values(response.locals.organization.inventories)
-      .map((inventory) => inventory.name)
-      .includes(name)
-  ) {
-    return response.status(StatusCodes.BAD_REQUEST).send({
+  if (rowCount) {
+    response.status(StatusCodes.BAD_REQUEST).send({
       error: `Inventory with the name ${name} already exists`,
     });
+
+    return true;
   }
 
-  const id = randomUUID();
-
-  response.locals.organization.inventories[id] = {
-    name,
-    items: {},
-    createdAt: Date.now(),
-  };
-
-  response.status(StatusCodes.CREATED).send(id);
+  return false;
 }
 
-export function GET_BY_ID(
-  request: Request<InventoryParams>,
-  response: Response<ErrorResponse | Inventory, OrganizationLocals>,
-): any {
-  const { inventoryId, name } = matchedData<{ inventoryId: UUID; name: string }>(request);
-  const inventory = response.locals.organization.inventories[inventoryId];
+export async function GET(
+  _request: Request,
+  response: Response<Inventory[], OrganizationLocals>
+) {
+  const { rows } = await database.query(
+    "SELECT * FROM inventory WHERE organization_id = $1",
+    [response.locals.organization.organizationId]
+  );
 
-  if (!inventory) {
-    return response.status(StatusCodes.NOT_FOUND).send({
-      error: `Inventory with ID ${inventoryId} not found`,
-    });
-  }
-
-  response.send(inventory);
+  response.send(rows.map<Inventory>(camelCaseify));
 }
 
-export function PATCH(
-  request: Request<InventoryParams>,
-  response: Response<ErrorResponse, OrganizationLocals>,
-): any {
-  const { inventoryId, name } = matchedData<{ inventoryId: UUID; name: string }>(request);
-  const inventory = response.locals.organization.inventories[inventoryId];
+export async function POST(
+  request: Request,
+  response: Response<ErrorResponse | number, OrganizationLocals>
+) {
+  const { name } = matchedData<{ name: string }>(request);
+  const organizationId = response.locals.organization.organizationId;
+
+  if (await checkIsInventoryNameTaken(organizationId, name, response)) return;
+
+  const result = await database.query(
+    `INSERT INTO inventory (organization_id, name)
+     VALUES ($1, $2)
+     RETURNING inventory_id`,
+    [organizationId, name]
+  );
+
+  response.status(StatusCodes.CREATED).send(result.rows[0].inventory_id);
+}
+
+type InventoryParams = {
+  inventoryId: number;
+};
+
+type InventoryPatch = InventoryParams & {
+  name: string;
+};
+
+export async function GET_BY_ID(
+  request: Request,
+  response: Response<ErrorResponse | Inventory, OrganizationLocals>
+): Promise<any> {
+  const { inventoryId } = matchedData<InventoryParams>(request);
+  const organizationId = response.locals.organization.organizationId;
+
+  const { rows } = await database.query(
+    "SELECT * FROM inventory WHERE inventory_id = $1 AND organization_id = $2",
+    [inventoryId, organizationId]
+  );
+
+  const inventory = rows[0];
 
   if (!inventory) {
-    return response.status(StatusCodes.NOT_FOUND).send({
-      error: `Inventory with ID ${inventoryId} not found`,
-    });
+    return response.status(StatusCodes.NOT_FOUND);
   }
 
-  inventory.name = name;
+  response.send(camelCaseify<Inventory>(inventory));
+}
+
+export async function PATCH(
+  request: Request,
+  response: Response<ErrorResponse, OrganizationLocals>
+): Promise<any> {
+  const { inventoryId, name } = matchedData<InventoryPatch>(request);
+  const organizationId = response.locals.organization.organizationId;
+
+  if (await checkIsInventoryNameTaken(organizationId, name, response)) return;
+
+  // TODO: merge upper check into WHERE clause "inventory_id <> $4" and just return name taken instead of not found
+  const result = await database.query(
+    "UPDATE inventory SET name = $1 WHERE inventory_id = $2 AND organization_id = $3 RETURNING *",
+    [name, inventoryId, organizationId]
+  );
+
+  if (!result.rowCount) {
+    return response.status(StatusCodes.NOT_FOUND);
+  }
 
   response.sendStatus(StatusCodes.OK);
 }
 
-export function DELETE(
-  request: Request<InventoryParams>,
-  response: Response<ErrorResponse, OrganizationLocals>,
-): any {
-  const { inventoryId } = matchedData(request);
+export async function DELETE(
+  request: Request,
+  response: Response<ErrorResponse, OrganizationLocals>
+): Promise<any> {
+  const { inventoryId } = matchedData<InventoryParams>(request);
+  const organizationId = response.locals.organization.organizationId;
 
-  if (!delete response.locals.organization.inventories[inventoryId]) {
+  const result = await database.query(
+    "DELETE FROM inventory WHERE inventory_id = $1 AND organization_id = $2",
+    [inventoryId, organizationId]
+  );
+
+  if (!result.rowCount) {
     return response.status(StatusCodes.NOT_FOUND);
   }
 

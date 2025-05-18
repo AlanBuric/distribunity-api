@@ -24,10 +24,15 @@
       "recommended": true,
       "suspicious": {
         "noExplicitAny": "off",
-        "noAssignInExpressions": "off"
+        "noAssignInExpressions": "off",
+        "noDoubleEquals": "off"
       },
       "complexity": {
         "noForEach": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off",
+        "noParameterAssign": "off"
       }
     }
   },

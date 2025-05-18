@@ -1,5 +1,8 @@
 {
   "editor.defaultFormatter": "biomejs.biome",
   "files.eol": "\n",
-  "typescript.preferences.preferTypeOnlyAutoImports": true
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "[sql]": {
+    "editor.defaultFormatter": "mtxr.sqltools"
+  }
 }

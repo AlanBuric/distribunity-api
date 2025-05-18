@@ -1,47 +1,42 @@
-import type { UUID } from "node:crypto";
-import { Low, Memory } from "lowdb";
-import type { Country, Organization, User } from "../types/database-types.js";
+import { Pool } from "pg";
+import { ALL_PERMISSIONS } from "../types/database-types.js";
+import getLoggingPrefix from "../utils/logging.js";
 
-export type DatabaseSchema = {
-  users: Record<UUID, User>;
-  countries: Record<string, Country>;
-  organizations: Record<UUID, Organization>;
-};
+const database = new Pool();
 
-let mockDatabase: Low<DatabaseSchema> | undefined;
+database.on("error", (error) => {
+  console.error("Unexpected error on idle client", error);
+});
 
-export function getDefaultData(): DatabaseSchema {
-  return {
-    users: {},
-    countries: {
-      hr: {
-        name: "Croatia",
-      },
-      us: {
-        name: "United States",
-      },
-    },
-    organizations: {},
-  };
-}
+await database.connect();
+/*
+const sqlFilePath = path.join(__dirname, "schema.sql");
+const sqlScript = await readFile(sqlFilePath, "utf8");
 
-export function connectDatabase() {
-  mockDatabase = new Low<DatabaseSchema>(new Memory<DatabaseSchema>(), getDefaultData());
-  return mockDatabase.read();
-}
+await database
+  .query(sqlScript)
+  .then(() =>
+    console.info(
+      `${getLoggingPrefix()} Database schema initialization executed`
+    )
+  )
+  .catch((error) => {
+    console.error(
+      `${getLoggingPrefix()} Database schema initialization failed`,
+      error
+    );
+    process.exit(1);
+  });
+*/
+await database
+  .query(
+    "INSERT INTO permission (name) SELECT unnest($1::text[]) AS name ON CONFLICT (name) DO NOTHING;",
+    [ALL_PERMISSIONS]
+  )
+  .then(() => console.info(`${getLoggingPrefix()} Database permissions seeded`))
+  .catch((error) => {
+    console.error(`${getLoggingPrefix()} Error seeding permissions`, error);
+    process.exit(1);
+  });
 
-export function saveDatabase() {
-  if (!mockDatabase) {
-    throw new Error("Database is uninitialized, call connectDatabase() beforehand");
-  }
-
-  return mockDatabase.write();
-}
-
-export default function getDatabase(): Low<DatabaseSchema> {
-  if (!mockDatabase) {
-    throw new Error("Database is uninitialized, call connectDatabase() beforehand");
-  }
-
-  return mockDatabase;
-}
+export default database;

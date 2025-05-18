@@ -1,15 +1,6 @@
-import type { UUID } from "node:crypto";
-import { randomUUID } from "node:crypto";
-import { type Request, type Response, Router } from "express";
-import { body, matchedData, param } from "express-validator";
+import { Router } from "express";
+import { body, param } from "express-validator";
 import type { MinMaxOptions } from "express-validator/lib/options.js";
-import { StatusCodes } from "http-status-codes";
-import type {
-  ErrorResponse,
-  OrganizationLocals,
-  WithUUID,
-} from "../../../types/data-transfer-objects.js";
-import type { CreatedAt, Item } from "../../../types/database-types.js";
 import { handleValidationResults } from "../../middleware/validation.js";
 import { DELETE, PATCH, POST } from "./controller.js";
 
@@ -20,12 +11,14 @@ const itemValidatorChain = [
   body("name")
     .isLength(minMaxItemNameLength)
     .withMessage(
-      `Item name needs to be between ${minMaxItemNameLength.min} and ${minMaxItemNameLength.max} characters long`,
+      `Item name needs to be between ${minMaxItemNameLength.min} and ${minMaxItemNameLength.max} characters long`
     ),
   body("unit")
     .default("")
     .isLength({ max: 32 })
-    .withMessage(`Item unit needs to be at most ${maxUnitNameLength.max} characters long`),
+    .withMessage(
+      `Item unit needs to be at most ${maxUnitNameLength.max} characters long`
+    ),
   body("iconURL").default("").isURL().withMessage("Icon URL isn't a valid URL"),
   body("unitPrice")
     .default(0)
@@ -45,14 +38,14 @@ const ItemRouter = Router({ mergeParams: true })
     param("itemId").isUUID().withMessage("Item ID isn't a valid UUID"),
     itemValidatorChain,
     handleValidationResults,
-    PATCH,
+    PATCH
   )
   .post("", itemValidatorChain, handleValidationResults, POST)
   .delete(
     "/:itemId",
     param("itemId").isUUID().withMessage("Item ID isn't a valid UUID"),
     handleValidationResults,
-    DELETE,
+    DELETE
   );
 
 export default ItemRouter;

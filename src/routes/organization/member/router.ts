@@ -7,20 +7,20 @@ import { DELETE, GET, PATCH } from "./controller.js";
 const MemberRouter = Router({ mergeParams: true })
   .get("", requirePermission("organization.members.view"), GET)
   .patch(
-    "/:memberId",
-    param("memberId").isUUID(),
+    "/:userId",
+    param("userId").isUUID(),
     body("roles").isArray(),
     body("roles.*").isUUID(),
     handleValidationResults,
     requirePermission("organization.members.updateRoles"),
-    PATCH,
+    PATCH
   )
   .delete(
-    "/:memberId",
-    param("memberId").isUUID(),
+    "/:userId",
+    param("userId").isUUID(),
     handleValidationResults,
     requirePermission("organization.members.remove"),
-    DELETE,
+    DELETE
   );
 
 export default MemberRouter;

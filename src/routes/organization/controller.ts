@@ -1,28 +1,42 @@
-import { randomUUID, type UUID } from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 import type {
   AuthorizedLocals,
   ErrorResponse,
-  OrganizationCreationRequest,
   OrganizationLocals,
   OrganizationResponse,
 } from "../../types/data-transfer-objects.js";
 import type { Organization, Permission } from "../../types/database-types.js";
-import * as UserService from "../user/service.js";
 import * as OrganizationService from "./service.js";
-import getDatabase from "../../database/database.js";
+import database from "../../database/database.js";
+import { camelCaseify, getSqlPatchColumns } from "../../utils/database.js";
+
+type OrganizationCreationRequest = {
+  name: string;
+  countryCode: string;
+};
 
 export function requirePermission(permission: Permission) {
-  return (request: Request, response: Response<any, OrganizationLocals>, next: NextFunction) => {
+  return async (
+    request: Request,
+    response: Response<any, OrganizationLocals>,
+    next: NextFunction
+  ) => {
     const { organizationId } = matchedData(request);
 
     if (!response.locals.organization) {
-      response.locals.organization = OrganizationService.getOrganizationById(organizationId);
+      response.locals.organization =
+        await OrganizationService.getOrganizationById(organizationId);
     }
 
-    if (OrganizationService.hasPermission(organizationId, response.locals.userId, permission)) {
+    if (
+      await OrganizationService.hasPermission(
+        organizationId,
+        response.locals.userId,
+        permission
+      )
+    ) {
       return next();
     }
 
@@ -30,25 +44,14 @@ export function requirePermission(permission: Permission) {
   };
 }
 
-function mapToOrganizationResponse(organization: Organization, userId: UUID): OrganizationResponse {
-  return {
-    createdAt: organization.createdAt,
-    name: organization.name,
-    joinDate: organization.members[userId].createdAt,
-    inventories: Object.keys(organization.inventories).length,
-    members: Object.keys(organization.members).length,
-    countryCode: organization.countryCode,
-  };
-}
-
 export function requireUserBelongsToTargetOrganization(
   request: Request,
   response: Response<ErrorResponse, AuthorizedLocals>,
-  next: NextFunction,
+  next: NextFunction
 ): any {
   const { organizationId } = matchedData(request);
 
-  if (!response.locals.user.organizations.includes(organizationId)) {
+  if (!response.locals.organizationIds.includes(organizationId)) {
     return response.status(StatusCodes.FORBIDDEN).send({
       error: `You're not a part of the requested organization with ID ${organizationId}`,
     });
@@ -57,84 +60,69 @@ export function requireUserBelongsToTargetOrganization(
   next();
 }
 
-export function GET(
+export async function GET(
   _request: Request,
-  response: Response<OrganizationResponse[], AuthorizedLocals>,
-): any {
-  response.send(
-    UserService.getUserById(response.locals.userId).organizations.map((organizationId) =>
-      mapToOrganizationResponse(
-        OrganizationService.getOrganizationById(organizationId),
-        response.locals.userId,
-      ),
-    ),
+  response: Response<OrganizationResponse[], AuthorizedLocals>
+) {
+  const { rows } = await database.query(
+    `SELECT organization_id, name, country_code
+    FROM organization_member
+    JOIN organization USING (organization_id)
+    WHERE user_id = $1;`,
+    [response.locals.userId]
   );
+
+  response.send(rows.map<OrganizationResponse>(camelCaseify));
 }
 
 export function GET_BY_ID(
   request: Request,
-  response: Response<OrganizationResponse, AuthorizedLocals>,
+  response: Response<OrganizationResponse, AuthorizedLocals>
 ): any {
   const { organizationId } = matchedData(request);
-  response.send(mapToOrganizationResponse(organizationId, response.locals.userId));
+  response.send();
 }
 
-export function PATCH(request: Request, response: Response<Organization, AuthorizedLocals>): any {
+export async function PATCH(
+  request: Request,
+  response: Response<Organization, AuthorizedLocals>
+): Promise<any> {
   const { name, countryCode, organizationId } = matchedData<
-    OrganizationCreationRequest & { organizationId: UUID }
+    OrganizationCreationRequest & { organizationId: string }
   >(request);
-  const organization = getDatabase().data.organizations[organizationId];
 
-  Object.assign(organization, { name, countryCode });
+  const [set, args] = getSqlPatchColumns(
+    [
+      ["name", name],
+      ["country_code", countryCode],
+    ],
+    organizationId
+  );
+
+  await database.query(
+    `UPDATE organization SET ${set} WHERE organization_id = $3`,
+    args
+  );
+
   response.sendStatus(StatusCodes.OK);
 }
 
-export function POST(request: Request, response: Response<Organization, AuthorizedLocals>): any {
-  const { name, countryCode } = matchedData<OrganizationCreationRequest>(request);
-  const organizationId = randomUUID();
-  const createdAt = Date.now();
-
-  const organization = (getDatabase().data.organizations[organizationId] = {
-    name,
-    createdAt,
-    roles: {},
-    members: {
-      [response.locals.userId]: {
-        createdAt,
-        profilePhotoUrl: "",
-        roles: [],
-      },
-    },
-    countryCode,
-    invitations: {},
-    inventories: {},
-    items: {},
-  });
-
-  response.locals.user.organizations.push(organizationId);
-  response.send(organization);
-}
-
-export function POST_JOIN(
+export async function POST(
   request: Request,
-  response: Response<OrganizationResponse, OrganizationLocals>,
-): any {
-  const { organizationId } = matchedData<{ organizationId: UUID }>(request);
+  response: Response<Organization, AuthorizedLocals>
+): Promise<any> {
+  const { name, countryCode } =
+    matchedData<OrganizationCreationRequest>(request);
 
-  if (!response.locals.organization) {
-    response.locals.organization = OrganizationService.getOrganizationById(organizationId);
-  }
+  const result = await database.query(
+    `
+    INSERT INTO organization (name, country_code, owner_id)
+    VALUES ($1, $2, $3)
+    RETURNING *;`,
+    [name, countryCode, response.locals.userId]
+  );
+  const organization = camelCaseify<Organization>(result.rows[0]);
 
-  if (delete response.locals.organization.invitations[response.locals.userId]) {
-    response.locals.user.organizations.push(organizationId);
-    response.locals.organization.members[response.locals.userId] = {
-      profilePhotoUrl: "",
-      createdAt: Date.now(),
-      roles: [],
-    };
-
-    return response
-      .status(StatusCodes.CREATED)
-      .send(mapToOrganizationResponse(response.locals.organization, response.locals.userId));
-  }
+  response.locals.organizationIds.push(organization.organizationId);
+  response.send(organization);
 }

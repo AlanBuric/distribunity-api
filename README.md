@@ -1,13 +1,13 @@
 # distribunity-api
 
-Web Applications class backend for "Distribunity", a software for inventory management built in Express and TypeScript.
+Web Applications course backend for "Distribunity", an inventory management software built in Express and TypeScript.
 
 In this web application, registered users can create organizations (a generalization of businesses and companies),
 invite other users with invitation codes or join other organizations, manage inventories inside their organizations and
 manage items inside the inventories; organization admins can manage their organizations' members, organizations' roles,
 roles' permissions and the roles assigned to the members.
 
-## Web Applications class
+## Web Applications course
 
 --------------------
 **Kolegij:** [_Web aplikacije_](http://ntankovic.unipu.hr/wa)  
@@ -22,7 +22,15 @@ roles' permissions and the roles assigned to the members.
 npm ci
 ```
 
-## Compilation reloads for live development
+## Local development mode
+
+1. Start the database in Docker:
+
+```
+docker compose up database
+```
+
+2. Start the server locally:
 
 ```
 npm run dev
@@ -33,3 +41,8 @@ npm run dev
 ```
 npm run build
 ```
+
+## Caching levels of database results
+
+1. Express.js response locals level
+2. Shared in-memory server-wide cache
