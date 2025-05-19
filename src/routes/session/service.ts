@@ -1,9 +1,10 @@
 import { StatusCodes } from "http-status-codes";
-import jwt, { type JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import ms, { type StringValue } from "ms";
 import PasswordHasher from "../../utils/PasswordHasher.js";
 import RequestError from "../../utils/RequestError.js";
 import { validateConfigValue } from "../../utils/config.js";
+import redis from "../../services/redis.js";
 
 // Specification: https://datatracker.ietf.org/doc/html/rfc6749
 
@@ -18,10 +19,6 @@ export type GeneratedToken = {
 };
 
 const passwordHasher = new PasswordHasher(16);
-/**
- * TODO: Redis token denylist
- */
-const tokenDenylist = new Map<string, number>();
 
 export function generateJwtToken(
   userId: number,
@@ -69,24 +66,14 @@ export function verifyPassword(
   return passwordHasher.verifyPassword(password, hash);
 }
 
-function checkTokenDenylist(token: string) {
-  const tokenExpiry = tokenDenylist.get(token);
-
-  if (tokenExpiry) {
-    if (tokenExpiry >= Date.now()) {
-      throw new RequestError(StatusCodes.UNAUTHORIZED);
-    }
-
-    tokenDenylist.delete(token);
-  }
+export async function isTokenBanned(token: string) {
+  return (await redis.get(`tdl:${token}`)) != null;
 }
 
 export async function getUserIdFromToken(
   token: string,
   type: TokenType
 ): Promise<number> {
-  checkTokenDenylist(token);
-
   const tokenSecret = validateConfigValue(`${type}_TOKEN_SECRET`);
 
   return new Promise<number>((resolve, reject) => {
@@ -109,4 +96,16 @@ export async function getUserIdFromToken(
       resolve(decoded.id);
     });
   });
+}
+
+export async function addTokenToDenylist(cookie: string) {
+  const decoded = jwt.decode(cookie);
+
+  console.log(decoded);
+
+  if (typeof decoded == "object" && decoded?.exp) {
+    await redis.set(`tdl:${cookie}`, 1, {
+      expiration: { type: "EXAT", value: decoded.exp },
+    });
+  }
 }

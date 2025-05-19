@@ -24,15 +24,16 @@ npm ci
 
 ## Local development mode
 
-1. Start the database in Docker:
+1. Start the services in Docker:
 
 ```
 docker compose up database
+docker compose up redis
 ```
+
 2. Configure in .env `PGHOST=localhost`
 
-The PostgreSQL database will be running in a Docker container, and so the server
-needs to connect to it through your host machine's own network.
+    The PostgreSQL database will be running in a Docker container, and so the server needs to connect to it through your host machine's own network.
 
 3. Start the server locally:
 

@@ -1,13 +1,11 @@
-import "./database/database.js";
+import "dotenv/config";
+import "./services/database.js";
 import { styleText } from "node:util";
-import application from "./application.js";
 import { validateConfigValue } from "./utils/config.js";
 import getLoggingPrefix from "./utils/logging.js";
-import { initializeCache } from "./routes/cache-service.js";
+import application from "./application.js";
 
-const port = validateConfigValue("PORT");
-
-await initializeCache();
+const port = Number(validateConfigValue("PORT"));
 
 application.listen(port, () =>
   console.info(

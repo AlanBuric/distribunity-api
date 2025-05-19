@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import type { Organization, Permission } from "../../types/database-types.js";
 import RequestError from "../../utils/RequestError.js";
-import database from "../../database/database.js";
+import database from "../../services/database.js";
 import { camelCaseify } from "../../utils/database.js";
 
 export async function getOrganizationById(id: string): Promise<Organization> {

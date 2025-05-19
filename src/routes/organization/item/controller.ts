@@ -6,7 +6,7 @@ import type {
   OrganizationLocals,
 } from "../../../types/data-transfer-objects.js";
 import type { Item } from "../../../types/database-types.js";
-import database from "../../../database/database.js";
+import database from "../../../services/database.js";
 import { camelCaseify } from "../../../utils/database.js";
 
 export async function PATCH(

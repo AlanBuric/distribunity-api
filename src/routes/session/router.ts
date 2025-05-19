@@ -11,7 +11,7 @@ import type {
 import { handleValidationResults } from "../middleware/validation.js";
 import * as UserService from "../user/service.js";
 import * as SessionService from "./service.js";
-import database from "../../database/database.js";
+import database from "../../services/database.js";
 import { camelCaseify } from "../../utils/database.js";
 import type { User } from "../../types/database-types.js";
 
@@ -154,9 +154,19 @@ const SessionRouter = Router()
       });
     }
   )
-  // TODO: Redis token denylist
-  .post("/logout", (request: Request, response: Response): any =>
-    response.clearCookie("refresh")
+  .delete(
+    "/logout",
+    async (request: Request, response: Response): Promise<any> => {
+      const accessToken = request.header("Authorization")?.split(" ")[1];
+      const refreshToken = response.req.headers.cookie;
+
+      response.clearCookie("refresh");
+
+      if (refreshToken) await SessionService.addTokenToDenylist(refreshToken);
+      if (accessToken) await SessionService.addTokenToDenylist(accessToken);
+
+      response.sendStatus(StatusCodes.NO_CONTENT);
+    }
   )
   .use(
     async (
@@ -167,9 +177,15 @@ const SessionRouter = Router()
       const accessToken = request.header("Authorization")?.split(" ")[1];
 
       if (!accessToken) {
-        return response.status(StatusCodes.BAD_REQUEST).send({
+        return response.status(StatusCodes.UNAUTHORIZED).send({
           error: "Missing access token in the format 'Bearer {token}'.",
         });
+      }
+
+      if (await SessionService.isTokenBanned(accessToken)) {
+        return response
+          .status(StatusCodes.UNAUTHORIZED)
+          .send({ error: "Access token expired" });
       }
 
       const userId = await SessionService.getUserIdFromToken(

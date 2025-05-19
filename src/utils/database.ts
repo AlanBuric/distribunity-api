@@ -1,12 +1,16 @@
-function toCamelCase(str: string) {
-  return str
-    .toLowerCase()
-    .replace(/([-_][a-z])/g, (group) =>
-      group.toUpperCase().replace("-", "").replace("_", "")
-    );
+export function toCamelCase(snakeCase: string) {
+  const [first, ...rest] = snakeCase.split("_");
+
+  return (
+    first +
+    rest.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join("")
+  );
 }
 
 export function camelCaseify<T2 extends object>(object: object): T2 {
+  if (typeof object != "object")
+    throw new Error("Argument to be camelCaseified wasn't an object");
+
   return Object.fromEntries(
     Object.entries(object).map(([key, value]) => [toCamelCase(key), value])
   ) as T2;
@@ -26,7 +30,8 @@ type NullableStringOrNumber = string | number | undefined | null;
  *
  * @param map  Array of pairs of SQL column names keys to value values
  * @param extraArgs Extra arguments to the string formatter
- * @returns Pair of a string of the SET part of the SQL UPDATE statement, and an array of values to pass to the pg package query array of argument values
+ * @returns Pair of a string of the SET part of the SQL UPDATE statement,
+ * and an array of values to pass to the pg package query array of argument values
  */
 export function getSqlPatchColumns(
   map: [string, NullableStringOrNumber][],

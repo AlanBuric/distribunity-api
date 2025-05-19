@@ -5,7 +5,7 @@ import type {
   ErrorResponse,
   OrganizationLocals,
 } from "../../../types/data-transfer-objects.js";
-import database from "../../../database/database.js";
+import database from "../../../services/database.js";
 import type { OrganizationMember } from "../../../types/database-types.js";
 import { camelCaseify } from "../../../utils/database.js";
 

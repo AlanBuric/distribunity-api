@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { StatusCodes } from "http-status-codes";
-import database from "../../database/database.js";
+import database from "../../services/database.js";
 import type {
   OrganizationResponse,
   ErrorResponse,

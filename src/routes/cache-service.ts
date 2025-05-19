@@ -1,4 +1,4 @@
-import database from "../database/database.js";
+import database from "../services/database.js";
 import type { Country } from "../types/database-types.js";
 import { camelCaseify } from "../utils/database.js";
 

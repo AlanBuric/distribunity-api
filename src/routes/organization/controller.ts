@@ -9,7 +9,7 @@ import type {
 } from "../../types/data-transfer-objects.js";
 import type { Organization, Permission } from "../../types/database-types.js";
 import * as OrganizationService from "./service.js";
-import database from "../../database/database.js";
+import database from "../../services/database.js";
 import { camelCaseify, getSqlPatchColumns } from "../../utils/database.js";
 
 type OrganizationCreationRequest = {

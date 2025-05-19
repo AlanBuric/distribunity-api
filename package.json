@@ -24,7 +24,8 @@
     "jsonwebtoken": "^9.0.2",
     "lowdb": "^7.0.1",
     "ms": "^3.0.0-canary.1",
-    "pg": "^8.14.1"
+    "pg": "^8.14.1",
+    "redis": "^5.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

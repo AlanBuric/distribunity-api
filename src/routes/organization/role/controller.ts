@@ -6,7 +6,7 @@ import type {
   OrganizationLocals,
 } from "../../../types/data-transfer-objects.js";
 import type { Role } from "../../../types/database-types.js";
-import database from "../../../database/database.js";
+import database from "../../../services/database.js";
 
 export async function POST(
   request: Request,

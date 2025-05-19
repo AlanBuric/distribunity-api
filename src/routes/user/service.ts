@@ -3,7 +3,7 @@ import type { UserRegistrationRequest } from "../../types/data-transfer-objects.
 import type { User } from "../../types/database-types.js";
 import RequestError from "../../utils/RequestError.js";
 import * as SessionService from "../session/service.js";
-import database from "../../database/database.js";
+import database from "../../services/database.js";
 import { camelCaseify } from "../../utils/database.js";
 import getLoggingPrefix from "../../utils/logging.js";
 

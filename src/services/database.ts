@@ -1,4 +1,3 @@
-import "dotenv/config";
 import pg from "pg";
 import { ALL_PERMISSIONS } from "../types/database-types.js";
 import getLoggingPrefix from "../utils/logging.js";
