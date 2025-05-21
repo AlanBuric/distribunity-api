@@ -15,9 +15,7 @@ export type OrganizationLocals = AuthorizedLocals & {
   organization: Organization;
 };
 
-export type ErrorResponse = {
-  error: string;
-};
+export type ErrorResponse = string;
 
 export type UserRegistrationRequest = Pick<
   User,

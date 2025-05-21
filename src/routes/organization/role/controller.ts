@@ -22,7 +22,7 @@ export async function POST(
   if (rowCount) {
     return response
       .status(StatusCodes.BAD_REQUEST)
-      .send({ error: "Role with that name already exists" });
+      .send("Role with that name already exists");
   }
 
   const {
@@ -54,7 +54,7 @@ export async function PATCH(
     if (rowCount) {
       return response
         .status(StatusCodes.BAD_REQUEST)
-        .send({ error: "Role with that name already exists" });
+        .send("Role with that name already exists");
     }
   }
 
@@ -69,9 +69,7 @@ export async function PATCH(
   );
 
   if (!rowCount) {
-    return response
-      .status(StatusCodes.NOT_FOUND)
-      .send({ error: "Role not found" });
+    return response.status(StatusCodes.NOT_FOUND).send("Role not found");
   }
 
   response.sendStatus(StatusCodes.OK);

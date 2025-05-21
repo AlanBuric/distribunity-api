@@ -55,9 +55,9 @@ export async function POST(
     if (updateResult.rowCount === 0) {
       client.query("ROLLBACK");
 
-      return response.status(StatusCodes.NOT_FOUND).send({
-        error: "Invitation not found or already used.",
-      });
+      return response
+        .status(StatusCodes.NOT_FOUND)
+        .send("Invitation not found or already used.");
     }
 
     const invite = camelCaseify<Invitation>(updateResult.rows[0]);
@@ -79,9 +79,9 @@ export async function POST(
       client.query("COMMIT");
 
       if (organizationResult.rowCount === 0) {
-        return response.status(StatusCodes.NOT_FOUND).send({
-          error: "Organization not found.",
-        });
+        return response
+          .status(StatusCodes.NOT_FOUND)
+          .send("Organization not found.");
       }
 
       return response

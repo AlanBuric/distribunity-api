@@ -87,9 +87,7 @@ const SessionRouter = Router()
       );
 
       if (result.rows.length === 0) {
-        return response
-          .status(StatusCodes.NOT_FOUND)
-          .send({ error: "User not found" });
+        return response.status(StatusCodes.NOT_FOUND).send("User not found");
       }
 
       const fullUser = camelCaseify<User>(result.rows[0]);
@@ -118,23 +116,21 @@ const SessionRouter = Router()
           });
       }
 
-      response
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: "Incorrect password" });
+      response.status(StatusCodes.BAD_REQUEST).send("Incorrect password");
     }
   )
   .post(
     "/refresh",
     async (
       request: Request,
-      response: Response<UserLoginResponse | ErrorResponse>
+      response: Response<UserLoginResponse | string>
     ): Promise<any> => {
       const refreshToken = request.cookies.refresh;
 
       if (!refreshToken) {
-        return response.status(StatusCodes.BAD_REQUEST).send({
-          error: "Missing refresh token in the request cookies.",
-        });
+        return response
+          .status(StatusCodes.BAD_REQUEST)
+          .send("Missing refresh token in the request cookies.");
       }
 
       const userId = await SessionService.getUserIdFromToken(
@@ -171,21 +167,21 @@ const SessionRouter = Router()
   .use(
     async (
       request: Request,
-      response: Response<ErrorResponse, AuthorizedLocals>,
+      response: Response<string, AuthorizedLocals>,
       next: NextFunction
     ): Promise<any> => {
       const accessToken = request.header("Authorization")?.split(" ")[1];
 
       if (!accessToken) {
-        return response.status(StatusCodes.UNAUTHORIZED).send({
-          error: "Missing access token in the format 'Bearer {token}'.",
-        });
+        return response
+          .status(StatusCodes.UNAUTHORIZED)
+          .send("Missing access token in the format 'Bearer {token}'.");
       }
 
       if (await SessionService.isTokenBanned(accessToken)) {
         return response
           .status(StatusCodes.UNAUTHORIZED)
-          .send({ error: "Access token expired" });
+          .send("Access token expired");
       }
 
       const userId = await SessionService.getUserIdFromToken(

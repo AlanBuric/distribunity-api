@@ -67,11 +67,13 @@ export async function POST(
     response.status(StatusCodes.CREATED).send({ id: itemId });
   } catch (error: any) {
     await client.query("ROLLBACK");
+
     if (error.code === "23505") {
-      return response.status(StatusCodes.BAD_REQUEST).send({
-        error: `Item with the name ${name} already exists`,
-      });
+      return response
+        .status(StatusCodes.BAD_REQUEST)
+        .send(`Item with the name ${name} already exists`);
     }
+
     throw error;
   } finally {
     client.release();
@@ -93,9 +95,9 @@ export async function DELETE(
   );
 
   if (!rowCount) {
-    return response.status(StatusCodes.NOT_FOUND).send({
-      error: `Item with ID ${itemId} not found`,
-    });
+    return response
+      .status(StatusCodes.NOT_FOUND)
+      .send(`Item with ID ${itemId} not found`);
   }
 
   await database.query(

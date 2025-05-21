@@ -52,9 +52,11 @@ export function requireUserBelongsToTargetOrganization(
   const { organizationId } = matchedData(request);
 
   if (!response.locals.organizationIds.includes(organizationId)) {
-    return response.status(StatusCodes.FORBIDDEN).send({
-      error: `You're not a part of the requested organization with ID ${organizationId}`,
-    });
+    return response
+      .status(StatusCodes.FORBIDDEN)
+      .send(
+        `You're not a part of the requested organization with ID ${organizationId}`
+      );
   }
 
   next();
