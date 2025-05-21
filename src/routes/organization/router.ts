@@ -13,7 +13,6 @@ import ItemRouter from "./item/router.js";
 import MemberRouter from "./member/router.js";
 import RoleRouter from "./role/router.js";
 import type { MinMaxOptions } from "express-validator/lib/options.js";
-import getDatabase from "../../services/database.js";
 import { getCountry } from "../cache-service.js";
 
 const minMaxOrganizationNameLength: MinMaxOptions = { min: 1, max: 32 };
@@ -43,7 +42,7 @@ const OrganizationRouter = Router()
   )
   .use(
     "/:organizationId",
-    param("organizationId").isUUID(),
+    param("organizationId").isInt(),
     handleValidationResults,
     Router({ mergeParams: true })
       .use(requireUserBelongsToTargetOrganization)

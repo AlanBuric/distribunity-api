@@ -1,4 +1,3 @@
-import type { UUID } from "node:crypto";
 import type { Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { StatusCodes } from "http-status-codes";
@@ -9,7 +8,6 @@ import type {
 } from "../../../types/data-transfer-objects.js";
 import type { Inventory } from "../../../types/database-types.js";
 import { camelCaseify } from "../../../utils/database.js";
-import type { InternalRequest } from "express-validator/lib/base.js";
 
 async function checkIsInventoryNameTaken(
   organizationId: number,

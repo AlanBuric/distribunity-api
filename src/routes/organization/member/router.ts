@@ -8,16 +8,16 @@ const MemberRouter = Router({ mergeParams: true })
   .get("", requirePermission("organization.members.view"), GET)
   .patch(
     "/:userId",
-    param("userId").isUUID(),
+    param("userId").isInt().withMessage("Invalid user ID"),
     body("roles").isArray(),
-    body("roles.*").isUUID(),
+    body("roles.*").isInt().withMessage("Invalid user ID"),
     handleValidationResults,
     requirePermission("organization.members.updateRoles"),
     PATCH
   )
   .delete(
     "/:userId",
-    param("userId").isUUID(),
+    param("userId").isInt().withMessage("Invalid user ID"),
     handleValidationResults,
     requirePermission("organization.members.remove"),
     DELETE

@@ -19,7 +19,7 @@ const itemValidatorChain = [
     .withMessage(
       `Item unit needs to be at most ${maxUnitNameLength.max} characters long`
     ),
-  body("iconURL").default("").isURL().withMessage("Icon URL isn't a valid URL"),
+  body("iconURL").default("").isURL().withMessage("Invalid icon URL"),
   body("unitPrice")
     .default(0)
     .isFloat({ min: 0 })
@@ -35,7 +35,7 @@ const itemValidatorChain = [
 const ItemRouter = Router({ mergeParams: true })
   .patch(
     "/:itemId",
-    param("itemId").isUUID().withMessage("Item ID isn't a valid UUID"),
+    param("itemId").isInt().withMessage("Invalid item ID"),
     itemValidatorChain,
     handleValidationResults,
     PATCH
@@ -43,7 +43,7 @@ const ItemRouter = Router({ mergeParams: true })
   .post("", itemValidatorChain, handleValidationResults, POST)
   .delete(
     "/:itemId",
-    param("itemId").isUUID().withMessage("Item ID isn't a valid UUID"),
+    param("itemId").isInt().withMessage("Invalid item ID"),
     handleValidationResults,
     DELETE
   );
