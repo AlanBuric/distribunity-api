@@ -66,10 +66,6 @@ export function verifyPassword(
   return passwordHasher.verifyPassword(password, hash);
 }
 
-export async function isTokenBanned(token: string) {
-  return (await redis.get(`tdl:${token}`)) != null;
-}
-
 export async function getUserIdFromToken(
   token: string,
   type: TokenType
@@ -88,7 +84,7 @@ export async function getUserIdFromToken(
         return reject(
           new RequestError(
             StatusCodes.BAD_REQUEST,
-            `Missing or malformed access token, given ${token}, error: ${err}`
+            "Missing or malformed access token"
           )
         );
       }
@@ -96,6 +92,10 @@ export async function getUserIdFromToken(
       resolve(decoded.id);
     });
   });
+}
+
+export async function isTokenOnDenylist(token: string) {
+  return (await redis.get(`tdl:${token}`)) != null;
 }
 
 export async function addTokenToDenylist(cookie: string) {

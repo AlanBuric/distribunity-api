@@ -62,12 +62,13 @@ export function requireUserBelongsToTargetOrganization(
   next();
 }
 
+// TODO: this belongs to the organization member route
 export async function GET(
   _request: Request,
   response: Response<OrganizationResponse[], AuthorizedLocals>
 ) {
   const { rows } = await database.query(
-    `SELECT organization_id, name, country_code
+    `SELECT *
     FROM organization_member
     JOIN organization USING (organization_id)
     WHERE user_id = $1;`,
@@ -116,15 +117,34 @@ export async function POST(
   const { name, countryCode } =
     matchedData<OrganizationCreationRequest>(request);
 
-  const result = await database.query(
-    `
+  const client = await database.connect();
+
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      `
     INSERT INTO organization (name, country_code, owner_id)
     VALUES ($1, $2, $3)
     RETURNING *;`,
-    [name, countryCode, response.locals.userId]
-  );
-  const organization = camelCaseify<Organization>(result.rows[0]);
+      [name, countryCode, response.locals.userId]
+    );
 
-  response.locals.organizationIds.push(organization.organizationId);
-  response.send(organization);
+    const organization = camelCaseify<Organization>(result.rows[0]);
+
+    await client.query(
+      `
+      INSERT INTO organization_member (user_id, organization_id)
+      VALUES ($1, $2)
+      `,
+      [response.locals.userId, organization.organizationId]
+    );
+    await client.query("COMMIT");
+
+    response.send(organization);
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 }

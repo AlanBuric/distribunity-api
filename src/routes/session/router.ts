@@ -167,7 +167,7 @@ const SessionRouter = Router()
   .use(
     async (
       request: Request,
-      response: Response<string, AuthorizedLocals>,
+      response: Response<ErrorResponse, AuthorizedLocals>,
       next: NextFunction
     ): Promise<any> => {
       const accessToken = request.header("Authorization")?.split(" ")[1];
@@ -178,7 +178,7 @@ const SessionRouter = Router()
           .send("Missing access token in the format 'Bearer {token}'.");
       }
 
-      if (await SessionService.isTokenBanned(accessToken)) {
+      if (await SessionService.isTokenOnDenylist(accessToken)) {
         return response
           .status(StatusCodes.UNAUTHORIZED)
           .send("Access token expired");
