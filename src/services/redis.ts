@@ -7,6 +7,4 @@ redis.on("error", (error) =>
   console.error(`${getLoggingPrefix()} Redis Client Error`, error)
 );
 
-await redis.connect();
-
 export default redis;

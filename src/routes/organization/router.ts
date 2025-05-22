@@ -13,7 +13,8 @@ import ItemRouter from "./item/router.js";
 import MemberRouter from "./member/router.js";
 import RoleRouter from "./role/router.js";
 import type { MinMaxOptions } from "express-validator/lib/options.js";
-import { getCountry } from "../cache-service.js";
+import redis from "../../services/redis.js";
+import { REDIS_COUNTRY_CODES_SET } from "../../utils/constants.js";
 
 const minMaxOrganizationNameLength: MinMaxOptions = { min: 1, max: 32 };
 
@@ -27,7 +28,11 @@ function createOrganizationValidatorChain() {
     body("countryCode")
       .isString()
       .withMessage("Invalid country code")
-      .custom((countryCode) => getCountry(countryCode) != null)
+      .custom((countryCode) =>
+        redis.sIsMember(REDIS_COUNTRY_CODES_SET, countryCode).then((found) => {
+          if (!found) throw new Error();
+        })
+      )
       .withMessage("Country not found"),
   ];
 }
