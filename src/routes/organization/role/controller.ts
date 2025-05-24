@@ -1,80 +1,94 @@
-import { type UUID, randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 import type {
   ErrorResponse,
   OrganizationLocals,
-  WithUUID,
 } from "../../../types/data-transfer-objects.js";
 import type { Role } from "../../../types/database-types.js";
-import { deleteFromArray } from "../../../utils/collections.js";
+import database from "../../../services/database.js";
 
-export function POST(
+export async function POST(
   request: Request,
-  response: Response<WithUUID | ErrorResponse, OrganizationLocals>,
-): any {
-  const { organizationId, ...role } = matchedData<Role & { organizationId: UUID }>(request);
+  response: Response<{ id: number } | ErrorResponse, OrganizationLocals>
+): Promise<any> {
+  const { name, description, permissions } = matchedData<Role>(request);
 
-  if (
-    Object.values(response.locals.organization.roles)
-      .map((role) => role.name)
-      .includes(role.name)
-  ) {
+  const { rowCount } = await database.query(
+    "SELECT 1 FROM role WHERE name = $1",
+    [name]
+  );
+
+  if (rowCount) {
     return response
       .status(StatusCodes.BAD_REQUEST)
-      .send({ error: "Role with that name already exists" });
+      .send("Role with that name already exists");
   }
 
-  const roleId = randomUUID();
+  const {
+    rows: [{ role_id }],
+  } = await database.query(
+    `INSERT INTO role (name, description, permissions)
+     VALUES ($1, $2, $3)
+     RETURNING role_id`,
+    [name, description, permissions]
+  );
 
-  response.locals.organization.roles[roleId] = role;
-
-  response.status(StatusCodes.CREATED).send({ id: roleId });
+  response.status(StatusCodes.CREATED).send(role_id);
 }
 
-export function PATCH(
+export async function PATCH(
   request: Request,
-  response: Response<WithUUID | ErrorResponse, OrganizationLocals>,
-): any {
-  const { organizationId, roleId, ...role } = matchedData<
-    Partial<Role> & {
-      organizationId: UUID;
-      roleId: UUID;
-    }
+  response: Response<number | ErrorResponse, OrganizationLocals>
+): Promise<any> {
+  const { roleId, name, description, permissions } = matchedData<
+    Partial<Role> & { roleId: number }
   >(request);
 
-  if (
-    role.name &&
-    Object.values(response.locals.organization.roles)
-      .map((role) => role.name)
-      .includes(role.name)
-  ) {
-    return response
-      .status(StatusCodes.BAD_REQUEST)
-      .send({ error: "Role with that name already exists" });
+  if (name) {
+    const { rowCount } = await database.query(
+      "SELECT 1 FROM role WHERE name = $1 AND role_id <> $2",
+      [name, roleId]
+    );
+
+    if (rowCount) {
+      return response
+        .status(StatusCodes.BAD_REQUEST)
+        .send("Role with that name already exists");
+    }
   }
 
-  Object.assign(response.locals.organization.roles[roleId], role);
+  const { rowCount } = await database.query(
+    `UPDATE role
+     SET name = COALESCE($1, name),
+         description = COALESCE($2, description),
+         permissions = COALESCE($3, permissions)
+     WHERE role_id = $4
+     RETURNING role_id`,
+    [name, description, permissions, roleId]
+  );
+
+  if (!rowCount) {
+    return response.status(StatusCodes.NOT_FOUND).send("Role not found");
+  }
 
   response.sendStatus(StatusCodes.OK);
 }
 
-export function DELETE(
+export async function DELETE(
   request: Request,
-  response: Response<ErrorResponse, OrganizationLocals>,
-): any {
-  const { roleId } = matchedData<{
-    roleId: UUID;
-  }>(request);
+  response: Response<ErrorResponse, OrganizationLocals>
+): Promise<any> {
+  const { roleId } = matchedData<{ roleId: number }>(request);
 
-  if (!delete response.locals.organization.roles[roleId]) {
+  const { rowCount } = await database.query(
+    "DELETE FROM role WHERE role_id = $1",
+    [roleId]
+  );
+
+  if (!rowCount) {
     return response.sendStatus(StatusCodes.NOT_FOUND);
   }
-
-  Object.values(response.locals.organization.members).forEach((member) =>
-    deleteFromArray(member.roles, roleId),
-  );
 
   response.sendStatus(StatusCodes.OK);
 }

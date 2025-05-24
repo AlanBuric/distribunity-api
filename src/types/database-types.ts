@@ -1,17 +1,3 @@
-import type { UUID } from "node:crypto";
-
-export type Named = {
-  name: string;
-};
-
-export type CreatedAt = {
-  createdAt: number;
-};
-
-export type CreatedBy = {
-  createdBy: UUID;
-};
-
 export const ALL_PERMISSIONS = [
   "organization.delete",
   "organization.edit",
@@ -36,51 +22,81 @@ export const ALL_PERMISSIONS = [
 
 export type Permission = (typeof ALL_PERMISSIONS)[number];
 
-export type Role = {
-  name: string;
-  description: string;
-  permissions: Permission[];
-};
-
-export type Country = {
-  name: string;
-};
-
-export type Item = Named &
-  CreatedAt & {
-    unit: string;
-    iconURL: string;
-    unitPrice: number;
-    attributes: (Record<string, string> | Record<string, number> | string)[];
-  };
-
-export type InventoryItem = {
-  quantity: number;
-};
-
-export type Inventory = Named & CreatedAt & { items: Record<UUID, InventoryItem> };
-
-export type Member = CreatedAt & {
-  roles: UUID[];
-  profilePhotoUrl: string;
-};
-
-export type Invitation = CreatedAt & CreatedBy;
-
-export type Organization = Named &
-  CreatedAt & {
-    roles: Record<UUID, Role>;
-    members: Record<UUID, Member>;
-    countryCode: string;
-    invitations: Record<UUID, Invitation>;
-    inventories: Record<UUID, Inventory>;
-    items: Record<UUID, Item>;
-  };
-
-export type User = CreatedAt & {
+export type User = {
+  userId: number;
+  createdAt: Date;
+  updatedAt: Date;
   firstName: string;
   lastName: string;
   email: string;
-  organizations: UUID[];
-  hashedPassword: string;
+  passwordHash?: string | null;
+};
+
+export type Country = {
+  countryCode: string;
+  name: string;
+};
+
+export type Organization = {
+  organizationId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  countryCode: string;
+  ownerId: number;
+};
+
+export type Role = {
+  roleId: number;
+  name: string;
+  description: string | null;
+  permissions: string[];
+};
+
+export type OrganizationMember = {
+  userId: number;
+  organizationId: number;
+  joinedAt: Date;
+  profilePhotoUrl: string | null;
+};
+
+export type OrganizationMemberRole = {
+  organizationId: number;
+  userId: number;
+  roleId: number;
+};
+
+export type Invitation = {
+  invitationId: number;
+  createdAt: Date;
+  organizationId: number;
+  invitedEmail: string;
+  inviterId: number;
+  token: string;
+  status: string;
+};
+
+export type Inventory = {
+  inventoryId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  organizationId: number;
+  name: string;
+};
+
+export type Item = {
+  itemId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  unit: string | null;
+  iconUrl: string | null;
+  unitPrice: number;
+  attributes: Record<string, unknown>;
+};
+
+export type InventoryItem = {
+  inventoryId: number;
+  itemId: number;
+  quantity: number;
 };

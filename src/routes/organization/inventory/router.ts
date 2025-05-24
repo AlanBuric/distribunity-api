@@ -9,21 +9,27 @@ const minMaxInventoryNameLength: MinMaxOptions = { min: 1, max: 32 };
 const nameValidator = body("name")
   .isLength(minMaxInventoryNameLength)
   .withMessage(
-    `Inventory name needs to be between ${minMaxInventoryNameLength.min} and ${minMaxInventoryNameLength.max} characters long`,
+    `Inventory name needs to be between ${minMaxInventoryNameLength.min} and ${minMaxInventoryNameLength.max} characters long`
   );
 const inventoryIdValidator = param("inventoryId")
-  .isUUID()
-  .withMessage("Inventory ID isn't a valid UUID");
+  .isInt()
+  .withMessage("Invalid inventory ID");
 
 const InventoryRouter = Router({ mergeParams: true })
   .get("", requirePermission("inventory.view"), GET)
-  .post("", nameValidator, handleValidationResults, requirePermission("inventory.create"), POST)
+  .post(
+    "",
+    nameValidator,
+    handleValidationResults,
+    requirePermission("inventory.create"),
+    POST
+  )
   .get(
     "/:inventoryId",
     inventoryIdValidator,
     handleValidationResults,
     requirePermission("inventory.view"),
-    GET_BY_ID,
+    GET_BY_ID
   )
   .patch(
     "/:inventoryId",
@@ -31,14 +37,14 @@ const InventoryRouter = Router({ mergeParams: true })
     nameValidator,
     handleValidationResults,
     requirePermission("inventory.edit"),
-    PATCH,
+    PATCH
   )
   .delete(
     "/:inventoryId",
     inventoryIdValidator,
     handleValidationResults,
     requirePermission("inventory.delete"),
-    DELETE,
+    DELETE
   );
 
 export default InventoryRouter;

@@ -2,8 +2,13 @@ import type { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 import getLoggingPrefix from "../../utils/logging.js";
+import type { ErrorResponse } from "../../types/data-transfer-objects.js";
 
-export function handleValidationResults(request: Request, response: Response, next: NextFunction) {
+export function handleValidationResults(
+  request: Request,
+  response: Response<ErrorResponse>,
+  next: NextFunction
+) {
   const result = validationResult(request);
 
   if (result.isEmpty()) {
@@ -14,12 +19,15 @@ export function handleValidationResults(request: Request, response: Response, ne
   let errorMsg = error.msg;
 
   if (error.msg === "Invalid value") {
-    console.warn(`${getLoggingPrefix} Express-validator response not handled: `, error);
+    console.warn(
+      `${getLoggingPrefix} Express-validator response not handled: `,
+      error
+    );
 
     if (error.type === "field") {
       errorMsg += ` for field ${error.path} in the ${error.location}`;
     }
   }
 
-  response.status(StatusCodes.BAD_REQUEST).send({ error: errorMsg });
+  response.status(StatusCodes.BAD_REQUEST).send(errorMsg);
 }

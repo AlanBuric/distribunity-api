@@ -1,44 +1,26 @@
-import type { UUID } from "node:crypto";
 import type { Organization, User } from "./database-types.js";
 
-export type InventoryParams = {
-  inventoryId: UUID;
+export type OrganizationResponse = {
+  name: string;
+  countryCode: string;
 };
-
-export type OrganizationResponse = Omit<
-  Organization,
-  "roles" | "members" | "invitations" | "inventories" | "items"
-> & {
-  joinDate: number;
-  inventories: number;
-  members: number;
-};
-
-export type OrganizationCreationRequest = Pick<Organization, "name" | "countryCode">;
 
 export type AuthorizedLocals = {
-  userId: UUID;
   user: User;
+  userId: number;
+  organizationIds: number[];
 };
 
 export type OrganizationLocals = AuthorizedLocals & {
   organization: Organization;
 };
 
-export type ErrorResponse = {
-  error: string;
-};
+export type ErrorResponse = string;
 
-export type WithUUID = {
-  id: UUID;
-};
-
-export type UserRegistrationRequest = Pick<User, "firstName" | "lastName" | "email"> & {
-  password: string;
-};
-
-export type UserLoginRequest = {
-  email: string;
+export type UserRegistrationRequest = Pick<
+  User,
+  "firstName" | "lastName" | "email"
+> & {
   password: string;
 };
 
@@ -47,7 +29,7 @@ export type AccessTokenResponse = {
   expiration: number;
 };
 
-export type SelfUserView = Omit<User, "hashedPassword" | "email"> & WithUUID;
+export type SelfUserView = Omit<User, "hashedPassword">;
 export type PublicUserView = Omit<SelfUserView, "organizations">;
 
 export type UserLoginResponse = AccessTokenResponse & {

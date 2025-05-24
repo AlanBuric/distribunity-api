@@ -6,7 +6,6 @@ import {
   GET_BY_ID,
   PATCH,
   POST,
-  POST_JOIN,
   requirePermission,
   requireUserBelongsToTargetOrganization,
 } from "./controller.js";
@@ -14,7 +13,8 @@ import ItemRouter from "./item/router.js";
 import MemberRouter from "./member/router.js";
 import RoleRouter from "./role/router.js";
 import type { MinMaxOptions } from "express-validator/lib/options.js";
-import getDatabase from "../../database/database.js";
+import redis from "../../services/redis.js";
+import { REDIS_COUNTRY_CODES_SET } from "../../utils/constants.js";
 
 const minMaxOrganizationNameLength: MinMaxOptions = { min: 1, max: 32 };
 
@@ -23,37 +23,47 @@ function createOrganizationValidatorChain() {
     body("name")
       .isLength(minMaxOrganizationNameLength)
       .withMessage(
-        `Organization name must be between ${minMaxOrganizationNameLength.min} and ${minMaxOrganizationNameLength.max} characters long`,
+        `Organization name must be between ${minMaxOrganizationNameLength.min} and ${minMaxOrganizationNameLength.max} characters long`
       ),
     body("countryCode")
       .isString()
       .withMessage("Invalid country code")
-      .custom((input) => getDatabase().data.countries[input] != null)
+      .custom((countryCode) =>
+        redis.sIsMember(REDIS_COUNTRY_CODES_SET, countryCode).then((found) => {
+          if (!found) throw new Error();
+        })
+      )
       .withMessage("Country not found"),
   ];
 }
 
 const OrganizationRouter = Router()
   .get("", GET)
-  .post("", ...createOrganizationValidatorChain(), handleValidationResults, POST)
+  .post(
+    "",
+    ...createOrganizationValidatorChain(),
+    handleValidationResults,
+    POST
+  )
   .use(
     "/:organizationId",
-    param("organizationId").isUUID(),
+    param("organizationId").isInt(),
     handleValidationResults,
     Router({ mergeParams: true })
-      .post("/join", POST_JOIN)
       .use(requireUserBelongsToTargetOrganization)
       .get("", GET_BY_ID)
       .patch(
         "",
-        ...createOrganizationValidatorChain().map((validator) => validator.optional()),
+        ...createOrganizationValidatorChain().map((validator) =>
+          validator.optional()
+        ),
         handleValidationResults,
         requirePermission("organization.edit"),
-        PATCH,
+        PATCH
       )
       .use("/role", RoleRouter)
       .use("/member", MemberRouter)
-      .use("/items", ItemRouter),
+      .use("/items", ItemRouter)
   );
 
 export default OrganizationRouter;

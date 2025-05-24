@@ -1,75 +1,111 @@
-import type { UUID } from "node:crypto";
-import { randomUUID } from "node:crypto";
-import { type Request, type Response, Router } from "express";
-import { body, matchedData, param } from "express-validator";
-import type { MinMaxOptions } from "express-validator/lib/options.js";
+import type { Request, Response } from "express";
+import { matchedData } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 import type {
   ErrorResponse,
   OrganizationLocals,
-  WithUUID,
 } from "../../../types/data-transfer-objects.js";
-import type { CreatedAt, Item } from "../../../types/database-types.js";
+import type { Item } from "../../../types/database-types.js";
+import database from "../../../services/database.js";
+import { camelCaseify } from "../../../utils/database.js";
 
-export function PATCH(
+export async function PATCH(
   request: Request,
-  response: Response<ErrorResponse, OrganizationLocals>,
-): any {
-  const { itemId, name } = matchedData<{
-    inventoryId: UUID;
-    itemId: UUID;
-    name: string;
-  }>(request);
-  const item = response.locals.organization.items[itemId];
-
-  if (!item) {
-    return response
-      .status(StatusCodes.NOT_FOUND)
-      .send({ error: `Item with ID ${itemId} not found` });
-  }
-
-  item.name = name;
-
-  response.sendStatus(StatusCodes.OK);
-}
-
-export function POST(
-  request: Request,
-  response: Response<ErrorResponse | WithUUID, OrganizationLocals>,
-): any {
-  const { inventoryId, ...item } = matchedData<
-    { inventoryId: UUID } & Exclude<Item, keyof CreatedAt>
+  response: Response<ErrorResponse | Item, OrganizationLocals>
+): Promise<any> {
+  const { itemId, name, unit, iconUrl, unitPrice, attributes } = matchedData<
+    Partial<Item> & { itemId: number }
   >(request);
 
-  if (
-    Object.values(response.locals.organization.inventories)
-      .map((inventory) => inventory.name)
-      .includes(item.name)
-  ) {
-    return response.status(StatusCodes.BAD_REQUEST).send({
-      error: `Inventory with the name ${item.name} already exists`,
-    });
+  const { rows, rowCount } = await database.query(
+    `UPDATE item
+     SET
+       name = COALESCE($2, name),
+       unit = COALESCE($3, unit),
+       icon_url = COALESCE($4, icon_url),
+       unit_price = COALESCE($5, unit_price),
+       attributes = COALESCE($6, attributes),
+       updated_at = now()
+     WHERE item_id = $1
+     RETURNING *`,
+    [itemId, name, unit, iconUrl, unitPrice, attributes]
+  );
+
+  if (rowCount) {
+    response.send(camelCaseify<Item>(rows[0]));
   }
 
-  const id = randomUUID();
-
-  response.locals.organization.items[id] = {
-    ...item,
-    createdAt: Date.now(),
-  };
-
-  response.status(StatusCodes.CREATED).send({ id });
+  response.status(StatusCodes.NOT_FOUND);
 }
 
-export function DELETE(
+export async function POST(
   request: Request,
-  response: Response<ErrorResponse, OrganizationLocals>,
-): any {
-  const { itemId } = matchedData(request);
+  response: Response<ErrorResponse | { id: number }, OrganizationLocals>
+): Promise<any> {
+  const { inventoryId, name, unit, iconUrl, unitPrice, attributes } =
+    matchedData<any>(request);
 
-  if (!delete response.locals.organization.items[itemId]) {
-    return response.status(StatusCodes.NOT_FOUND);
+  const client = await database.connect();
+  try {
+    await client.query("BEGIN");
+
+    const itemResult = await client.query(
+      `INSERT INTO item (name, unit, icon_url, unit_price, attributes)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING item_id`,
+      [name, unit, iconUrl, unitPrice, attributes]
+    );
+    const itemId = itemResult.rows[0].item_id;
+
+    await client.query(
+      `INSERT INTO inventory_item (inventory_id, item_id, quantity)
+       VALUES ($1, $2, 0)`,
+      [inventoryId, itemId]
+    );
+
+    await client.query("COMMIT");
+    response.status(StatusCodes.CREATED).send({ id: itemId });
+  } catch (error: any) {
+    await client.query("ROLLBACK");
+
+    if (error.code === "23505") {
+      return response
+        .status(StatusCodes.BAD_REQUEST)
+        .send(`Item with the name ${name} already exists`);
+    }
+
+    throw error;
+  } finally {
+    client.release();
   }
+}
+
+export async function DELETE(
+  request: Request,
+  response: Response<ErrorResponse, OrganizationLocals>
+): Promise<any> {
+  const { itemId, inventoryId } = matchedData<{
+    itemId: number;
+    inventoryId: number;
+  }>(request);
+
+  const { rowCount } = await database.query(
+    "DELETE FROM inventory_item WHERE item_id = $1 AND inventory_id = $2",
+    [itemId, inventoryId]
+  );
+
+  if (!rowCount) {
+    return response
+      .status(StatusCodes.NOT_FOUND)
+      .send(`Item with ID ${itemId} not found`);
+  }
+
+  await database.query(
+    `DELETE FROM item WHERE item_id = $1 AND NOT EXISTS (
+      SELECT 1 FROM inventory_item WHERE item_id = $1
+    )`,
+    [itemId]
+  );
 
   response.sendStatus(StatusCodes.OK);
 }
