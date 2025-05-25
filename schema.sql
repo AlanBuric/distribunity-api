@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS invitation (
   invited_email   CITEXT NOT NULL,
   inviter_id      BIGINT NOT NULL REFERENCES "user"(user_id),
   token           UUID NOT NULL DEFAULT gen_random_uuid(),
-  status          TEXT NOT NULL DEFAULT 'pending'
+  status          TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected'))
 );
 
 CREATE TABLE IF NOT EXISTS inventory (

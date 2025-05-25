@@ -101,8 +101,6 @@ export async function isTokenOnDenylist(token: string) {
 export async function addTokenToDenylist(cookie: string) {
   const decoded = jwt.decode(cookie);
 
-  console.log(decoded);
-
   if (typeof decoded == "object" && decoded?.exp) {
     await redis.set(`tdl:${cookie}`, 1, {
       expiration: { type: "EXAT", value: decoded.exp },

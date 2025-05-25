@@ -17,7 +17,7 @@ export async function GET(
   const { userId } = matchedData<UserRequest>(request);
 
   if (response.locals.userId != userId) {
-    return response.status(StatusCodes.FORBIDDEN);
+    return response.sendStatus(StatusCodes.FORBIDDEN);
   }
 
   const { passwordHash, ...user } = await getUserById(userId);

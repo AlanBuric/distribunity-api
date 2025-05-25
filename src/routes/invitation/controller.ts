@@ -12,6 +12,8 @@ import type { Invitation } from "../../types/database-types.js";
 import { camelCaseify } from "../../utils/database.js";
 import getLoggingPrefix from "../../utils/logging.js";
 import RequestError from "../../utils/RequestError.js";
+import redis from "../../services/redis.js";
+import { REDIS_ORGANIZATION_MEMBERS } from "../../utils/constants.js";
 
 export async function GET(
   _request: Request,
@@ -44,7 +46,10 @@ export async function POST(
   try {
     await client.query("BEGIN");
 
-    const updateResult = await client.query(
+    const {
+      rows: [invitation],
+      rowCount,
+    } = await client.query(
       `UPDATE invitation
        SET status = $1
        WHERE token = $2 AND status = 'pending'
@@ -52,7 +57,7 @@ export async function POST(
       [isAccepting ? "accepted" : "rejected", invitationToken]
     );
 
-    if (updateResult.rowCount === 0) {
+    if (!rowCount) {
       client.query("ROLLBACK");
 
       return response
@@ -60,7 +65,7 @@ export async function POST(
         .send("Invitation not found or already used.");
     }
 
-    const invite = camelCaseify<Invitation>(updateResult.rows[0]);
+    const invite = camelCaseify<Invitation>(invitation);
 
     if (isAccepting) {
       await client.query(
@@ -69,7 +74,10 @@ export async function POST(
         [response.locals.userId, invite.organizationId]
       );
 
-      const organizationResult = await client.query(
+      const {
+        rows: [organization],
+        rowCount,
+      } = await client.query(
         `SELECT organization_id, name, country_code
          FROM organization
          WHERE organization_id = $1`,
@@ -78,20 +86,25 @@ export async function POST(
 
       client.query("COMMIT");
 
-      if (organizationResult.rowCount === 0) {
+      if (!rowCount) {
         return response
           .status(StatusCodes.NOT_FOUND)
           .send("Organization not found.");
       }
 
+      redis.sAdd(
+        REDIS_ORGANIZATION_MEMBERS(invite.organizationId),
+        response.locals.userId.toString()
+      );
+
       return response
         .status(StatusCodes.CREATED)
-        .send(camelCaseify<OrganizationResponse>(organizationResult.rows[0]));
+        .send(camelCaseify<OrganizationResponse>(organization));
     }
 
     client.query("COMMIT");
 
-    response.status(StatusCodes.NO_CONTENT).send();
+    response.sendStatus(StatusCodes.NO_CONTENT);
   } catch (error) {
     client.query("ROLLBACK");
 

@@ -11,6 +11,9 @@ import type { Organization, Permission } from "../../types/database-types.js";
 import * as OrganizationService from "./service.js";
 import database from "../../services/database.js";
 import { camelCaseify, getSqlPatchColumns } from "../../utils/database.js";
+import redis from "../../services/redis.js";
+import { REDIS_ORGANIZATION_MEMBERS } from "../../utils/constants.js";
+import RequestError from "../../utils/RequestError.js";
 
 type OrganizationCreationRequest = {
   name: string;
@@ -44,14 +47,18 @@ export function requirePermission(permission: Permission) {
   };
 }
 
-export function requireUserBelongsToTargetOrganization(
+export async function requireUserBelongsToTargetOrganization(
   request: Request,
   response: Response<ErrorResponse, AuthorizedLocals>,
   next: NextFunction
-): any {
+): Promise<any> {
   const { organizationId } = matchedData(request);
+  const isMember = await redis.sIsMember(
+    REDIS_ORGANIZATION_MEMBERS(organizationId),
+    response.locals.userId.toString()
+  );
 
-  if (!response.locals.organizationIds.includes(organizationId)) {
+  if (!isMember) {
     return response
       .status(StatusCodes.FORBIDDEN)
       .send(
@@ -62,7 +69,6 @@ export function requireUserBelongsToTargetOrganization(
   next();
 }
 
-// TODO: this belongs to the organization member route
 export async function GET(
   _request: Request,
   response: Response<OrganizationResponse[], AuthorizedLocals>
@@ -78,12 +84,32 @@ export async function GET(
   response.send(rows.map<OrganizationResponse>(camelCaseify));
 }
 
-export function GET_BY_ID(
+export async function GET_BY_ID(
   request: Request,
   response: Response<OrganizationResponse, AuthorizedLocals>
-): any {
+): Promise<any> {
   const { organizationId } = matchedData(request);
-  response.send();
+
+  const {
+    rows: [organization],
+    rowCount,
+  } = await database.query(
+    `
+    SELECT *
+    FROM organization
+    JOIN organization_member 
+      ON organization.organization_id = organization_member.organization_id
+    WHERE organization.organization_id = $1
+      AND organization_member.user_id = $2
+    `,
+    [organizationId, response.locals.userId]
+  );
+
+  if (!rowCount) {
+    return response.sendStatus(StatusCodes.NOT_FOUND);
+  }
+
+  response.send(camelCaseify<OrganizationResponse>(organization));
 }
 
 export async function PATCH(
@@ -140,10 +166,17 @@ export async function POST(
     );
     await client.query("COMMIT");
 
+    redis.sAdd(
+      REDIS_ORGANIZATION_MEMBERS(organization.organizationId),
+      response.locals.userId.toString()
+    );
     response.send(organization);
   } catch (error) {
     await client.query("ROLLBACK");
-    throw error;
+
+    console.error(error);
+
+    throw new RequestError(StatusCodes.INTERNAL_SERVER_ERROR);
   } finally {
     client.release();
   }

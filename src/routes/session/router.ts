@@ -96,13 +96,17 @@ const SessionRouter = Router()
         await SessionService.verifyPassword(password, fullUser.passwordHash!)
       ) {
         const { passwordHash, ...user } = fullUser;
-        const generatedAccessToken = await SessionService.generateJwtToken(
-          user.userId,
-          SessionService.TokenType.ACCESS
-        );
-        const generatedRefreshToken = await SessionService.generateJwtToken(
-          user.userId,
-          SessionService.TokenType.REFRESH
+        const [generatedAccessToken, generatedRefreshToken] = await Promise.all(
+          [
+            SessionService.generateJwtToken(
+              user.userId,
+              SessionService.TokenType.ACCESS
+            ),
+            SessionService.generateJwtToken(
+              user.userId,
+              SessionService.TokenType.REFRESH
+            ),
+          ]
         );
 
         return response

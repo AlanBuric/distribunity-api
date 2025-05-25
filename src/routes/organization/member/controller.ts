@@ -8,6 +8,8 @@ import type {
 import database from "../../../services/database.js";
 import type { OrganizationMember } from "../../../types/database-types.js";
 import { camelCaseify } from "../../../utils/database.js";
+import redis from "../../../services/redis.js";
+import { REDIS_ORGANIZATION_MEMBERS } from "../../../utils/constants.js";
 
 export async function GET(
   _request: Request,
@@ -41,18 +43,22 @@ export async function PATCH(
   response.sendStatus(StatusCodes.OK);
 }
 
+// TODO: the member with permission or the member themselves can only invoke this
 export async function DELETE(
   request: Request,
   response: Response<ErrorResponse, OrganizationLocals>
 ): Promise<any> {
-  const { userId } = matchedData<{ userId: number }>(request);
-
+  const { userId, organizationId } = matchedData<{
+    userId: number;
+    organizationId: number;
+  }>(request);
   const { rowCount } = await database.query(
     "DELETE FROM member WHERE user_id = $1",
     [userId]
   );
 
   if (rowCount) {
+    redis.sRem(REDIS_ORGANIZATION_MEMBERS(organizationId), userId.toString());
     return response.sendStatus(StatusCodes.OK);
   }
 

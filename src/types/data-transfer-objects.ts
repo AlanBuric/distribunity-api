@@ -1,9 +1,10 @@
-import type { Organization, User } from "./database-types.js";
+import type {
+  Organization,
+  OrganizationMember,
+  User,
+} from "./database-types.js";
 
-export type OrganizationResponse = {
-  name: string;
-  countryCode: string;
-};
+export type OrganizationResponse = Organization & OrganizationMember;
 
 export type AuthorizedLocals = {
   user: User;

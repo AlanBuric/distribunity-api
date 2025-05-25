@@ -1,4 +1,5 @@
 import "dotenv/config";
+import cors from "cors";
 import express, { json, Router } from "express";
 import handleError from "./routes/middleware/error-handler.js";
 import SessionRouter from "./routes/session/router.js";
@@ -8,6 +9,7 @@ import UserRouter from "./routes/user/router.js";
 const application = express()
   .use(
     "/api/v1",
+    cors({ allowedHeaders: ["Content-Type", "Authorization"] }),
     json(),
     SessionRouter,
     Router().use("/users", UserRouter),
