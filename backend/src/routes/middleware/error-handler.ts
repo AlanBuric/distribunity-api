@@ -4,15 +4,15 @@ import RequestError from "../../utils/RequestError.js";
 
 export default function handleError(
   error: any,
-  request: Request,
+  _request: Request,
   response: Response,
-  next: NextFunction,
+  _next: NextFunction
 ): any {
   if (error instanceof RequestError) {
-    return response.status(error.statusCode).send({ error: error.message });
+    return response.status(error.statusCode).send(error.message);
   }
 
   console.error(error);
 
-  response.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message });
+  response.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
 }

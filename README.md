@@ -22,18 +22,28 @@ roles' permissions and the roles assigned to the members.
 npm ci
 ```
 
-## Local development mode
+## Development mode
 
-1. Start the services in Docker:
+Development mode means that the backend API server will be run 
+on your computer, while the Redis and PostgreSQL services 
+will run in Docker.
+
+1. Configure your `.env` file:
+
+The services will have to be targeted as localhost and by the services' ports, 
+since the backend will see the services as hidden behind a single container 
+host rather than multiple hosts when ran in a container.
+
+- change `REDIS_URL=redis://redis:6379` to `REDIS_URL=redis://localhost:6379`
+- change `PGHOST=database` to `PGHOST=localhost`
+
+2. Start the services in Docker:
 
 ```
-docker compose up database
-docker compose up redis
+docker compose up database redis -d
 ```
 
-2. Configure in .env `PGHOST=localhost`
-
-    The PostgreSQL database will be running in a Docker container, and so the server needs to connect to it through your host machine's own network.
+The `-d` flag runs the services in background.
 
 3. Start the server locally:
 

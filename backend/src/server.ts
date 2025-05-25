@@ -19,7 +19,7 @@ await Promise.all([
 ]);
 await initializeCache();
 
-application.listen(port, () =>
+const server = application.listen(port, () =>
   console.info(
     styleText(
       ["blueBright"],
@@ -27,3 +27,16 @@ application.listen(port, () =>
     )
   )
 );
+
+const gracefulShutdown = async () => {
+  console.info(`${getLoggingPrefix()} Shutting down gracefully...`);
+
+  await Promise.allSettled([redis.quit(), database.end()]);
+
+  server.close(() => {
+    console.info(`${getLoggingPrefix()} Server closed.`);
+    process.exit(0);
+  });
+};
+
+process.once("SIGINT", gracefulShutdown).once("SIGTERM", gracefulShutdown);

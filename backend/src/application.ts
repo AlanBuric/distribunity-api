@@ -7,6 +7,7 @@ import OrganizationRouter from "./routes/organization/router.js";
 import UserRouter from "./routes/user/router.js";
 
 const application = express()
+  .get("/health", (_req, res): any => res.status(200).send("OK"))
   .use(
     "/api/v1",
     cors({ allowedHeaders: ["Content-Type", "Authorization"] }),

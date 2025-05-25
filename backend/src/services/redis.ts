@@ -1,11 +1,12 @@
 import { createClient } from "redis";
 import getLoggingPrefix from "../utils/logging.js";
+import { validateConfigValue } from "../utils/config.js";
 
 // Tries to minimize Redis' connection retry spam.
 let lastError: Error | undefined = undefined;
 let lastConnected: number | undefined = undefined;
 
-const redis = createClient()
+const redis = createClient({ url: validateConfigValue("REDIS_URL") })
   .on("error", (error) => {
     if (!lastError || !(lastError instanceof error.constructor)) {
       console.error(`${getLoggingPrefix()} Redis Client error`, error);

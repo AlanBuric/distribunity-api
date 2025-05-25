@@ -1,6 +1,6 @@
 services:
-  server:
-    build: .
+  backend:
+    build: ./backend
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -15,8 +15,19 @@ services:
       PGUSER: ${PGUSER}
       PGPASSWORD: ${PGPASSWORD}
       PGDATABASE: ${PGDATABASE}
+      REDIS_URL: ${REDIS_URL}
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
 
   database:
     image: postgres:17-alpine
@@ -45,6 +56,11 @@ services:
       - "6379:6379"
     volumes:
       - redisdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
     networks:
       - app-network
 
