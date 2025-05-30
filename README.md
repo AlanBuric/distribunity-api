@@ -16,6 +16,14 @@ roles' permissions and the roles assigned to the members.
 
 --------------------
 
+## Technology stack
+
+- **Backend:** HTTP(S) REST API Express server running on Node
+- **Database:** PostgreSQL, without an ORM
+- **Cache:** Redis for most most common database results
+- **Frontend:** Vue, Pinia, Vite
+- **Deployment:** Docker
+
 ## Project setup
 
 ```
@@ -45,19 +53,30 @@ docker compose up database redis -d
 
 The `-d` flag runs the services in background.
 
-3. Start the server locally:
+3. Start the development backend and frontend servers locally
+
+Assuming that each block of commands is ran from the root directory:
 
 ```
+cd backend
+npm run dev
+```
+
+```
+cd frontend
 npm run dev
 ```
 
 ## Compilation for production
 
+Assuming that each block of commands is ran from the root directory:
+
 ```
+cd backend
 npm run build
 ```
 
-## Caching levels of database results
-
-1. Express.js response locals level
-2. Shared in-memory server-wide cache
+```
+cd frontend
+npm run build
+```
