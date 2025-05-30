@@ -24,7 +24,7 @@ npm ci
 
 ## Development mode
 
-Development mode means that the backend API server will be run 
+Development mode means that the backend API server will run 
 on your computer, while the Redis and PostgreSQL services 
 will run in Docker.
 

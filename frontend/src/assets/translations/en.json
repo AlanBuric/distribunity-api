@@ -1,0 +1,27 @@
+{
+  "display": "English",
+  "emoji": "🇺🇸",
+  "main": {
+    "nav": {
+      "home": "Home",
+      "blog": "News",
+      "res": "Resources",
+      "logIn": "Log in",
+      "signUp": "Sign up"
+    },
+    "home": {
+      "title1": "It's time to ditch the spreadsheets and pen & paper.",
+      "par1": "Distribunity takes care of all the inventory changes, details and item tracking.",
+      "btn1": "Sign up for free",
+      "title2": "Coming soon to your Desktop and Mobile platforms!",
+      "par2": "We're planning to port Distribunity as a standalone installed application for your devices.",
+      "btn2": "Notify me when it happens"
+    },
+    "blog": {
+      "previous": "Previous",
+      "backToTop": "Back to top",
+      "next": "Next"
+    }
+  },
+  "app": {}
+}

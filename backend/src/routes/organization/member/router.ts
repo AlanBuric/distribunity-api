@@ -1,26 +1,27 @@
-import { Router } from "express";
-import { body, param } from "express-validator";
-import { handleValidationResults } from "../../middleware/validation.js";
-import { requirePermission } from "../controller.js";
-import { DELETE, GET, PATCH } from "./controller.js";
+import { Router } from 'express';
+import { body, param } from 'express-validator';
+import { handleValidationResults } from '../../middleware/validation.js';
+import { requirePermission } from '../controller.js';
+import { DELETE, GET, PATCH } from './controller.js';
 
 const MemberRouter = Router({ mergeParams: true })
-  .get("", requirePermission("organization.members.view"), GET)
+  // Deprecated
+  .get('', requirePermission('organization.members.view'), GET)
   .patch(
-    "/:userId",
-    param("userId").isInt().withMessage("Invalid user ID"),
-    body("roles").isArray(),
-    body("roles.*").isInt().withMessage("Invalid user ID"),
+    '/:userId',
+    param('userId').isInt().withMessage('Invalid user ID'),
+    body('roles').isArray(),
+    body('roles.*').isInt().withMessage('Invalid user ID'),
     handleValidationResults,
-    requirePermission("organization.members.updateRoles"),
-    PATCH
+    requirePermission('organization.members.updateRoles'),
+    PATCH,
   )
   .delete(
-    "/:userId",
-    param("userId").isInt().withMessage("Invalid user ID"),
+    '/:userId',
+    param('userId').isInt().withMessage('Invalid user ID'),
     handleValidationResults,
-    requirePermission("organization.members.remove"),
-    DELETE
+    requirePermission('organization.members.remove'),
+    DELETE,
   );
 
 export default MemberRouter;

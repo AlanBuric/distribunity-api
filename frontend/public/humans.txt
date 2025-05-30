@@ -1,0 +1,1 @@
+Distribunity is a computer science student's first attempt at software engineering in the novel framework Vue.js, made with genuine curiosity and creativity for developing web applications.

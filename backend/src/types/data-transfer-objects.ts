@@ -1,10 +1,10 @@
-import type {
-  Organization,
-  OrganizationMember,
-  User,
-} from "./database-types.js";
+import type { Organization, OrganizationMember, Role, User } from './database-types.js';
 
-export type OrganizationResponse = Organization & OrganizationMember;
+/**
+ * Returns the organization with the information of the organization member that requested this data.
+ */
+export type OrganizationSelfResponse = Organization &
+  OrganizationMember & { countryName: string; roles: Role[]; permissions: number[] };
 
 export type AuthorizedLocals = {
   user: User;
@@ -18,10 +18,7 @@ export type OrganizationLocals = AuthorizedLocals & {
 
 export type ErrorResponse = string;
 
-export type UserRegistrationRequest = Pick<
-  User,
-  "firstName" | "lastName" | "email"
-> & {
+export type UserRegistrationRequest = Pick<User, 'firstName' | 'lastName' | 'email'> & {
   password: string;
 };
 
@@ -30,8 +27,8 @@ export type AccessTokenResponse = {
   expiration: number;
 };
 
-export type SelfUserView = Omit<User, "hashedPassword">;
-export type PublicUserView = Omit<SelfUserView, "organizations">;
+export type SelfUserView = Omit<User, 'hashedPassword'>;
+export type PublicUserView = Omit<SelfUserView, 'organizations'>;
 
 export type UserLoginResponse = AccessTokenResponse & {
   user: SelfUserView;

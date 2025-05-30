@@ -1,23 +1,23 @@
 export const ALL_PERMISSIONS = [
-  "organization.delete",
-  "organization.edit",
-  "organization.roles.view",
-  "organization.roles.create",
-  "organization.roles.delete",
-  "organization.roles.updatePermissions",
-  "organization.members.remove",
-  "organization.members.view",
-  "organization.members.updateRoles",
-  "organization.invites.create",
-  "organization.invites.delete",
-  "inventory.create",
-  "inventory.view",
-  "inventory.edit",
-  "inventory.delete",
-  "item.create",
-  "item.edit",
-  "item.delete",
-  "item.view",
+  'organization.delete',
+  'organization.edit',
+  'organization.roles.view',
+  'organization.roles.create',
+  'organization.roles.delete',
+  'organization.roles.updatePermissions',
+  'organization.members.remove',
+  'organization.members.view',
+  'organization.members.updateRoles',
+  'organization.invites.create',
+  'organization.invites.delete',
+  'inventory.create',
+  'inventory.view',
+  'inventory.edit',
+  'inventory.delete',
+  'item.create',
+  'item.edit',
+  'item.delete',
+  'item.view',
 ] as const;
 
 export type Permission = (typeof ALL_PERMISSIONS)[number];
@@ -34,7 +34,7 @@ export type User = {
 
 export type Country = {
   countryCode: string;
-  name: string;
+  countryName: string;
 };
 
 export type Organization = {

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 
 CREATE TABLE IF NOT EXISTS country (
   country_code CHAR(2) PRIMARY KEY,
-  name VARCHAR(60) NOT NULL
+  country_name VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS organization (

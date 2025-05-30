@@ -4,5 +4,14 @@
   "typescript.preferences.preferTypeOnlyAutoImports": true,
   "[sql]": {
     "editor.defaultFormatter": "mtxr.sqltools"
-  }
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
 }
