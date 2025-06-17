@@ -1,26 +1,24 @@
-export const ALL_PERMISSIONS = [
-  'organization.delete',
-  'organization.edit',
-  'organization.roles.view',
-  'organization.roles.create',
-  'organization.roles.delete',
-  'organization.roles.updatePermissions',
-  'organization.members.remove',
-  'organization.members.view',
-  'organization.members.updateRoles',
-  'organization.invites.create',
-  'organization.invites.delete',
-  'inventory.create',
-  'inventory.view',
-  'inventory.edit',
-  'inventory.delete',
-  'item.create',
-  'item.edit',
-  'item.delete',
-  'item.view',
-] as const;
-
-export type Permission = (typeof ALL_PERMISSIONS)[number];
+export enum Permission {
+  ORGANIZATION_DELETE,
+  ORGANIZATION_EDIT,
+  ORGANIZATION_ROLES_VIEW,
+  ORGANIZATION_ROLES_CREATE,
+  ORGANIZATION_ROLES_DELETE,
+  ORGANIZATION_ROLES_UPDATE_PERMISSIONS,
+  ORGANIZATION_MEMBERS_REMOVE,
+  ORGANIZATION_MEMBERS_VIEW,
+  ORGANIZATION_MEMBERS_UPDATE_ROLES,
+  ORGANIZATION_INVITES_CREATE,
+  ORGANIZATION_INVITES_DELETE,
+  INVENTORY_CREATE,
+  INVENTORY_VIEW,
+  INVENTORY_EDIT,
+  INVENTORY_DELETE,
+  ITEM_CREATE,
+  ITEM_EDIT,
+  ITEM_DELETE,
+  ITEM_VIEW,
+}
 
 export type User = {
   userId: number;

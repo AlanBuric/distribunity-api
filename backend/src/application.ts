@@ -5,17 +5,19 @@ import handleError from './routes/middleware/error-handler.js';
 import SessionRouter from './routes/session/router.js';
 import OrganizationRouter from './routes/organization/router.js';
 import UserRouter from './routes/user/router.js';
+import CountryRouter from './routes/countries/router.js';
 
 export default function createApplication() {
   return express()
-    .get('/health', (_req, res): any => res.status(200).send('OK'))
+    .get('health', (_req, res): any => res.status(200).send('OK'))
     .use(
-      '/api/v1',
+      'api/v1',
       cors({ allowedHeaders: ['Content-Type', 'Authorization'] }),
       json(),
       SessionRouter,
-      Router().use('/users', UserRouter),
-      Router().use('/organizations', OrganizationRouter),
+      Router().use('users', UserRouter),
+      Router().use('organizations', OrganizationRouter),
+      Router().use('countries', CountryRouter),
     )
     .use(handleError);
 }

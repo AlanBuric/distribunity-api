@@ -1,35 +1,26 @@
 import type { OrganizationSelfResponse } from '@backend-types/data-transfer-objects';
-import type { User } from '@backend-types/database-types';
-
-export type Named = {
-  name: string;
-};
 
 export enum Permission {
-  'organization.delete',
-  'organization.edit',
-  'organization.roles.view',
-  'organization.roles.create',
-  'organization.roles.delete',
-  'organization.roles.updatePermissions',
-  'organization.members.remove',
-  'organization.members.view',
-  'organization.members.updateRoles',
-  'organization.invites.create',
-  'organization.invites.delete',
-  'inventory.create',
-  'inventory.view',
-  'inventory.edit',
-  'inventory.delete',
-  'item.create',
-  'item.edit',
-  'item.delete',
-  'item.view',
+  ORGANIZATION_DELETE,
+  ORGANIZATION_EDIT,
+  ORGANIZATION_ROLES_VIEW,
+  ORGANIZATION_ROLES_CREATE,
+  ORGANIZATION_ROLES_DELETE,
+  ORGANIZATION_ROLES_UPDATE_PERMISSIONS,
+  ORGANIZATION_MEMBERS_REMOVE,
+  ORGANIZATION_MEMBERS_VIEW,
+  ORGANIZATION_MEMBERS_UPDATE_ROLES,
+  ORGANIZATION_INVITES_CREATE,
+  ORGANIZATION_INVITES_DELETE,
+  INVENTORY_CREATE,
+  INVENTORY_VIEW,
+  INVENTORY_EDIT,
+  INVENTORY_DELETE,
+  ITEM_CREATE,
+  ITEM_EDIT,
+  ITEM_DELETE,
+  ITEM_VIEW,
 }
-
-export type Role = Named & {
-  permissions: Permission[];
-};
 
 export enum AuthState {
   Loading,
@@ -41,17 +32,82 @@ export type AuthUser =
   | (User & { authState: AuthState.LoggedIn })
   | { authState: AuthState.Loading | AuthState.LoggedOut };
 
-export type MemberVuefire = {
-  id: string;
-  roles: string[];
-  joined: number;
+export type User = {
+  userId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  firstName: string;
+  lastName: string;
+  email: string;
+  passwordHash?: string | null;
 };
 
-export type Item = Named & {
+export type Country = {
+  countryCode: string;
+  countryName: string;
+};
+
+export type Organization = {
+  organizationId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  countryCode: string;
+  ownerId: number;
+};
+
+export type Role = {
+  roleId: number;
+  name: string;
+  description: string | null;
+  permissions: string[];
+};
+
+export type OrganizationMember = {
+  userId: number;
+  organizationId: number;
+  joinedAt: Date;
+  profilePhotoUrl: string | null;
+};
+
+export type OrganizationMemberRole = {
+  organizationId: number;
+  userId: number;
+  roleId: number;
+};
+
+export type Invitation = {
+  invitationId: number;
+  createdAt: Date;
+  organizationId: number;
+  invitedEmail: string;
+  inviterId: number;
+  token: string;
+  status: string;
+};
+
+export type Inventory = {
+  inventoryId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  organizationId: number;
+  name: string;
+};
+
+export type Item = {
+  itemId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  unit: string | null;
+  iconUrl: string | null;
   unitPrice: number;
-  unit: string;
-  attributes: string;
-  iconURL: string;
+  attributes: Record<string, unknown>;
+};
+
+export type InventoryItem = {
+  inventoryId: number;
+  itemId: number;
   quantity: number;
 };
 
@@ -65,24 +121,8 @@ export enum ColumnType {
   TOTAL_PRICE = 'TOTAL_PRICE',
 }
 
-export type Inventory = Named & {
-  id: number;
-  items: Item[];
-};
-
-export type CountryData = {
-  countryCode: string;
-  country: string;
-};
-
-export type Organization = CountryData & {
-  invites: string[];
+export type SettingsSection = {
   name: string;
-  organizationId: number;
-  ownerId: number;
-};
-
-export type SettingsSection = Named & {
   sidebarName: string;
   displayName: string;
 };
@@ -92,24 +132,6 @@ export type BlogPost = {
   description: string;
   date: Date;
   title: string;
-};
-
-export type RestCountriesCountryName = {
-  common: string;
-  official: string;
-  nativeName: Record<
-    string,
-    {
-      official: string;
-      common: string;
-    }
-  >;
-};
-
-export type RestCountriesCountry = {
-  name: RestCountriesCountryName;
-  cca3: string;
-  independent: boolean;
 };
 
 export type OrganizationInfo = Omit<OrganizationSelfResponse, 'permissions'> & {

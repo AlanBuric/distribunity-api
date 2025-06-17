@@ -1,26 +1,26 @@
 <script setup lang="ts">
-  import { auth, database } from '@/firebase/init';
-  import { arrayUnion, doc, writeBatch } from 'firebase/firestore';
   import { ref } from 'vue';
   import Popup from '../ModalPopup.vue';
-  import { filterCountriesByName } from '@/scripts/country-search';
-  import { type CountryData, type RestCountriesCountry } from '@/types';
   import { firestoreAutoId } from '@/scripts/firebase-utilities';
+  import type { Country } from '@/types';
+  import axios from 'axios';
 
   const emit = defineEmits(['closeForm']);
   const countrySearchInput = ref<string>('');
-  const countryResults = ref<RestCountriesCountry[]>([]);
-  const selectedCountry = ref<CountryData>();
+  const countryResults = ref<Country[]>([]);
+  const selectedCountry = ref<Country>();
 
   async function searchCountries() {
-    countryResults.value = await filterCountriesByName(countrySearchInput.value);
-    // Reset the current input to empty string so that it defaults to the default disabled value.
+    countryResults.value = await axios.get(
+      `/api/countries?filter=${encodeURI(countrySearchInput.value)}`,
+    );
+
     selectedCountry.value = undefined;
-  };
+  }
 
   const organizationCreationFeedback = ref<{
-    feedback: string
-    status?: 'progress' | 'success' | 'failure'
+    feedback: string;
+    status?: 'progress' | 'success' | 'failure';
   }>({ feedback: '' });
 
   const name = ref('');
@@ -28,7 +28,8 @@
   async function createOrganization() {
     if (!auth.currentUser?.uid) {
       organizationCreationFeedback.value = {
-        feedback: 'We failed to authenticate you. Sign out and sign back in to try again, otherwise report this issue if it persists.',
+        feedback:
+          'We failed to authenticate you. Sign out and sign back in to try again, otherwise report this issue if it persists.',
         status: 'failure',
       };
 
@@ -61,7 +62,10 @@
         country: selectedCountry.value.country,
       });
 
-      batch.set(doc(database, 'organizations', organizationId, 'members', auth.currentUser.uid), { roles: [], joined: Date.now() });
+      batch.set(doc(database, 'organizations', organizationId, 'members', auth.currentUser.uid), {
+        roles: [],
+        joined: Date.now(),
+      });
 
       batch.update(ownerRef, {
         organizations: arrayUnion(newOrganizationRef),
@@ -110,7 +114,7 @@
             required
             placeholder="My Awesome Business"
             class="mt-1 block w-full rounded-md px-3 py-2 bg-gray-100 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 shadow-sm dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
-          >
+          />
         </div>
 
         <div>
@@ -125,7 +129,7 @@
               type="search"
               minlength="3"
               class="w-full rounded-md px-3 py-2 bg-gray-100 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 shadow-sm dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
-            >
+            />
             <button
               type="button"
               for="country-search"
@@ -148,14 +152,14 @@
           class="block w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
           required
         >
-          <option disabled v-if="countryResults.length === 0" :value="undefined">
-            No results
-          </option>
+          <option disabled v-if="countryResults.length === 0" :value="undefined">No results</option>
           <template v-else>
-            <option disabled :value="undefined">
-              Please select a country
-            </option>
-            <option v-for="country in countryResults" :key="country.cca3" :value="{ countryCode: country.cca3, country: country.name.common }">
+            <option disabled :value="undefined">Please select a country</option>
+            <option
+              v-for="country in countryResults"
+              :key="country.cca3"
+              :value="{ countryCode: country.cca3, country: country.name.common }"
+            >
               {{ country.name.common }}
             </option>
           </template>
