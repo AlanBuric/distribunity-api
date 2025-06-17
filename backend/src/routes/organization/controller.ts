@@ -14,11 +14,11 @@ import type {
   Role,
 } from '../../types/database-types.js';
 import * as OrganizationService from './service.js';
-import database from '../../services/database.js';
 import { camelCaseify, getSqlPatchColumns } from '../../utils/database.js';
-import redis from '../../services/redis.js';
 import { REDIS_ORGANIZATION_MEMBERS } from '../../utils/constants.js';
 import RequestError from '../../utils/RequestError.js';
+import getRedis from '../../services/redis.js';
+import getDatabase from '../../services/database.js';
 
 type OrganizationCreationRequest = {
   name: string;
@@ -53,7 +53,7 @@ export async function requireUserBelongsToTargetOrganization(
   next: NextFunction,
 ): Promise<any> {
   const { organizationId } = matchedData(request);
-  const isMember = await redis.sIsMember(
+  const isMember = await getRedis().sIsMember(
     REDIS_ORGANIZATION_MEMBERS(organizationId),
     response.locals.userId.toString(),
   );
@@ -68,7 +68,7 @@ export async function requireUserBelongsToTargetOrganization(
 }
 
 export async function GET(_request: Request, response: Response<Organization[], AuthorizedLocals>) {
-  const { rows } = await database.query(
+  const { rows } = await getDatabase().query(
     `SELECT *
     FROM organization
     WHERE organization_id IN (
@@ -91,7 +91,7 @@ export async function GET_BY_ID(
   const {
     rows: [organizationMember],
     rowCount,
-  } = await database.query(
+  } = await getDatabase().query(
     `
     SELECT *
     FROM organization
@@ -108,7 +108,7 @@ export async function GET_BY_ID(
     return response.sendStatus(StatusCodes.NOT_FOUND);
   }
 
-  const { rows: roleRows } = await database.query(
+  const { rows: roleRows } = await getDatabase().query(
     `
     SELECT role.*
     FROM organization_member_role
@@ -124,7 +124,7 @@ export async function GET_BY_ID(
   let roles: Role[] = [];
 
   if (roleIds.length) {
-    const { rows: permissionRows } = await database.query(
+    const { rows: permissionRows } = await getDatabase().query(
       `
       SELECT DISTINCT permission_id
       FROM role_permission
@@ -171,7 +171,7 @@ export async function PATCH(
     organizationId,
   );
 
-  await database.query(`UPDATE organization SET ${set} WHERE organization_id = $3`, args);
+  await getDatabase().query(`UPDATE organization SET ${set} WHERE organization_id = $3`, args);
 
   response.sendStatus(StatusCodes.OK);
 }
@@ -182,10 +182,11 @@ export async function POST(
 ): Promise<any> {
   const { name, countryCode } = matchedData<OrganizationCreationRequest>(request);
 
-  const client = await database.connect();
+  const client = await getDatabase().connect();
 
   try {
     await client.query('BEGIN');
+
     const result = await client.query(
       `
     INSERT INTO organization (name, country_code, owner_id)
@@ -205,7 +206,7 @@ export async function POST(
     );
     await client.query('COMMIT');
 
-    redis.sAdd(
+    getRedis().sAdd(
       REDIS_ORGANIZATION_MEMBERS(organization.organizationId),
       response.locals.userId.toString(),
     );

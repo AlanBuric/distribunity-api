@@ -7,7 +7,6 @@ export type OrganizationSelfResponse = Organization &
   OrganizationMember & { countryName: string; roles: Role[]; permissions: number[] };
 
 export type AuthorizedLocals = {
-  user: User;
   userId: number;
   organizationIds: number[];
 };
@@ -27,8 +26,7 @@ export type AccessTokenResponse = {
   expiration: number;
 };
 
-export type SelfUserView = Omit<User, 'hashedPassword'>;
-export type PublicUserView = Omit<SelfUserView, 'organizations'>;
+export type SelfUserView = Omit<User, 'passwordHash'>;
 
 export type UserLoginResponse = AccessTokenResponse & {
   user: SelfUserView;

@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
-import database from '../../services/database.js';
 import type {
   OrganizationSelfResponse,
   ErrorResponse,
@@ -12,11 +11,12 @@ import type { Invitation } from '../../types/database-types.js';
 import { camelCaseify } from '../../utils/database.js';
 import getLoggingPrefix from '../../utils/logging.js';
 import RequestError from '../../utils/RequestError.js';
-import redis from '../../services/redis.js';
 import { REDIS_ORGANIZATION_MEMBERS } from '../../utils/constants.js';
+import getRedis from '../../services/redis.js';
+import getDatabase from '../../services/database.js';
 
 export async function GET(_request: Request, response: Response<Invitation[], AuthorizedLocals>) {
-  const { rows } = await database.query(
+  const { rows } = await getDatabase().query(
     `
     SELECT *
     FROM invitation
@@ -38,7 +38,7 @@ export async function POST(
     isAccepting: boolean;
   }>(request);
 
-  const client = await database.connect();
+  const client = await getDatabase().connect();
 
   try {
     await client.query('BEGIN');
@@ -85,7 +85,7 @@ export async function POST(
         return response.status(StatusCodes.NOT_FOUND).send('Organization not found.');
       }
 
-      redis.sAdd(
+      getRedis().sAdd(
         REDIS_ORGANIZATION_MEMBERS(invite.organizationId),
         response.locals.userId.toString(),
       );

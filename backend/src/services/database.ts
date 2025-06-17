@@ -1,8 +1,19 @@
-import pg from "pg";
-import getLoggingPrefix from "../utils/logging.js";
+import pg, { type Pool } from 'pg';
+import getLoggingPrefix from '../utils/logging.js';
 
-const database = new pg.Pool().on("error", (error) =>
-  console.error("Unexpected error on idle client", error)
-);
+let database: Pool | undefined = undefined;
 
-export default database;
+export async function connectDatabase() {
+  database = new pg.Pool().on('error', (error) =>
+    console.error('Unexpected error on idle client', error),
+  );
+  database
+    .connect()
+    .then(() => console.info(`${getLoggingPrefix()} Connected to PostgreSQL database.`));
+}
+
+export default function getDatabase() {
+  if (!database) throw new Error("Database isn't initialized");
+
+  return database;
+}

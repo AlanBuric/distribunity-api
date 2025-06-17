@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS organization (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   name            VARCHAR(64) NOT NULL,
-  country_code    CHAR(3) NOT NULL REFERENCES country(country_code),
+  country_code    CHAR(2) NOT NULL REFERENCES country(country_code),
   owner_id        BIGINT NOT NULL REFERENCES "user"(user_id)
 );
 
@@ -118,7 +118,7 @@ INSERT INTO permission (permission_id, name) VALUES
   (18, 'item.delete'),
   (19, 'item.view');
 
-INSERT INTO country (country_code, name) VALUES
+INSERT INTO country VALUES
   ('AF', 'Afghanistan'),
   ('AL', 'Albania'),
   ('DZ', 'Algeria'),

@@ -1,23 +1,20 @@
-import type { Request, Response } from "express";
-import { matchedData } from "express-validator";
-import { StatusCodes } from "http-status-codes";
-import type {
-  ErrorResponse,
-  OrganizationLocals,
-} from "../../../types/data-transfer-objects.js";
-import type { Item } from "../../../types/database-types.js";
-import database from "../../../services/database.js";
-import { camelCaseify } from "../../../utils/database.js";
+import type { Request, Response } from 'express';
+import { matchedData } from 'express-validator';
+import { StatusCodes } from 'http-status-codes';
+import type { ErrorResponse, OrganizationLocals } from '../../../types/data-transfer-objects.js';
+import type { Item } from '../../../types/database-types.js';
+import { camelCaseify } from '../../../utils/database.js';
+import getDatabase from '../../../services/database.js';
 
 export async function PATCH(
   request: Request,
-  response: Response<ErrorResponse | Item, OrganizationLocals>
+  response: Response<ErrorResponse | Item, OrganizationLocals>,
 ): Promise<any> {
   const { itemId, name, unit, iconUrl, unitPrice, attributes } = matchedData<
     Partial<Item> & { itemId: number }
   >(request);
 
-  const { rows, rowCount } = await database.query(
+  const { rows, rowCount } = await getDatabase().query(
     `UPDATE item
      SET
        name = COALESCE($2, name),
@@ -28,7 +25,7 @@ export async function PATCH(
        updated_at = now()
      WHERE item_id = $1
      RETURNING *`,
-    [itemId, name, unit, iconUrl, unitPrice, attributes]
+    [itemId, name, unit, iconUrl, unitPrice, attributes],
   );
 
   if (rowCount) {
@@ -40,35 +37,35 @@ export async function PATCH(
 
 export async function POST(
   request: Request,
-  response: Response<ErrorResponse | { id: number }, OrganizationLocals>
+  response: Response<ErrorResponse | { id: number }, OrganizationLocals>,
 ): Promise<any> {
-  const { inventoryId, name, unit, iconUrl, unitPrice, attributes } =
-    matchedData<any>(request);
+  const { inventoryId, name, unit, iconUrl, unitPrice, attributes } = matchedData<any>(request);
 
-  const client = await database.connect();
+  const client = await getDatabase().connect();
+
   try {
-    await client.query("BEGIN");
+    await client.query('BEGIN');
 
     const itemResult = await client.query(
       `INSERT INTO item (name, unit, icon_url, unit_price, attributes)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING item_id`,
-      [name, unit, iconUrl, unitPrice, attributes]
+      [name, unit, iconUrl, unitPrice, attributes],
     );
     const itemId = itemResult.rows[0].item_id;
 
     await client.query(
       `INSERT INTO inventory_item (inventory_id, item_id, quantity)
        VALUES ($1, $2, 0)`,
-      [inventoryId, itemId]
+      [inventoryId, itemId],
     );
 
-    await client.query("COMMIT");
+    await client.query('COMMIT');
     response.status(StatusCodes.CREATED).send({ id: itemId });
   } catch (error: any) {
-    await client.query("ROLLBACK");
+    await client.query('ROLLBACK');
 
-    if (error.code === "23505") {
+    if (error.code === '23505') {
       return response
         .status(StatusCodes.BAD_REQUEST)
         .send(`Item with the name ${name} already exists`);
@@ -82,29 +79,27 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  response: Response<ErrorResponse, OrganizationLocals>
+  response: Response<ErrorResponse, OrganizationLocals>,
 ): Promise<any> {
   const { itemId, inventoryId } = matchedData<{
     itemId: number;
     inventoryId: number;
   }>(request);
 
-  const { rowCount } = await database.query(
-    "DELETE FROM inventory_item WHERE item_id = $1 AND inventory_id = $2",
-    [itemId, inventoryId]
+  const { rowCount } = await getDatabase().query(
+    'DELETE FROM inventory_item WHERE item_id = $1 AND inventory_id = $2',
+    [itemId, inventoryId],
   );
 
   if (!rowCount) {
-    return response
-      .status(StatusCodes.NOT_FOUND)
-      .send(`Item with ID ${itemId} not found`);
+    return response.status(StatusCodes.NOT_FOUND).send(`Item with ID ${itemId} not found`);
   }
 
-  await database.query(
+  await getDatabase().query(
     `DELETE FROM item WHERE item_id = $1 AND NOT EXISTS (
       SELECT 1 FROM inventory_item WHERE item_id = $1
     )`,
-    [itemId]
+    [itemId],
   );
 
   response.sendStatus(StatusCodes.OK);

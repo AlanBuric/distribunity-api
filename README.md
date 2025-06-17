@@ -20,7 +20,7 @@ roles' permissions and the roles assigned to the members.
 
 - **Backend:** HTTP(S) REST API Express server running on Node
 - **Database:** PostgreSQL, without an ORM
-- **Cache:** Redis for most most common database results
+- **Cache:** Redis for authentication token blocklists, and database enums and common operations
 - **Frontend:** Vue, Pinia, Vite
 - **Deployment:** Docker
 
@@ -36,7 +36,7 @@ Development mode means that the backend API server will run
 on your computer, while the Redis and PostgreSQL services 
 will run in Docker.
 
-1. Configure your `.env` file:
+1. Configure your `.env` file as a copy of `.env.example`, in the `backend` directory:
 
 The services will have to be targeted as localhost and by the services' ports, 
 since the backend will see the services as hidden behind a single container 
@@ -67,16 +67,6 @@ cd frontend
 npm run dev
 ```
 
-## Compilation for production
+## Running in production
 
-Assuming that each block of commands is ran from the root directory:
-
-```
-cd backend
-npm run build
-```
-
-```
-cd frontend
-npm run build
-```
+Run `docker compose up -d`.

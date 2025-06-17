@@ -1,8 +1,11 @@
+import type { OrganizationSelfResponse } from '@backend-types/data-transfer-objects';
+import type { User } from '@backend-types/database-types';
+
 export type Named = {
   name: string;
 };
 
-export const ALL_PERMISSIONS = [
+export enum Permission {
   'organization.delete',
   'organization.edit',
   'organization.roles.view',
@@ -22,9 +25,7 @@ export const ALL_PERMISSIONS = [
   'item.edit',
   'item.delete',
   'item.view',
-] as const;
-
-export type Permission = (typeof ALL_PERMISSIONS)[number];
+}
 
 export type Role = Named & {
   permissions: Permission[];
@@ -39,15 +40,6 @@ export enum AuthState {
 export type AuthUser =
   | (User & { authState: AuthState.LoggedIn })
   | { authState: AuthState.Loading | AuthState.LoggedOut };
-
-export type User = {
-  firstName: string;
-  lastName: string;
-  theme: string;
-  language: string;
-  organizations: Organization;
-  userId: number;
-};
 
 export type MemberVuefire = {
   id: string;
@@ -118,4 +110,8 @@ export type RestCountriesCountry = {
   name: RestCountriesCountryName;
   cca3: string;
   independent: boolean;
+};
+
+export type OrganizationInfo = Omit<OrganizationSelfResponse, 'permissions'> & {
+  permissions: Set<number>;
 };

@@ -1,42 +1,46 @@
-import "dotenv/config";
-import database from "./services/database.js";
-import redis from "./services/redis.js";
-import { styleText } from "node:util";
-import { validateConfigValue } from "./utils/config.js";
-import getLoggingPrefix from "./utils/logging.js";
-import application from "./application.js";
-import { initializeCache } from "./services/cache.js";
+import 'dotenv/config';
+import { connectDatabase } from './services/database.js';
+import { connectRedis } from './services/redis.js';
+import { styleText } from 'node:util';
+import EnvConfig from './utils/config.js';
+import getLoggingPrefix from './utils/logging.js';
+import { initializeCache } from './services/cache.js';
+import getRedis from './services/redis.js';
+import getDatabase from './services/database.js';
+import createApplication from './application.js';
 
-const port = Number(validateConfigValue("PORT"));
+EnvConfig.initialize();
 
-await Promise.all([
-  redis.connect(),
-  database
-    .connect()
-    .then(() =>
-      console.info(`${getLoggingPrefix()} Connected to PostgreSQL database.`)
-    ),
-]);
-await initializeCache();
+await Promise.all([connectRedis(), connectDatabase()]).then(initializeCache);
 
-const server = application.listen(port, () =>
+const server = createApplication().listen(EnvConfig.PORT, () =>
   console.info(
+    styleText(['blueBright', 'bold'], '✔ Distribunity service is up and running:'),
+    '\n',
     styleText(
-      ["blueBright"],
-      `${getLoggingPrefix()} Distribunity API server started on http://localhost:${port}/api/v1`
-    )
-  )
+      ['blue'],
+      `➥ API routes: ${styleText(['underline'], `http://localhost:${EnvConfig.PORT}/api/v1`)}`,
+    ),
+    '\n',
+    styleText(
+      ['blue'],
+      `➥ Healthcheck: ${styleText(['underline'], `http://localhost:${EnvConfig.PORT}/health`)}`,
+    ),
+  ),
 );
 
 const gracefulShutdown = async () => {
   console.info(`${getLoggingPrefix()} Shutting down gracefully...`);
 
-  await Promise.allSettled([redis.quit(), database.end()]);
+  await Promise.allSettled([getRedis().quit(), getDatabase().end()]);
 
-  server.close(() => {
+  server.close((error) => {
+    if (error)
+      console.error('An error occurred while shutting down the Distribunity service', error);
+
     console.info(`${getLoggingPrefix()} Server closed.`);
     process.exit(0);
   });
 };
 
-process.once("SIGINT", gracefulShutdown).once("SIGTERM", gracefulShutdown);
+process.once('SIGINT', gracefulShutdown).once('SIGTERM', gracefulShutdown);
