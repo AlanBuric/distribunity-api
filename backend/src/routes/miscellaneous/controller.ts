@@ -12,10 +12,11 @@ export async function getFilteredCountries(
 ) {
   const { filter } = matchedData<{ filter: string }>(request);
 
-  const { rows } = await getDatabase().query(
-    `SELECT * FROM country WHERE country_name ILIKE '%' || $1 || '%'`,
-    [filter],
-  );
+  const { rows } = filter
+    ? await getDatabase().query(`SELECT * FROM country WHERE country_name ILIKE '%' || $1 || '%'`, [
+        filter,
+      ])
+    : await getDatabase().query('SELECT * FROM country');
 
   response.send(rows.map(camelCaseify<Country>));
 }
@@ -26,6 +27,10 @@ export async function addEmailToNewsletter(
 ) {
   const { email } = matchedData<{ email: string }>(request);
 
-  // TODO add to database
-  response.sendStatus(StatusCodes.OK);
+  response.sendStatus(
+    await getDatabase()
+      .query('INSERT INTO newsletter_email VALUES ($1)', [email])
+      .then(() => StatusCodes.OK)
+      .catch(() => StatusCodes.CONFLICT),
+  );
 }

@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS inventory_item (
   PRIMARY KEY (inventory_id, item_id)
 );
 
-CREATE TABLE IF NOT EXISTS newsletter_emails (
+CREATE TABLE IF NOT EXISTS newsletter_email (
   email VARCHAR(255) NOT NULL
 );
 
