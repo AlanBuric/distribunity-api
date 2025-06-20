@@ -4,10 +4,10 @@ export enum Permission {
   ORGANIZATION_ROLES_VIEW,
   ORGANIZATION_ROLES_CREATE,
   ORGANIZATION_ROLES_DELETE,
-  ORGANIZATION_ROLES_UPDATE_PERMISSIONS,
+  ORGANIZATION_ROLES_UPstring_PERMISSIONS,
   ORGANIZATION_MEMBERS_REMOVE,
   ORGANIZATION_MEMBERS_VIEW,
-  ORGANIZATION_MEMBERS_UPDATE_ROLES,
+  ORGANIZATION_MEMBERS_UPstring_ROLES,
   ORGANIZATION_INVITES_CREATE,
   ORGANIZATION_INVITES_DELETE,
   INVENTORY_CREATE,
@@ -20,14 +20,16 @@ export enum Permission {
   ITEM_VIEW,
 }
 
-export type User = {
+export type DbUser = {
   userId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  upstringdAt: string;
   firstName: string;
   lastName: string;
+  theme: string;
+  language: string;
   email: string;
-  passwordHash?: string | null;
+  passwordHash: string;
 };
 
 export type Country = {
@@ -35,11 +37,12 @@ export type Country = {
   countryName: string;
 };
 
-export type Organization = {
+export type DbOrganization = {
   organizationId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  upstringdAt: string;
   name: string;
+  currencyFormat: string;
   countryCode: string;
   ownerId: number;
 };
@@ -54,7 +57,7 @@ export type Role = {
 export type OrganizationMember = {
   userId: number;
   organizationId: number;
-  joinedAt: Date;
+  joinedAt: string;
   profilePhotoUrl: string | null;
 };
 
@@ -66,7 +69,7 @@ export type OrganizationMemberRole = {
 
 export type Invitation = {
   invitationId: number;
-  createdAt: Date;
+  createdAt: string;
   organizationId: number;
   invitedEmail: string;
   inviterId: number;
@@ -76,16 +79,16 @@ export type Invitation = {
 
 export type Inventory = {
   inventoryId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  upstringdAt: string;
   organizationId: number;
   name: string;
 };
 
 export type Item = {
   itemId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  upstringdAt: string;
   name: string;
   unit: string | null;
   iconUrl: string | null;

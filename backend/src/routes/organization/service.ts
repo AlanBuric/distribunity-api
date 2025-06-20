@@ -1,8 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
-import type { Organization, Permission } from '../../types/database-types.js';
+import type { DbOrganization, Permission } from '../../types/database-types.js';
 import RequestError from '../../utils/RequestError.js';
 import { camelCaseify } from '../../utils/database.js';
 import getDatabase from '../../services/database.js';
+import type { CurrencyFormat, Organization } from '../../types/data-transfer-objects.js';
 
 export async function getOrganizationById(id: string): Promise<Organization> {
   const organizations = await getDatabase().query(
@@ -10,11 +11,13 @@ export async function getOrganizationById(id: string): Promise<Organization> {
     [id],
   );
 
-  if (organizations.rowCount == 0) {
+  if (!organizations.rowCount)
     throw new RequestError(StatusCodes.NOT_FOUND, `Organization with ID ${id} not found`);
-  }
 
-  return camelCaseify(organizations.rows[0]);
+  const adapted = camelCaseify<DbOrganization>(organizations.rows[0]);
+  const currencyFormat: CurrencyFormat = JSON.parse(adapted.currencyFormat);
+
+  return Object.assign(adapted, { currencyFormat });
 }
 
 export async function hasPermission(

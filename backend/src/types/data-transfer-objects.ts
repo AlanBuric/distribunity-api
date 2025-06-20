@@ -1,9 +1,21 @@
-import type { Organization, OrganizationMember, Role, User } from './database-types.js';
+import type { DbOrganization, OrganizationMember, Role, DbUser } from './database-types.js';
+
+export interface CurrencyFormat {
+  symbolPosition: 'before' | 'after';
+  decimalSeparator: string;
+  thousandSeparator: string;
+  fractionDigits: number;
+  symbol: string;
+}
+
+export type Organization = Omit<DbOrganization, 'currencyFormat'> & {
+  currencyFormat: CurrencyFormat;
+};
 
 /**
  * Returns the organization with the information of the organization member that requested this data.
  */
-export type OrganizationSelfResponse = Organization &
+export type OrganizationSelfResponse = DbOrganization &
   OrganizationMember & { countryName: string; roles: Role[]; permissions: number[] };
 
 export type AuthorizedLocals = {
@@ -12,12 +24,15 @@ export type AuthorizedLocals = {
 };
 
 export type OrganizationLocals = AuthorizedLocals & {
-  organization: Organization;
+  organization: DbOrganization;
 };
 
 export type ErrorResponse = string;
 
-export type UserRegistrationRequest = Pick<User, 'firstName' | 'lastName' | 'email'> & {
+export type UserRegistrationRequest = {
+  firstName: string;
+  lastName: string;
+  email: string;
   password: string;
 };
 
@@ -26,8 +41,8 @@ export type AccessTokenResponse = {
   expiration: number;
 };
 
-export type SelfUserView = Omit<User, 'passwordHash'>;
+export type UserView = Omit<DbUser, 'passwordHash'>;
 
 export type UserLoginResponse = AccessTokenResponse & {
-  user: SelfUserView;
+  user: UserView;
 };

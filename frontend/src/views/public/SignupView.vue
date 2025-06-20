@@ -7,13 +7,13 @@
   import { useRouter } from 'vue-router';
 
   type LoginStateMessage = {
-    message: string
-    state: 'processing' | 'success' | 'failure'
+    message: string;
+    state: 'processing' | 'success' | 'failure';
   };
   type PasswordsMatchState = {
-    feedback: string
-    classList: string
-    matches: boolean
+    feedback: string;
+    classList: string;
+    matches: boolean;
   };
 
   const router = useRouter();
@@ -43,7 +43,7 @@
       };
     } else {
       passwordsMatch.value = {
-        feedback: 'Confirmation password doesn\'t match the password.',
+        feedback: "Confirmation password doesn't match the password.",
         classList: 'text-red-400',
         matches,
       };
@@ -64,14 +64,18 @@
     }
 
     if (!passwordsMatch.value?.matches) {
-      issues.push('Your passwords don\'t match');
+      issues.push("Your passwords don't match");
     }
 
     return issues;
   }
 
   function isAllowedToSubmit() {
-    return formIssues.value.length == 0 && passwordsMatch.value && loginStateMessage.value?.state != 'processing';
+    return (
+      formIssues.value.length == 0 &&
+      passwordsMatch.value &&
+      loginStateMessage.value?.state != 'processing'
+    );
   }
 
   function handleUserRegistrationError(error: any) {
@@ -82,7 +86,8 @@
       };
     } else {
       loginStateMessage.value = {
-        message: 'Sorry, but we failed to create your user profile in our database. Please contact us for support; you can find our contacts at the bottom of the page.',
+        message:
+          'Sorry, but we failed to create your user profile in our database. Please contact us for support; you can find our contacts at the bottom of the page.',
         state: 'failure',
       };
     }
@@ -98,7 +103,11 @@
       };
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email.value,
+          password.value,
+        );
 
         loginStateMessage.value.message = 'User creation succeeded.';
 
@@ -106,13 +115,14 @@
           firstName: firstName.value,
           lastName: lastName.value,
           theme: 'dark',
-          language: 'en_us',
+          language: 'en-US',
           organizations: [],
           joined: Date.now(),
         });
 
         loginStateMessage.value = {
-          message: 'Your user profile is ready. If you\'re still seeing this message, refresh the page and visit the Dashboard.',
+          message:
+            "Your user profile is ready. If you're still seeing this message, refresh the page and visit the Dashboard.",
           state: 'success',
         };
 
@@ -129,7 +139,10 @@
 </script>
 
 <template>
-  <form @submit.prevent="handleUserRegistration" class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+  <form
+    @submit.prevent="handleUserRegistration"
+    class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg"
+  >
     <h2 class="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-gray-100">
       Create an account
     </h2>
@@ -147,7 +160,7 @@
       placeholder="e.g. Amelia"
       autocomplete="given-name"
       required
-    >
+    />
 
     <label for="lastName" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
       Last name:
@@ -161,7 +174,7 @@
       maxlength="40"
       placeholder="e.g. Wilson"
       autocomplete="family-name"
-    >
+    />
 
     <label for="email" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
       Email:
@@ -174,7 +187,7 @@
       placeholder="e.g. amelia.wilson@gmail.com"
       autocomplete="email"
       required
-    >
+    />
 
     <label for="password" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
       Password:
@@ -188,13 +201,19 @@
       placeholder="New password"
       autocomplete="new-password"
       required
-    >
+    />
 
     <p id="password-strength" class="mb-4 text-gray-600 dark:text-gray-400">
-      Password strength: <span class="font-semibold text-gray-700 dark:text-gray-100">{{ passwordStrength.title }}</span>
+      Password strength:
+      <span class="font-semibold text-gray-700 dark:text-gray-100">{{
+        passwordStrength.title
+      }}</span>
     </p>
 
-    <label for="password-confirm" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
+    <label
+      for="password-confirm"
+      class="block text-lg font-medium text-gray-700 dark:text-gray-300"
+    >
       Confirm password:
     </label>
     <input
@@ -206,7 +225,7 @@
       placeholder="Confirm password"
       autocomplete="off"
       required
-    >
+    />
     <p v-if="passwordsMatch" :class="['mb-4', passwordsMatch.classList]">
       {{ passwordsMatch.feedback }}
     </p>
@@ -216,10 +235,11 @@
       value="Sign up"
       class="fancy-button w-full"
       :disabled="!isAllowedToSubmit()"
-    >
+    />
 
     <p
-      v-if="loginStateMessage" :class="{
+      v-if="loginStateMessage"
+      :class="{
         'mt-4': true,
         'text-yellow-400': loginStateMessage.state == 'processing',
         'text-green-400': loginStateMessage.state == 'success',

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import 'vue-router';
 import useAuthStore from './store/auth';
-import { getIdFromRefString } from './scripts/firebase-utilities';
+import { AuthState } from './types';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -19,7 +19,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '',
       alias: ['/home'],
       name: 'home-view',
       component: () => import('@/pages/HomePage.vue'),
@@ -27,20 +27,20 @@ const router = createRouter({
         {
           path: '',
           name: 'home',
-          component: () => import('@/views/home/HomeView.vue'),
+          component: () => import('@/views/public/HomeView.vue'),
         },
         {
           path: 'resources',
           alias: ['help', 'support', 'about'],
           name: 'resources-view',
-          component: () => import('@/views/home/ResourcesView.vue'),
+          component: () => import('@/views/public/ResourcesView.vue'),
           children: [
             {
               path: '',
               name: 'resources',
-              component: () => import('@/views/home/resources/FAQView.vue'),
+              component: () => import('@/views/public/resources/FAQView.vue'),
               meta: {
-                title: 'Distribunity: resources',
+                title: 'Distribunity | Resources',
               },
             },
           ],
@@ -48,17 +48,17 @@ const router = createRouter({
         {
           path: 'blog',
           name: 'blog',
-          component: () => import('@/views/home/BlogView.vue'),
+          component: () => import('@/views/public/BlogView.vue'),
           meta: {
-            title: 'Distribunity: posts',
+            title: 'Distribunity | Blog',
           },
         },
         {
           path: 'login',
           name: 'login',
-          component: () => import('@/views/home/LoginView.vue'),
+          component: () => import('@/views/public/LoginView.vue'),
           meta: {
-            title: 'Distribunity: login',
+            title: 'Distribunity | Login',
             avoidIfAuthed: {
               name: 'home',
             },
@@ -67,9 +67,9 @@ const router = createRouter({
         {
           path: 'signup',
           name: 'signup',
-          component: () => import('@/views/home/SignupView.vue'),
+          component: () => import('@/views/public/SignupView.vue'),
           meta: {
-            title: 'Distribunity: signup',
+            title: 'Distribunity | Signup',
             avoidIfAuthed: {
               name: 'dashboard',
             },
@@ -88,18 +88,18 @@ const router = createRouter({
         {
           path: '',
           name: 'dashboard',
-          component: () => import('@/views/auth/DashboardView.vue'),
+          component: () => import('@/views/logged-in/DashboardView.vue'),
           meta: {
-            title: 'Distribunity: Dashboard',
+            title: 'Distribunity | Dashboard',
             requiresAuth: true,
           },
         },
         {
           path: 'settings',
           name: 'settings',
-          component: () => import('@/views/auth/UserSettingsView.vue'),
+          component: () => import('@/views/logged-in/UserSettingsView.vue'),
           meta: {
-            title: 'Distribunity: settings',
+            title: 'Distribunity | Settings',
             requiresAuth: true,
           },
         },
@@ -109,9 +109,9 @@ const router = createRouter({
             {
               path: '',
               name: 'organization-settings',
-              component: () => import('@/views/auth/OrganizationAdminView.vue'),
+              component: () => import('@/views/logged-in/OrganizationAdminView.vue'),
               meta: {
-                title: 'Distribunity: organization settings',
+                title: 'Distribunity | Organization settings',
                 requiresAuth: true,
                 requiresOrganizationAdmin: true,
                 shouldLoadMember: true,
@@ -126,7 +126,7 @@ const router = createRouter({
       name: 'organization-inventories',
       component: () => import('@/pages/InventoryPage.vue'),
       meta: {
-        title: 'Distribunity: organization inventories',
+        title: 'Distribunity | Organization inventories',
         requiresAuth: true,
         shouldLoadMember: true,
       },
@@ -149,25 +149,18 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const store = useAuthStore();
 
-  await auth.authStateReady();
+  await store.authReady;
 
-  if (auth.currentUser?.uid) {
-    await store.tryLogUserIn(auth.currentUser.uid);
+  if (store.state == AuthState.LoggedIn) {
+    if (to.path.toLowerCase().includes('/work/organization') && typeof to.params.id == 'string')
+      await store.loadOrganization(to.params.id);
 
-    if (to.path.toLowerCase().includes('/work/organization') && typeof to.params.id == 'string') {
-      await store.loadOrganizationData(to.params.id, auth.currentUser!.uid);
-    }
-
-    if (
-      to.meta.requiresOrganizationAdmin &&
-      getIdFromRefString(store.currentOrganization!.owner.id) != auth.currentUser.uid
-    ) {
+    if (to.meta.requiresOrganizationAdmin && !store.isOrganizationOwner())
       return {
         path: '/work',
       };
-    } else if (to.meta.avoidIfAuthed && auth.currentUser?.uid) {
-      return to.meta.avoidIfAuthed;
-    }
+
+    if (to.meta.avoidIfAuthed) return to.meta.avoidIfAuthed;
   } else if (to.meta.requiresAuth) {
     return {
       name: 'login',

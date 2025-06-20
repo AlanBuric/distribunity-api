@@ -8,7 +8,7 @@ import type {
   OrganizationSelfResponse,
 } from '../../types/data-transfer-objects.js';
 import type {
-  Organization,
+  DbOrganization,
   OrganizationMember,
   Permission,
   Role,
@@ -67,7 +67,10 @@ export async function requireUserBelongsToTargetOrganization(
   next();
 }
 
-export async function GET(_request: Request, response: Response<Organization[], AuthorizedLocals>) {
+export async function GET(
+  _request: Request,
+  response: Response<DbOrganization[], AuthorizedLocals>,
+) {
   const { rows } = await getDatabase().query(
     `SELECT *
     FROM organization
@@ -79,7 +82,7 @@ export async function GET(_request: Request, response: Response<Organization[], 
     [response.locals.userId],
   );
 
-  response.send(rows.map<Organization>(camelCaseify));
+  response.send(rows.map<DbOrganization>(camelCaseify));
 }
 
 export async function GET_BY_ID(
@@ -138,7 +141,9 @@ export async function GET_BY_ID(
 
   response.send(
     Object.assign(
-      camelCaseify<Organization & OrganizationMember & { countryName: string }>(organizationMember),
+      camelCaseify<DbOrganization & OrganizationMember & { countryName: string }>(
+        organizationMember,
+      ),
       {
         roles,
         permissions,
@@ -157,7 +162,7 @@ export async function GET_BY_ID_AS_ADMIN(
 
 export async function PATCH(
   request: Request,
-  response: Response<Organization, AuthorizedLocals>,
+  response: Response<DbOrganization, AuthorizedLocals>,
 ): Promise<any> {
   const { name, countryCode, organizationId } = matchedData<
     OrganizationCreationRequest & { organizationId: string }
@@ -178,7 +183,7 @@ export async function PATCH(
 
 export async function POST(
   request: Request,
-  response: Response<Organization, AuthorizedLocals>,
+  response: Response<DbOrganization, AuthorizedLocals>,
 ): Promise<any> {
   const { name, countryCode } = matchedData<OrganizationCreationRequest>(request);
 
@@ -195,7 +200,7 @@ export async function POST(
       [name, countryCode, response.locals.userId],
     );
 
-    const organization = camelCaseify<Organization>(result.rows[0]);
+    const organization = camelCaseify<DbOrganization>(result.rows[0]);
 
     await client.query(
       `

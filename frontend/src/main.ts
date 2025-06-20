@@ -3,16 +3,19 @@ import { createApp } from 'vue';
 import Application from '@/Application.vue';
 import router from '@/router';
 import { createPinia } from 'pinia';
-import { availableLocales, chooseAvailableLocale } from '@/scripts/translation';
 import { createI18n } from 'vue-i18n';
+import useGlobalStore, { availableLanguages } from './store/global';
 
-const locale = chooseAvailableLocale();
+const application = createApp(Application).use(router).use(createPinia());
+
+useGlobalStore().loadPreferredLanguage();
+
 const i18n = createI18n({
   warnHtmlInMessage: false,
   legacy: false,
-  locale,
-  fallbackLocale: 'en',
-  availableLocales: availableLocales.map((locale) => locale[0]),
+  locale: useGlobalStore().language,
+  fallbackLocale: 'en-US',
+  availableLocales: availableLanguages.map(([tag]) => tag),
   messages: {
     en: {},
     hr: {},
@@ -20,4 +23,4 @@ const i18n = createI18n({
   },
 });
 
-createApp(Application).use(router).use(createPinia()).use(i18n).mount('#app');
+application.use(i18n).mount('#app');

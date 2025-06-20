@@ -12,10 +12,10 @@ function isVariedCase(text: string): boolean {
 
 function measurePasswordStrength(password: string): number {
   return (
-    Math.floor(password.length / passwordScale)
-    + +isVariedCase(password)
-    + +numberRegEx.test(password)
-    + +symbolRegEx.test(password)
+    Math.floor(password.length / passwordScale) +
+    +isVariedCase(password) +
+    +numberRegEx.test(password) +
+    +symbolRegEx.test(password)
   );
 }
 
@@ -30,6 +30,6 @@ export function getPasswordStrength(password: string): PasswordStrength {
 }
 
 export type PasswordStrength = {
-  title: string
-  strength: number
+  title: string;
+  strength: number;
 };

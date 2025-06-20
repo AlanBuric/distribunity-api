@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS "user" (
   first_name    VARCHAR(24) NOT NULL,
   last_name     VARCHAR(24) NOT NULL,
   email         CITEXT UNIQUE NOT NULL,
+  theme         VARCHAR(24) DEFAULT NULL,
+  language      VARCHAR(7) DEFAULT NULL,
   password_hash TEXT NOT NULL
 );
 
@@ -21,6 +23,7 @@ CREATE TABLE IF NOT EXISTS organization (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   name            VARCHAR(64) NOT NULL,
+  currency_format JSONB,
   country_code    CHAR(2) NOT NULL REFERENCES country(country_code),
   owner_id        BIGINT NOT NULL REFERENCES "user"(user_id)
 );
@@ -91,6 +94,10 @@ CREATE TABLE IF NOT EXISTS inventory_item (
   item_id       BIGINT NOT NULL REFERENCES item(item_id) ON DELETE CASCADE,
   quantity      NUMERIC NOT NULL CHECK (quantity >= 0),
   PRIMARY KEY (inventory_id, item_id)
+);
+
+CREATE TABLE IF NOT EXISTS newsletter_emails (
+  email VARCHAR(255) NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS user_email_idx ON "user"(email);

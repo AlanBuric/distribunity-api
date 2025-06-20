@@ -1,16 +1,15 @@
 <script lang="ts" setup>
-  import { database } from '@/firebase/init';
-  import { doc, setDoc } from 'firebase/firestore';
+  import axios from 'axios';
   import { ref } from 'vue';
 
   const submitted = ref(false);
   const email = ref();
 
   function signupForNewsLetter() {
-    setDoc(doc(database, 'email-subscriptions', email.value), {})
-      .then(() => submitted.value = true)
-      .catch(error => console.error(error));
-    submitted.value = true;
+    axios
+      .post('/api/newsletter', { email: email.value })
+      .catch(() => alert("You've already signed up for the newsletter!"))
+      .finally(() => (submitted.value = true));
   }
 </script>
 
@@ -38,7 +37,7 @@
             autocomplete="email"
             placeholder="Your e-mail"
             required
-          >
+          />
         </div>
         <div class="mb-4 flex items-center">
           <input
@@ -47,22 +46,14 @@
             name="agreement"
             class="form-checkbox h-5 w-5 text-teal-500 dark:text-teal-400"
             required
-          >
-          <label
-            for="agreement"
-            class="ml-3 text-gray-700 dark:text-gray-300 text-sm"
-          >
-            I allow Distribunity to save my e-mail for sending me promotions and educational content,
-            and have the right to cancel my subscription any time.
+          />
+          <label for="agreement" class="ml-3 text-gray-700 dark:text-gray-300 text-sm">
+            I allow Distribunity to save my e-mail for sending me promotions and educational
+            content, and have the right to cancel my subscription any time.
           </label>
         </div>
         <div class="space-x-3">
-          <button
-            type="submit"
-            class="text-lg fancy-button"
-          >
-            Subscribe
-          </button>
+          <button type="submit" class="text-lg fancy-button">Subscribe</button>
           <slot />
         </div>
       </form>

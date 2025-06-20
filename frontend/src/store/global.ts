@@ -1,63 +1,72 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import useAuthStore from './auth.js';
+import { AuthState, LocalStorage, type LanguageTag } from '@/types.js';
 
-const knownLanguages = ['en-us', 'hr-hr'];
+export const availableLanguages: ReadonlyArray<[LanguageTag, string]> = [
+  ['en-US', 'English (US)'],
+  ['hr-HR', 'Hrvatski'],
+  ['it-IT', 'Italiano'],
+];
+
+export const defaultLanguage = availableLanguages[0][0];
 
 /**
- * Global states available regardless of whether the user is authenticated or not.
+ * Manages global states available regardless of whether the user is authenticated or not.
  */
 const useGlobalStore = defineStore('global', () => {
-    const theme = ref('light');
-    const language = ref<string>('en-us');
+  const theme = ref('light');
+  const language = ref<LanguageTag>('en-US');
 
-    /**
-     * @deprecated Multiple themes are a planned feature for the future
-     * @returns Whether the currently selected theme is the dark theme
-     */
-    function isDarkTheme() {
-        return theme.value == 'dark';
-    }
+  function setTheme(newTheme: string) {
+    theme.value = newTheme;
+    localStorage.setItem(LocalStorage.THEME, theme.value);
 
-    function setTheme(newTheme: string) {
-        theme.value = newTheme;
-        document.documentElement.classList.toggle('dark', isDarkTheme());
-        localStorage.setItem('theme', theme.value);
-    }
+    document.documentElement.classList.toggle('dark', theme.value == 'dark');
+  }
 
-    function setLanguage(newLanguage: string) {
-        if (knownLanguages.includes(newLanguage.toLowerCase())) {
-            language.value = newLanguage;
-        }
-    }
+  function nextTheme() {
+    setTheme(theme.value == 'dark' ? 'light' : 'dark');
+  }
 
-    function toggleTheme() {
-      setTheme(isDarkTheme() ? 'light' : 'dark');
-    };
+  /**
+   * Sets the current theme by priority to the theme:
+   * 1. Stored in current authenticated user
+   * 2. The one stored in localStorage,
+   * 3. Default one used by the browser or system.
+   */
+  function loadPreferredTheme() {
+    const user = useAuthStore().user;
+    const newTheme =
+      ((user.authState == AuthState.LoggedIn && user.theme) ??
+        localStorage.getItem('theme') ??
+        (window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark' : 'light')) ||
+      'light';
 
-    function getSavedTheme() {
-        return localStorage.getItem('theme');
-    }
+    setTheme(newTheme);
+  }
 
-    /**
-     * Sets the current theme by priority to the theme:
-     * 1. stored in current authenticated user, otherwise if not authenticated:
-     * 2. the one stored in localStorage,
-     * 3. otherwise uses the default one used by the browser or system.
-     */
-    function loadPreferredTheme() {
-        const newTheme = useAuthStore().userProfile?.theme
-          ?? getSavedTheme()
-          ?? (window.matchMedia('(prefers-color-scheme: dark').matches
-            ? 'dark'
-            : 'light');
+  function loadPreferredLanguage() {
+    const potentialMatches = new Set(
+      [localStorage.getItem(LocalStorage.LOCALE), ...window.navigator.languages].map(
+        (code) => code,
+      ),
+    );
 
-        setTheme(newTheme);
-    }
+    return availableLanguages.find(([tag]) => potentialMatches.has(tag))?.[0] ?? defaultLanguage;
+  }
 
-    loadPreferredTheme();
+  loadPreferredTheme();
+  loadPreferredLanguage();
 
-    return { theme, language, isDarkTheme, setTheme, setLanguage, toggleTheme, getSavedTheme, loadPreferredTheme };
+  return {
+    theme,
+    language,
+    setTheme,
+    nextTheme,
+    loadPreferredTheme,
+    loadPreferredLanguage,
+  };
 });
 
 export default useGlobalStore;

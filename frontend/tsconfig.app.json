@@ -2,8 +2,7 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": [
     "env.d.ts",
-    "src/**/*",
-    "src/**/*.vue"
+    "./src/**/*",
   ],
   "exclude": [
     "src/**/__tests__/*"
@@ -13,9 +12,6 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@backend-types/*": [
-        "../backend/src/types/*"
       ]
     }
   }

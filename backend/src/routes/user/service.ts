@@ -1,13 +1,13 @@
 import { StatusCodes } from 'http-status-codes';
-import type { UserRegistrationRequest } from '../../types/data-transfer-objects.js';
-import type { User } from '../../types/database-types.js';
+import type { UserView, UserRegistrationRequest } from '../../types/data-transfer-objects.js';
+import type { DbUser } from '../../types/database-types.js';
 import RequestError from '../../utils/RequestError.js';
 import * as SessionService from '../session/service.js';
 import { camelCaseify } from '../../utils/database.js';
 import getLoggingPrefix from '../../utils/logging.js';
 import getDatabase from '../../services/database.js';
 
-export async function registerUser(registration: UserRegistrationRequest): Promise<User> {
+export async function registerUser(registration: UserRegistrationRequest): Promise<UserView> {
   const hashedPassword = await SessionService.hashPassword(registration.password);
   const {
     rows: [{ password_hash, ...user }],
@@ -33,7 +33,7 @@ export async function registerUser(registration: UserRegistrationRequest): Promi
   return camelCaseify(user);
 }
 
-export async function getUserById(id: number): Promise<User> {
+export async function getUserById(id: number): Promise<DbUser> {
   const {
     rows: [user],
     rowCount,
@@ -46,14 +46,12 @@ export async function getUserById(id: number): Promise<User> {
     [id],
   );
 
-  if (!rowCount) {
-    throw new RequestError(StatusCodes.NOT_FOUND, `User with ID ${id} not found`);
-  }
+  if (!rowCount) throw new RequestError(StatusCodes.NOT_FOUND, `User with ID ${id} not found`);
 
   return camelCaseify(user);
 }
 
-export async function getUserByEmail(email: string): Promise<User> {
+export async function getUserByEmail(email: string): Promise<DbUser> {
   const {
     rows: [user],
     rowCount,

@@ -1,41 +1,89 @@
-import { AuthState, type AuthUser, type OrganizationInfo, Permission } from '@/types';
-import type { User } from '@backend-types/database-types';
+import {
+  type AdaptedSelfOrganization,
+  AuthState,
+  LocalStorage,
+  type OrganizationSelfResponse,
+  Permission,
+  type User,
+} from '@/types';
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import useGlobalStore from './global';
+
+const EMPTY_USER: User = {
+  userId: 0,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  firstName: '',
+  lastName: '',
+  theme: '',
+  email: '',
+  language: '',
+};
 
 const useAuthStore = defineStore('auth', () => {
-  const user = ref<AuthUser>({ authState: AuthState.Loading });
-  const currentOrganization = ref<OrganizationInfo>();
+  const state = ref<AuthState>(AuthState.Loading);
+  const user = ref<User>(EMPTY_USER);
+  const currentOrganization = ref<AdaptedSelfOrganization>();
 
-  async function tryLogIn(userId: string) {
-    const accessToken = localStorage.getItem('accessToken');
+  let resolveReady: (() => void) | null = null;
+  const authReady = new Promise<void>((resolve) => {
+    resolveReady = resolve;
+  });
+
+  async function tryLogIn() {
+    const accessToken = localStorage.getItem(LocalStorage.ACCESS_TOKEN);
 
     if (!accessToken) {
-      user.value = { authState: AuthState.LoggedOut };
+      state.value = AuthState.LoggedOut;
+
+      resolveReady?.();
       return;
     }
 
     axios.defaults.headers.authorization = `Bearer ${accessToken}`;
 
-    user.value = await axios
-      .get<User>(`/api/users/${userId}`)
-      .then(({ data }) => Object.assign(data, { authState: AuthState.LoggedIn }))
-      .catch(() => ({ authState: AuthState.LoggedOut }));
+    await axios
+      .get<User>(`/api/users/self`)
+      .then(({ data }) => {
+        user.value = data;
+        state.value = AuthState.LoggedIn;
+      })
+      .catch(() => (state.value = AuthState.LoggedOut));
+
+    useGlobalStore().loadPreferredTheme();
+    useGlobalStore().loadPreferredLanguage();
+
+    resolveReady?.();
   }
 
-  async function loadOrganization(organizationId: number) {
-    if (currentOrganization.value?.organizationId != organizationId) {
+  async function signOut() {
+    await axios.delete('/api/logout').catch();
+
+    delete axios.defaults.headers.authorization;
+
+    localStorage.removeItem(LocalStorage.ACCESS_TOKEN);
+
+    state.value = AuthState.LoggedOut;
+    user.value = EMPTY_USER;
+  }
+
+  async function loadOrganization(organizationId: string) {
+    if (currentOrganization.value?.organizationId.toString() != organizationId) {
       currentOrganization.value = await axios
-        .get(`/api/organizations/${organizationId}`)
-        .then(({ data }) => data);
+        .get<OrganizationSelfResponse>(`/api/organizations/${organizationId}`)
+        .then(({ data }) => {
+          // @ts-ignore
+          data.permissions = new Set(data.permissions);
+          return data as AdaptedSelfOrganization;
+        });
     }
   }
 
   function isOrganizationOwner() {
     return (
-      user.value?.authState == AuthState.LoggedIn &&
-      currentOrganization.value?.ownerId == user.value?.userId
+      state.value == AuthState.LoggedIn && currentOrganization.value?.ownerId == user.value?.userId
     );
   }
 
@@ -43,11 +91,16 @@ const useAuthStore = defineStore('auth', () => {
     return isOrganizationOwner() || currentOrganization.value?.permissions.has(permission);
   }
 
+  tryLogIn();
+
   return {
+    state,
     user,
+    authReady,
     currentOrganization,
-    tryLogUserIn: tryLogIn,
-    loadOrganizationData: loadOrganization,
+    signOut,
+    tryLogIn,
+    loadOrganization,
     isOrganizationOwner,
     hasPermission,
   };

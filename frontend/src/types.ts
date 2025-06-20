@@ -1,4 +1,21 @@
-import type { OrganizationSelfResponse } from '@backend-types/data-transfer-objects';
+export enum LocalStorage {
+  THEME = 'theme',
+  LOCALE = 'locale',
+  ACCESS_TOKEN = 'accessToken',
+}
+
+export const supportedThemes = ['dark', 'light'] as const;
+
+export type Theme = (typeof supportedThemes)[number];
+
+/**
+ * https://datatracker.ietf.org/doc/html/rfc5646
+ */
+type LanguageTagFormat = `${Lowercase<string>}-${Uppercase<string>}`;
+
+export const supportedLanguages: LanguageTagFormat[] = ['en-US', 'hr-HR', 'it-IT'] as const;
+
+export type LanguageTag = (typeof supportedLanguages)[number];
 
 export enum Permission {
   ORGANIZATION_DELETE,
@@ -30,16 +47,18 @@ export enum AuthState {
 
 export type AuthUser =
   | (User & { authState: AuthState.LoggedIn })
-  | { authState: AuthState.Loading | AuthState.LoggedOut };
+  | { authState: AuthState.LoggedOut }
+  | { authState: AuthState.Loading };
 
 export type User = {
   userId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   firstName: string;
   lastName: string;
+  language: string;
+  theme: string;
   email: string;
-  passwordHash?: string | null;
 };
 
 export type Country = {
@@ -47,11 +66,20 @@ export type Country = {
   countryName: string;
 };
 
+export type CurrencyFormat = {
+  symbolPosition: 'before' | 'after';
+  decimalSeparator: string;
+  thousandSeparator: string;
+  fractionDigits: number;
+  symbol: string;
+};
+
 export type Organization = {
   organizationId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  upstringdAt: string;
   name: string;
+  currencyFormat: CurrencyFormat;
   countryCode: string;
   ownerId: number;
 };
@@ -66,7 +94,7 @@ export type Role = {
 export type OrganizationMember = {
   userId: number;
   organizationId: number;
-  joinedAt: Date;
+  joinedAt: string;
   profilePhotoUrl: string | null;
 };
 
@@ -78,7 +106,7 @@ export type OrganizationMemberRole = {
 
 export type Invitation = {
   invitationId: number;
-  createdAt: Date;
+  createdAt: string;
   organizationId: number;
   invitedEmail: string;
   inviterId: number;
@@ -88,16 +116,16 @@ export type Invitation = {
 
 export type Inventory = {
   inventoryId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   organizationId: number;
   name: string;
 };
 
 export type Item = {
   itemId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   name: string;
   unit: string | null;
   iconUrl: string | null;
@@ -105,9 +133,8 @@ export type Item = {
   attributes: Record<string, unknown>;
 };
 
-export type InventoryItem = {
+export type InventoryItem = Item & {
   inventoryId: number;
-  itemId: number;
   quantity: number;
 };
 
@@ -130,10 +157,13 @@ export type SettingsSection = {
 export type BlogPost = {
   id: string;
   description: string;
-  date: Date;
+  date: string;
   title: string;
 };
 
-export type OrganizationInfo = Omit<OrganizationSelfResponse, 'permissions'> & {
+export type OrganizationSelfResponse = Organization &
+  OrganizationMember & { countryName: string; roles: Role[]; permissions: number[] };
+
+export type AdaptedSelfOrganization = Omit<OrganizationSelfResponse, 'permission'> & {
   permissions: Set<number>;
 };

@@ -11,9 +11,9 @@
   const selectedCountry = ref<Country>();
 
   async function searchCountries() {
-    countryResults.value = await axios.get(
-      `/api/countries?filter=${encodeURI(countrySearchInput.value)}`,
-    );
+    countryResults.value = await axios
+      .get<Country[]>(`/api/countries?filter=${encodeURI(countrySearchInput.value)}`)
+      .then(({ data }) => data);
 
     selectedCountry.value = undefined;
   }

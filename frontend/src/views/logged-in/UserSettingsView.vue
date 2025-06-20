@@ -1,123 +1,66 @@
 <script setup lang="ts">
-  import { auth, database } from '@/firebase/init';
   import useAuthStore from '@/store/auth';
-  import { EmailAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendPasswordResetEmail, updateEmail, updateProfile } from 'firebase/auth';
-  import { GoogleAuthProvider } from 'firebase/auth/web-extension';
-  import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
+  import axios from 'axios';
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
 
   const authStore = useAuthStore();
   const router = useRouter();
 
-  const newEmail = ref(auth.currentUser?.email ?? '');
+  const newEmail = ref(authStore.user.email);
 
-  const firstName = ref(authStore.userProfile!.firstName);
-  const lastName = ref(authStore.userProfile!.lastName);
-  const profilePhotoURL = ref(auth.currentUser?.photoURL ?? '');
-  const language = ref(authStore.userProfile!.language);
-  const theme = ref(authStore.userProfile!.theme);
+  const firstName = ref(authStore.user.firstName);
+  const lastName = ref(authStore.user.lastName);
+  const language = ref(authStore.user.language);
+  const theme = ref(authStore.user.theme);
 
   const emailConfirmation = ref('');
   const passwordConfirmation = ref('');
 
   function saveProfileSettings() {
-    updateProfile(auth.currentUser!, {
-      displayName: `${firstName.value} ${lastName.value}`,
-      photoURL: profilePhotoURL.value,
-    });
-
-    updateDoc(doc(database, 'users', authStore.userId!), {
-      firstName: firstName.value,
-      lastName: lastName.value,
-      language: language.value,
-      theme: theme.value,
-    });
+    axios
+      .patch('/api/users/self', {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        language: language.value,
+        theme: theme.value,
+        email: newEmail.value,
+      })
+      .then(() => alert('Your settings have been updated.'))
+      .catch(() => alert("Sorry, we couldn't update your settings."));
   }
 
-  function changeEmail() {
-    updateEmail(auth.currentUser!, newEmail.value)
-      .catch(error => alert('We were unable to change your e-mail. Try signing out and back in.' + error.code ? ` Error code: ${error.code}` : ''));
-  }
-
-  function resetPassword() {
-    sendPasswordResetEmail(auth, auth.currentUser!.email!);
-  }
-
-  async function deleteAccountFromFirestore(userId: string) {
-    return deleteDoc(doc(database, 'users', userId))
-      .catch(error => console.error('Failed to delete user data:', error));
-  }
-
-  function alertFailedToDeleteAccount(error?: any) {
-    if (error) {
-      console.error(error);
-    }
-
-    alert('We were unable to delete your account. Try signing out and back in. If the issue persists, please report it.');
+  function changePassword() {
+    axios.patch('/api/users/self/password', {});
   }
 
   async function deleteAccount() {
-    if (auth.currentUser && confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      const userId = auth.currentUser.uid;
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      const userId = authStore.user.userId;
 
       try {
-        await deleteAccountFromFirestore(userId);
-        await auth.currentUser.delete();
+        await axios.delete('/api/users/self');
+        await authStore.signOut();
+
         router.push({ path: '/signup' });
-      } catch (error) {
-        if (error.code === 'auth/requires-recent-login') {
-          try {
-            await deleteAccountFromFirestore(userId);
-            await reauthenticateUser();
-            await auth.currentUser?.delete();
-
-            router.push({ path: '/signup' });
-          } catch (reauthError) {
-            alertFailedToDeleteAccount(reauthError);
-          }
-        } else {
-          alertFailedToDeleteAccount(error);
-        }
+      } catch (error: any) {
+        alert(error['message'] ?? error);
       }
-    }
-  }
-
-  async function reauthenticateUser() {
-    const user = auth.currentUser;
-
-    if (!user) {
-      alert('No authenticated user.');
-      return;
-    }
-
-    const providerId = user.providerData[0]?.providerId;
-
-    if (providerId === 'password') {
-      const credential = EmailAuthProvider.credential(emailConfirmation.value, passwordConfirmation.value);
-      return reauthenticateWithCredential(user, credential);
-    } else if (providerId === 'google.com') {
-      const provider = new GoogleAuthProvider();
-      return reauthenticateWithPopup(user, provider);
-    } else {
-      alert('Unsupported authentication provider.');
     }
   }
 </script>
 
 <template>
-  <main class="flex-1 items-center flex flex-col p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
-    <h1 class="text-3xl font-semibold mb-4">
-      User Settings
-    </h1>
+  <main
+    class="flex-1 items-center flex flex-col p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
+  >
+    <h1 class="text-3xl font-semibold mb-4">User Settings</h1>
 
     <div class="flex flex-col lg:flex-row space-x-10">
       <div class="h-full bg-gray-500 w-[1px]" />
 
       <section class="mb-8">
-        <h2 class="text-xl font-semibold mb-4">
-          Profile Settings
-        </h2>
+        <h2 class="text-xl font-semibold mb-4">Profile Settings</h2>
 
         <form @submit.prevent="saveProfileSettings">
           <div class="mb-4">
@@ -126,7 +69,7 @@
               type="text"
               v-model="firstName"
               class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
-            >
+            />
           </div>
 
           <div class="mb-4">
@@ -135,7 +78,7 @@
               type="text"
               v-model="lastName"
               class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
-            >
+            />
           </div>
 
           <div class="mb-4">
@@ -144,7 +87,7 @@
               type="url"
               v-model="profilePhotoURL"
               class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
-            >
+            />
           </div>
 
           <div class="mb-4">
@@ -153,12 +96,8 @@
               v-model="language"
               class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
             >
-              <option value="en_us">
-                English
-              </option>
-              <option value="hr_hr">
-                Croatian
-              </option>
+              <option value="en-US">English</option>
+              <option value="hr-HR">Croatian</option>
             </select>
           </div>
 
@@ -168,12 +107,8 @@
               v-model="theme"
               class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
             >
-              <option value="dark">
-                Dark
-              </option>
-              <option value="light">
-                Light
-              </option>
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
             </select>
           </div>
 
@@ -189,9 +124,7 @@
       <div class="h-full bg-gray-500 w-[1px]" />
 
       <section class="mb-8">
-        <h2 class="text-xl font-semibold mb-4">
-          Account Settings
-        </h2>
+        <h2 class="text-xl font-semibold mb-4">Account Settings</h2>
 
         <form @submit.prevent="changeEmail">
           <div class="mb-4">
@@ -200,7 +133,7 @@
               type="email"
               v-model="newEmail"
               class="px-3 py-2 border border-gray-500 rounded w-64 dark:bg-gray-700 dark:text-gray-200"
-            >
+            />
           </div>
 
           <div class="flex gap-4">
@@ -214,7 +147,7 @@
 
             <button
               type="button"
-              @click.prevent.stop="resetPassword"
+              @click.prevent.stop="changePassword"
               class="px-3 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700"
             >
               Reset Password
@@ -226,9 +159,7 @@
       <div class="h-full bg-gray-500 w-[1px]" />
 
       <section class="mb-8">
-        <h2 class="text-xl font-semibold mb-4">
-          Account deletion
-        </h2>
+        <h2 class="text-xl font-semibold mb-4">Account deletion</h2>
 
         <form @submit.prevent="deleteAccount">
           <div class="mb-4">
@@ -239,7 +170,7 @@
               id="confirm-email"
               v-model="emailConfirmation"
               class="px-3 py-2 border border-gray-500 rounded w-64 dark:bg-gray-700 dark:text-gray-200"
-            >
+            />
           </div>
 
           <div class="mb-4">
@@ -250,7 +181,7 @@
               id="confirm-password"
               v-model="passwordConfirmation"
               class="px-3 py-2 border border-gray-500 rounded w-64 dark:bg-gray-700 dark:text-gray-200"
-            >
+            />
           </div>
 
           <button

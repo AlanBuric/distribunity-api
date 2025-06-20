@@ -60,19 +60,4 @@ export function navigateInput(event) {
   }
 }
 
-export const bubbleEvent
-  = emit =>
-    (name, ...payload) =>
-      emit(name, ...payload);
-
-export function capitalizeFirstLetter(text: string) {
-  return text[0].toUpperCase() + text.substring(1);
-}
-
-export function getPrettyEnumName(enumName: string): string {
-  const lower = enumName.toLowerCase();
-
-  return lower.split('_').map(capitalizeFirstLetter).join(' ');
-}
-
-export const NO_PERMISSIONS_MESSAGE = 'You don\'t have the permission to do that.';
+export const NO_PERMISSIONS_MESSAGE = "You don't have the permission to do that.";

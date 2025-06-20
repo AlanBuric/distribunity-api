@@ -2,28 +2,21 @@ import type { Request, Response } from 'express';
 import type {
   AuthorizedLocals,
   ErrorResponse,
-  SelfUserView,
+  UserView,
 } from '../../types/data-transfer-objects.js';
-import { matchedData } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 import { getUserById } from './service.js';
 import getDatabase from '../../services/database.js';
 import { logoutUser } from '../session/controller.js';
 import getLoggingPrefix from '../../utils/logging.js';
-
-type UserRequest = { userId: number };
+import { matchedData } from 'express-validator';
+import { verifyPassword } from '../session/service.js';
 
 export async function getSelfUser(
-  request: Request,
-  response: Response<ErrorResponse | SelfUserView, AuthorizedLocals>,
+  _request: Request,
+  response: Response<ErrorResponse | UserView, AuthorizedLocals>,
 ): Promise<any> {
-  const { userId } = matchedData<UserRequest>(request);
-
-  if (response.locals.userId != userId) {
-    return response.sendStatus(StatusCodes.FORBIDDEN);
-  }
-
-  const { passwordHash, ...user } = await getUserById(userId);
+  const { passwordHash, ...user } = await getUserById(response.locals.userId);
 
   response.send(user);
 }
@@ -44,3 +37,25 @@ export async function deleteSelfUser(
         .send("Please transfer your organizations' ownerships before deleting your account");
     });
 }
+
+type PasswordChangeRequest = {
+  oldPassword: string;
+  newPassword: string;
+};
+
+export async function changeSelfUserPassword(
+  request: Request<PasswordChangeRequest>,
+  response: Response<ErrorResponse, AuthorizedLocals>,
+): Promise<any> {
+  const { oldPassword, newPassword } = matchedData<PasswordChangeRequest>(request);
+
+  const user = await getUserById(response.locals.userId);
+
+  if (!verifyPassword(oldPassword, user.passwordHash))
+    return response.status(StatusCodes.BAD_REQUEST).send('Wrong old password');
+}
+
+export async function editSelfUser(
+  request: Request,
+  response: Response<ErrorResponse, AuthorizedLocals>,
+): Promise<any> {}

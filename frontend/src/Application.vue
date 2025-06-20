@@ -1,19 +1,20 @@
 <script lang="ts" setup>
   import { watch } from 'vue';
   import { RouterView, useRoute, useRouter } from 'vue-router';
+  import useAuthStore from './store/auth';
+  import { AuthState } from './types';
+  import { storeToRefs } from 'pinia';
 
-  const user = useCurrentUser();
+  const { user, state } = storeToRefs(useAuthStore());
   const router = useRouter();
   const route = useRoute();
 
-  watch(user, async (currentUser, previousUser) => {
-    if (!currentUser && previousUser && route.meta.requiresAuth) {
-      return router.push({ name: 'login' });
-    }
+  watch(user, async () => {
+    if (state.value == AuthState.LoggedOut && route.meta.requiresAuth)
+      return router.push({ name: 'login', replace: true });
 
-    if (currentUser && typeof route.query.redirect === 'string') {
+    if (state.value == AuthState.LoggedIn && typeof route.query.redirect === 'string')
       return router.push(route.query.redirect);
-    }
   });
 </script>
 
@@ -52,16 +53,5 @@
     unicode-range:
       U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
       U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-  }
-
-  .nav-link {
-    text-align: center;
-    padding: 0.8rem 0.4rem;
-    font-size: 1.1rem;
-    @apply text-gray-700 dark:text-gray-300;
-  }
-
-  .nav-link:hover {
-    color: var(--active-link);
   }
 </style>

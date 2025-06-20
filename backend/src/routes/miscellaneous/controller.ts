@@ -4,6 +4,7 @@ import { matchedData } from 'express-validator';
 import { camelCaseify } from '../../utils/database.js';
 import { Country } from '../../types/database-types.js';
 import type { AuthorizedLocals } from '../../types/data-transfer-objects.js';
+import { StatusCodes } from 'http-status-codes';
 
 export async function getFilteredCountries(
   request: Request,
@@ -17,4 +18,14 @@ export async function getFilteredCountries(
   );
 
   response.send(rows.map(camelCaseify<Country>));
+}
+
+export async function addEmailToNewsletter(
+  request: Request,
+  response: Response<Country[], AuthorizedLocals>,
+) {
+  const { email } = matchedData<{ email: string }>(request);
+
+  // TODO add to database
+  response.sendStatus(StatusCodes.OK);
 }

@@ -1,15 +1,10 @@
 import { Router } from 'express';
-import { deleteSelfUser, getSelfUser } from './controller.js';
-import { handleValidationResults } from '../middleware/validation.js';
-import { param } from 'express-validator';
+import { changeSelfUserPassword, deleteSelfUser, editSelfUser, getSelfUser } from './controller.js';
 
 const UserRouter = Router()
-  .get(
-    '/:userId',
-    param('userId').isInt().withMessage('Invalid user ID'),
-    handleValidationResults,
-    getSelfUser,
-  )
-  .delete('', deleteSelfUser);
+  .get('/self', getSelfUser)
+  .patch('/self', editSelfUser)
+  .patch('/self/password', changeSelfUserPassword)
+  .delete('/self', deleteSelfUser);
 
 export default UserRouter;
