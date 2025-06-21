@@ -1,14 +1,20 @@
+<script setup lang="ts">
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
+</script>
+
 <template>
   <section class="px-5 py-10">
     <div class="max-w-3xl mx-auto text-center">
       <h2 class="text-3xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-        {{ $t('title') }}
+        {{ t('title') }}
       </h2>
       <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-        {{ $t('description') }}
+        {{ t('description') }}
       </p>
       <RouterLink class="text-lg fancy-button" to="/resources">
-        {{ $t('learnMore') }}
+        {{ t('learnMore') }}
       </RouterLink>
     </div>
   </section>

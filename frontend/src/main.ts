@@ -17,7 +17,7 @@ const i18n = createI18n({
   fallbackLocale: 'en-US',
   availableLocales: availableLanguages.map(([tag]) => tag),
   messages: {
-    en: {
+    'en-US': {
       home: 'Home',
       blog: 'Blog',
       resources: 'Resources',
@@ -31,7 +31,7 @@ const i18n = createI18n({
       backToTop: 'Back to top',
       next: 'Next',
     },
-    hr: {
+    'hr-HR': {
       home: 'Početna',
       blog: 'Blog',
       resources: 'Informacije',
@@ -45,7 +45,7 @@ const i18n = createI18n({
       backToTop: 'Vrati me na vrh',
       next: 'Slijedeća',
     },
-    it: {},
+    'it-IT': {},
   },
 });
 

@@ -30,6 +30,11 @@ const useGlobalStore = defineStore('global', () => {
     setTheme(theme.value == 'dark' ? 'light' : 'dark');
   }
 
+  function setLanguage(newLanguage: LanguageTag) {
+    language.value = newLanguage;
+    document.documentElement.lang = newLanguage;
+  }
+
   /**
    * Sets the current theme by priority to the theme:
    * 1. Stored in current authenticated user
@@ -57,8 +62,9 @@ const useGlobalStore = defineStore('global', () => {
       ),
     );
 
-    language.value =
-      availableLanguages.find(([tag]) => potentialMatches.has(tag))?.[0] ?? defaultLanguage;
+    setLanguage(
+      availableLanguages.find(([tag]) => potentialMatches.has(tag))?.[0] ?? defaultLanguage,
+    );
   }
 
   loadPreferredTheme();

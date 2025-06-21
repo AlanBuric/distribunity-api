@@ -1,15 +1,3 @@
-const DEFAULT_LANGUAGE = 'en';
-
-export function getLanguage() {
-  const result = new Set(...navigator.languages, navigator.language);
-
-  if (result.size == 0) {
-    return new Set(DEFAULT_LANGUAGE);
-  }
-
-  return result;
-}
-
 function findFirstNext(element, tagName = element.tagName.toUpperCase()) {
   let next = element.nextElementSibling;
 

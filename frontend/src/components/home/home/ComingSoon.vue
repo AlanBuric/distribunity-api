@@ -2,6 +2,9 @@
   import ModalPopup from '@/components/ModalPopup.vue';
   import { ref } from 'vue';
   import NewsletterForm from './NewsletterForm.vue';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   const showNewsletterForm = ref(false);
 </script>
@@ -21,17 +24,17 @@
     <img src="@/assets/phone-example.png" alt="Phone Example" class="h-[30em] max-md:hidden" />
     <div class="text-center lg:text-left">
       <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-        {{ $t('comingSoonTitle') }}
+        {{ t('comingSoonTitle') }}
       </h2>
       <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
-        {{ $t('comingSoonDescription') }}
+        {{ t('comingSoonDescription') }}
       </p>
       <button
         class="text-lg fancy-button"
         title="Sign up for our newsletter"
         @click="showNewsletterForm = !showNewsletterForm"
       >
-        {{ $t('notifyMe') }}
+        {{ t('notifyMe') }}
       </button>
     </div>
   </section>
