@@ -1,13 +1,16 @@
 <script setup lang="ts">
   import { useRoute } from 'vue-router';
   import { ref } from 'vue';
-  import MemberList from '@/components/admin/MemberList.vue';
+  import MemberList from '@/components/work/admin/MemberList.vue';
   import { deleteOrganization } from '@/scripts/firebase-utilities';
-  import RemovableChip from '@/components/admin/RemovableChip.vue';
+  import RemovableChip from '@/components/work/admin/RemovableChip.vue';
+  import { useI18n } from 'vue-i18n';
   import useAuthStore from '@/store/auth';
   import { NO_PERMISSIONS_MESSAGE } from '@/scripts/shared';
+  import { Permission } from '@/types';
   import axios from 'axios';
 
+  const { t } = useI18n();
   const authStore = useAuthStore();
 
   const organizationId = useRoute().params.id as string;
@@ -368,7 +371,8 @@
               <td class="px-3 py-2">
                 <form
                   @submit.prevent="
-                    (event) => addPermission(role.id, event.target!['permission-to-add'].value)
+                    (event) =>
+                      addPermission(role.id, (event.target as any)?.['permission-to-add']?.value)
                   "
                   class="space-x-1 space-y-1"
                 >
@@ -378,11 +382,11 @@
                     class="px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:outline-none"
                   >
                     <option
-                      v-for="permission in ALL_PERMISSIONS"
-                      :key="permission"
-                      :disabled="role.permissions.includes(permission)"
+                      v-for="permission in Object.entries(Permission)"
+                      :key="permission[1]"
+                      :disabled="role.permissions.includes(permission[1])"
                     >
-                      {{ permission }}
+                      {{ t(`permission${permission[1]}`) }}
                     </option>
                   </select>
                   <button

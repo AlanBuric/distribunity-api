@@ -9,8 +9,36 @@ import { getUserById } from './service.js';
 import getDatabase from '../../services/database.js';
 import { logoutUser } from '../session/controller.js';
 import getLoggingPrefix from '../../utils/logging.js';
-import { matchedData } from 'express-validator';
+import { matchedData, type Meta } from 'express-validator';
 import { verifyPassword } from '../session/service.js';
+
+const lowercaseRegEx = /[a-z]/;
+const uppercaseRegEx = /[A-Z]/;
+const numberRegEx = /[0-9]/;
+const symbolRegEx = /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
+
+function getPasswordProblem(password: string, email?: string) {
+  if (!numberRegEx.test(password)) return 'Password must include a number';
+  if (!symbolRegEx.test(password)) return 'Password must include a symbol';
+  if (!lowercaseRegEx.test(password)) return 'Password must include a lowercase letter';
+  if (!uppercaseRegEx.test(password)) return 'Password must include an uppercase letter';
+
+  if (email) {
+    const user = email.split('@')[0].toLowerCase();
+
+    if (password.toLowerCase().includes(user)) return 'Password must not include email username';
+  }
+
+  return null;
+}
+
+export function validatePassword(input: string, meta: Meta) {
+  const error = getPasswordProblem(input, meta.req.body?.email);
+
+  if (error) throw new Error(error);
+
+  return true;
+}
 
 export async function getSelfUser(
   _request: Request,

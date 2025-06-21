@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import useAuthStore from './auth.js';
 import { AuthState, LocalStorage, type LanguageTag } from '@/types.js';
+import { identity } from '@/scripts/shared.js';
 
 export const availableLanguages: ReadonlyArray<[LanguageTag, string]> = [
   ['en-US', 'English (US)'],
@@ -35,13 +36,16 @@ const useGlobalStore = defineStore('global', () => {
    * 2. The one stored in localStorage,
    * 3. Default one used by the browser or system.
    */
-  function loadPreferredTheme() {
-    const user = useAuthStore().user;
-    const newTheme =
-      ((user.authState == AuthState.LoggedIn && user.theme) ??
-        localStorage.getItem('theme') ??
-        (window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark' : 'light')) ||
-      'light';
+  async function loadPreferredTheme() {
+    const auth = useAuthStore();
+
+    await auth.authReady;
+
+    const newTheme = [
+      auth.state == AuthState.LoggedIn && auth.user.theme,
+      localStorage.getItem(LocalStorage.THEME),
+      window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark' : 'light',
+    ].find(identity) as string;
 
     setTheme(newTheme);
   }
@@ -53,7 +57,8 @@ const useGlobalStore = defineStore('global', () => {
       ),
     );
 
-    return availableLanguages.find(([tag]) => potentialMatches.has(tag))?.[0] ?? defaultLanguage;
+    language.value =
+      availableLanguages.find(([tag]) => potentialMatches.has(tag))?.[0] ?? defaultLanguage;
   }
 
   loadPreferredTheme();

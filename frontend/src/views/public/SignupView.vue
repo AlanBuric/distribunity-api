@@ -1,10 +1,8 @@
 <script lang="ts" setup>
   import { ref, watch } from 'vue';
   import { getPasswordStrength, type PasswordStrength } from '@/scripts/password-policy';
-  import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-  import { auth, database } from '@/firebase/init';
-  import { setDoc, doc } from 'firebase/firestore';
   import { useRouter } from 'vue-router';
+  import axios from 'axios';
 
   type LoginStateMessage = {
     message: string;
@@ -103,34 +101,14 @@
       };
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email.value,
-          password.value,
-        );
-
-        loginStateMessage.value.message = 'User creation succeeded.';
-
-        await setDoc(doc(database, 'users', userCredential.user.uid), {
-          firstName: firstName.value,
-          lastName: lastName.value,
-          theme: 'dark',
-          language: 'en-US',
-          organizations: [],
-          joined: Date.now(),
-        });
+        await axios.post('/api/register', { email: email.value, password: password.value });
 
         loginStateMessage.value = {
-          message:
-            "Your user profile is ready. If you're still seeing this message, refresh the page and visit the Dashboard.",
+          message: 'Your account has been successfully created.',
           state: 'success',
         };
 
-        await updateProfile(userCredential.user, {
-          displayName: `${firstName.value} ${lastName.value}`,
-        }).catch(console.error);
-
-        router.push({ path: '/work' });
+        router.push({ path: '/login' });
       } catch (error) {
         handleUserRegistrationError(error);
       }

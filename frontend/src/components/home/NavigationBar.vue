@@ -3,6 +3,7 @@
   import ThemeSwitch from '../ThemeSwitch.vue';
   import { useRouter } from 'vue-router';
   import { AuthState } from '@/types';
+  import LanguageSwitch from '../LanguageSwitch.vue';
 
   defineProps<{ hideBlog?: boolean }>();
 
@@ -91,6 +92,7 @@
         </button>
       </template>
 
+      <LanguageSwitch />
       <ThemeSwitch />
     </div>
   </nav>

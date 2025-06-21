@@ -147,15 +147,15 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  const store = useAuthStore();
+  const auth = useAuthStore();
 
-  await store.authReady;
+  await auth.authReady;
 
-  if (store.state == AuthState.LoggedIn) {
+  if (auth.state == AuthState.LoggedIn) {
     if (to.path.toLowerCase().includes('/work/organization') && typeof to.params.id == 'string')
-      await store.loadOrganization(to.params.id);
+      await auth.loadOrganization(to.params.id);
 
-    if (to.meta.requiresOrganizationAdmin && !store.isOrganizationOwner())
+    if (to.meta.requiresOrganizationAdmin && !auth.isOrganizationOwner())
       return {
         path: '/work',
       };

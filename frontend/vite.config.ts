@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig, type ServerOptions } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 import vue from '@vitejs/plugin-vue';
 
 const commonServerOptions: ServerOptions = {
@@ -14,7 +15,7 @@ const commonServerOptions: ServerOptions = {
 };
 
 export default defineConfig({
-  plugins: [vue(), tailwindcss()],
+  plugins: [vue(), tailwindcss(), VueI18nPlugin({ strictMessage: false })],
   preview: commonServerOptions,
   server: commonServerOptions,
   resolve: {

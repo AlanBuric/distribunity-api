@@ -1,17 +1,17 @@
 <template>
   <section class="bg-cover bg-center bg-no-repeat">
-    <div class="bg-white bg-opacity-80 backdrop-blur-sm px-5 py-6 max-w-lg md:pb-32 lg:pb-48 xl:pb-72 dark:bg-gray-800 dark:bg-opacity-80">
+    <div
+      class="bg-white bg-opacity-80 backdrop-blur-sm px-5 py-6 max-w-lg md:pb-32 lg:pb-48 xl:pb-72 dark:bg-gray-800 dark:bg-opacity-80"
+    >
       <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-        It's time to ditch the spreadsheets and pen & paper.
+        {{ $t('introTitle') }}
       </h2>
       <p class="text-xl mb-4 text-gray-700 dark:text-gray-300">
-        <b>Distribunity</b> takes care of all the inventory changes, details and item tracking of your business in one place.
+        <b>Distribunity</b>
+        {{ $t('introDescription') }}
       </p>
-      <RouterLink
-        class="inline-block text-lg fancy-button"
-        to="/signup"
-      >
-        Sign up for free
+      <RouterLink class="inline-block text-lg fancy-button" to="/signup">
+        {{ $t('signUpForFree') }}
       </RouterLink>
     </div>
   </section>
@@ -22,3 +22,23 @@
     background: center url('@/assets/inventory-background.webp');
   }
 </style>
+
+<i18n>
+{
+  "en-US": {
+    "introTitle": "It's time to ditch the spreadsheets and pen & paper.",
+    "introDescription": "takes care of all the inventory changes, details and item tracking of your business in one place.",
+    "signUpForFree": "Sign up for free"
+  },
+  "hr-HR": {
+    "introTitle": "Vrijeme je da se riješite proračunskih tablica i papira.",
+    "introDescription": "se brine za sve promjene u skladištu, detaljima i praćenju robe.",
+    "signUpForFree": "Besplatno stvorite novi račun"
+  },
+  "it-IT": {
+    "introTitle": "È ora di abbandonare i fogli di calcolo e la carta.",
+    "introDescription": "si occupa di tutte le modifiche all'inventario, dei dettagli e del monitoraggio degli articoli della tua attività in un unico posto.",
+    "signUpForFree": "Iscriviti gratis"
+  }
+}
+</i18n>

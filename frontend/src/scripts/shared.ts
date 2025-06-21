@@ -61,3 +61,7 @@ export function navigateInput(event) {
 }
 
 export const NO_PERMISSIONS_MESSAGE = "You don't have the permission to do that.";
+
+export function identity<T>(value: T) {
+  return value;
+}

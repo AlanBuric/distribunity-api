@@ -10,30 +10,49 @@
   <section class="flex flex-col-reverse md:flex-row items-center justify-evenly p-5">
     <ModalPopup v-if="showNewsletterForm">
       <NewsletterForm>
-        <button @click.prevent="showNewsletterForm = false" class="px-6 py-3 font-medium bg-gray-100 text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 focus:outline-none">
+        <button
+          @click.prevent="showNewsletterForm = false"
+          class="px-6 py-3 font-medium bg-gray-100 text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 focus:outline-none"
+        >
           Close
         </button>
       </NewsletterForm>
     </ModalPopup>
-    <img
-      src="@/assets/phone-example.png"
-      alt="Phone Example"
-      class="h-[30em] max-md:hidden"
-    >
+    <img src="@/assets/phone-example.png" alt="Phone Example" class="h-[30em] max-md:hidden" />
     <div class="text-center lg:text-left">
       <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-        Coming soon to your Desktop and Mobile platforms!
+        {{ $t('comingSoonTitle') }}
       </h2>
       <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
-        We're planning to port Distribunity as a standalone installed application for your devices.
+        {{ $t('comingSoonDescription') }}
       </p>
       <button
         class="text-lg fancy-button"
         title="Sign up for our newsletter"
         @click="showNewsletterForm = !showNewsletterForm"
       >
-        Notify me when it happens
+        {{ $t('notifyMe') }}
       </button>
     </div>
   </section>
 </template>
+
+<i18n>
+{
+  "en-US": {
+    "comingSoonTitle": "Coming soon to your Desktop and Mobile platforms!",
+    "comingSoonDescription": "We're planning to port Distribunity as a standalone installed application for your devices.",
+    "notifyMe": "Notify me when it happens"
+  },
+  "hr-HR": {
+    "comingSoonTitle": "Uskoro na vašim desktop i mobilnim platformama!",
+    "comingSoonDescription": "Planiramo prenijeti Distribunity kao samostalnu aplikaciju za vaše uređaje.",
+    "notifyMe": "Obavijesti me kad bude dostupno"
+  },
+  "it-IT": {
+    "comingSoonTitle": "Presto disponibile su Desktop e Mobile!",
+    "comingSoonDescription": "Abbiamo in programma di portare Distribunity come applicazione installabile per i tuoi dispositivi.",
+    "notifyMe": "Avvisami quando sarà disponibile"
+  }
+}
+</i18n>

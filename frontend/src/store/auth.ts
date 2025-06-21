@@ -6,7 +6,7 @@ import {
   Permission,
   type User,
 } from '@/types';
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import useGlobalStore from './global';
@@ -28,6 +28,7 @@ const useAuthStore = defineStore('auth', () => {
   const currentOrganization = ref<AdaptedSelfOrganization>();
 
   let resolveReady: (() => void) | null = null;
+
   const authReady = new Promise<void>((resolve) => {
     resolveReady = resolve;
   });
@@ -50,7 +51,11 @@ const useAuthStore = defineStore('auth', () => {
         user.value = data;
         state.value = AuthState.LoggedIn;
       })
-      .catch(() => (state.value = AuthState.LoggedOut));
+      .catch((error: AxiosError) => {
+        state.value = AuthState.LoggedOut;
+
+        if (error?.status == 401) localStorage.removeItem(LocalStorage.ACCESS_TOKEN);
+      });
 
     useGlobalStore().loadPreferredTheme();
     useGlobalStore().loadPreferredLanguage();
