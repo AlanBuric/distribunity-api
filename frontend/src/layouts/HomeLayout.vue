@@ -28,6 +28,6 @@
   <div class="flex flex-col items-center h-full">
     <HomeNavigationBar class="top-bar" />
     <RouterView :style="{ marginTop: routerViewMarginTop }" />
-    <HomeFooter class="flex-1 mt-4 w-full" />
+    <HomeFooter />
   </div>
 </template>
