@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import useAuthStore from './auth.js';
-import { AuthState, LocalStorage, type LanguageTag } from '@/types.js';
+import { AuthState, LocalStorage, type LanguageTag, type Theme } from '@/types.js';
 import { identity } from '@/scripts/shared.js';
 
 export const availableLanguages: ReadonlyArray<[LanguageTag, string]> = [
@@ -12,6 +12,14 @@ export const availableLanguages: ReadonlyArray<[LanguageTag, string]> = [
 
 export const defaultLanguage = availableLanguages[0][0];
 
+export function getSystemTheme(): Theme {
+  return window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark' : 'light';
+}
+
+function getValidTheme(theme: any): Theme {
+  return theme == 'dark' ? 'dark' : 'light';
+}
+
 /**
  * Manages global states available regardless of whether the user is authenticated or not.
  */
@@ -19,7 +27,7 @@ const useGlobalStore = defineStore('global', () => {
   const theme = ref('light');
   const language = ref<LanguageTag>('en-US');
 
-  function setTheme(newTheme: string) {
+  function setTheme(newTheme: Theme) {
     theme.value = newTheme;
     localStorage.setItem(LocalStorage.THEME, theme.value);
 
@@ -46,11 +54,11 @@ const useGlobalStore = defineStore('global', () => {
 
     await auth.authReady;
 
-    const newTheme = [
-      auth.state == AuthState.LoggedIn && auth.user.theme,
-      localStorage.getItem(LocalStorage.THEME),
-      window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark' : 'light',
-    ].find(identity) as string;
+    const newTheme: Theme = [
+      getValidTheme(auth.state == AuthState.LoggedIn && auth.user.theme),
+      getValidTheme(localStorage.getItem(LocalStorage.THEME)),
+      getSystemTheme(),
+    ].find(identity) as Theme;
 
     setTheme(newTheme);
   }

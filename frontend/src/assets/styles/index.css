@@ -7,7 +7,13 @@
 }
 
 .fancy-button {
-  @apply bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-bold px-6 py-3 rounded-lg shadow-md hover:shadow-md transition-transform transform hover:scale-105 hover:to-indigo-500;
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium 
+  transition-colors focus-visible:outline-none focus-visible:ring-2 
+  focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:opacity-50 
+  disabled:pointer-events-none bg-black dark:bg-gray-700 text-white 
+  dark:text-white hover:bg-gray-700 dark:hover:bg-gray-900 border-1
+  dark:border-gray-600
+  h-10 px-4 py-2;
 }
 
 :root {
@@ -131,3 +137,26 @@ button {
     width: 15px;
   }
 } */
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-gray-600);
+  border-radius: 5px;
+  border: 2px solid var(--color-gray-600);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}

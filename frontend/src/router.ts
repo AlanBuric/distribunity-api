@@ -22,7 +22,7 @@ const router = createRouter({
       path: '',
       alias: ['/home'],
       name: 'home-view',
-      component: () => import('@/pages/HomePage.vue'),
+      component: () => import('@/layouts/HomeLayout.vue'),
       children: [
         {
           path: '',
@@ -80,7 +80,7 @@ const router = createRouter({
     {
       path: '/work/',
       name: 'work',
-      component: () => import('@/pages/CommonAuthPage.vue'),
+      component: () => import('@/layouts/CommonAuthPage.vue'),
       meta: {
         requiresAuth: true,
       },
@@ -124,7 +124,7 @@ const router = createRouter({
     {
       path: '/work/organization/:id/inventories',
       name: 'organization-inventories',
-      component: () => import('@/pages/InventoryPage.vue'),
+      component: () => import('@/layouts/InventoryPage.vue'),
       meta: {
         title: 'Distribunity | Organization inventories',
         requiresAuth: true,
@@ -138,7 +138,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('@/pages/NotFoundPage.vue'),
+      component: () => import('@/layouts/NotFoundPage.vue'),
       meta: {
         title: 'Page not found',
       },

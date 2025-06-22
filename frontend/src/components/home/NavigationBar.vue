@@ -19,21 +19,21 @@
   <nav class="flex flex-1 flex-wrap items-center justify-between px-4 py-2">
     <div class="flex items-center gap-3">
       <RouterLink
-        class="text-lg font-medium text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
+        class="text-lg text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
         to="/"
         exact
       >
         Home
       </RouterLink>
       <RouterLink
-        class="text-lg font-medium text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
+        class="text-lg text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
         to="/resources"
       >
         Resources
       </RouterLink>
       <RouterLink
         v-if="!hideBlog"
-        class="text-lg font-medium text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
+        class="text-lg text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
         :to="{ name: 'blog', query: { page: 1 } }"
       >
         Blog
@@ -46,24 +46,19 @@
           name="search"
           placeholder="Search..."
           type="search"
-          class="bg-gray-100 dark:bg-gray-700 text-black dark:text-white placeholder-gray-500 appearance-none dark:placeholder-gray-400 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 pl-8 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-active-link"
-        />
-        <input
-          type="submit"
-          value="Submit"
-          class="bg-gray-100 dark:bg-gray-700 text-black dark:text-white border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:hover:text-gray-200 hover:bg-gray-200"
+          class="bg-gray-100 dark:bg-gray-700 text-black dark:text-white placeholder-gray-500 appearance-none dark:placeholder-gray-400 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 pl-8 focus:bg-gray-100 dark:focus:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-active-link"
         />
       </form>
 
       <template v-if="auth.state == AuthState.LoggedOut">
         <RouterLink
-          class="text-lg font-medium text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
+          class="text-lg text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
           to="/login"
         >
           Log in
         </RouterLink>
         <RouterLink
-          class="text-lg font-medium text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
+          class="text-lg text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
           to="/signup"
         >
           Sign up
@@ -71,19 +66,19 @@
       </template>
       <template v-else>
         <RouterLink
-          class="text-lg font-medium text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
+          class="text-lg text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
           to="/work"
         >
           Dashboard
         </RouterLink>
         <RouterLink
-          class="text-lg font-medium text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
+          class="text-lg text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
           to="/work/settings"
         >
           Settings
         </RouterLink>
         <button
-          class="text-lg font-medium text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
+          class="text-lg text-gray-700 dark:text-gray-300 dark:hover:text-active-link"
           @click.prevent="logoutAndRefresh()"
         >
           Sign out

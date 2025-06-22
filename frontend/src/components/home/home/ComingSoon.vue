@@ -49,7 +49,7 @@
   },
   "hr-HR": {
     "comingSoonTitle": "Uskoro na vašim desktop i mobilnim platformama!",
-    "comingSoonDescription": "Planiramo prenijeti Distribunity kao samostalnu aplikaciju za vaše uređaje.",
+    "comingSoonDescription": "Planiramo razviti Distribunity kao samostalnu aplikaciju za vaše uređaje.",
     "notifyMe": "Obavijesti me kad bude dostupno"
   },
   "it-IT": {

@@ -7,7 +7,7 @@
 
   const route = useRoute();
 
-  var postsPerPage = 10;
+  const postsPerPage = 10;
   const posts = ref<BlogPost[]>([
     {
       id: '1',
@@ -36,16 +36,16 @@
 </script>
 
 <template>
-  <main class="max-w-screen-2xl w-full mx-auto p-8 flex flex-col items-center bg-gray-200 dark:bg-gray-800 rounded-lg">
+  <main
+    class="max-w-screen-xl w-full mx-auto p-8 flex flex-col items-center bg-gray-200 dark:bg-gray-800 rounded-lg"
+  >
     <BlogError
-      v-if="!doesPageExist()" error-message="Oops! This page doesn't exist."
+      v-if="!doesPageExist()"
+      error-message="Oops! This page doesn't exist."
       redirect-href="/blog?page=1"
       subtitle="Let's take you back to the beginning."
       class="text-center mt-12"
     />
-    <BlogPage
-      v-else :posts="posts" :get-page-count="getPageCount"
-      :route="route"
-    />
+    <BlogPage v-else :posts="posts" :get-page-count="getPageCount" :route="route" />
   </main>
 </template>

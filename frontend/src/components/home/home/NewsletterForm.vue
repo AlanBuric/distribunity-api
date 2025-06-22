@@ -34,7 +34,7 @@
         <div class="mb-4">
           <input
             v-model="email"
-            class="custom-input w-full p-3 border text-gray-700 dark:text-gray-300 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-teal-400"
+            class="custom-input w-full px-2 py-1.5 border text-gray-700 dark:text-gray-300 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-teal-400"
             type="email"
             name="email"
             autocomplete="email"

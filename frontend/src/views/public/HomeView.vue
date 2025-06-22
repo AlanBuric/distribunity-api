@@ -7,11 +7,19 @@
 </script>
 
 <template>
-  <main class="flex flex-col gap-5 max-w-screen-2xl w-full">
-    <HomeIntro class="bg-gray-100 shadow-sm overflow-hidden dark:bg-gray-800 2xl:rounded-xl" />
-    <SolutionInfo class="bg-gray-100 shadow-sm overflow-hidden dark:bg-gray-800 2xl:rounded-xl" />
-    <ComingSoon class="bg-gray-100 shadow-sm overflow-hidden dark:bg-gray-800 2xl:rounded-xl" />
-    <NewsletterForm class="bg-gray-100 shadow-sm overflow-hidden dark:bg-gray-800 2xl:rounded-xl" />
-    <FAQOffer class="bg-gray-100 shadow-sm overflow-hidden dark:bg-gray-800 2xl:rounded-xl" />
+  <main class="flex flex-col gap-5 max-w-screen-xl w-full">
+    <HomeIntro class="overflow-hidden border-gray-300 dark:border-gray-700 border-1 rounded-md" />
+    <SolutionInfo
+      class="bg-white overflow-hidden dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md"
+    />
+    <ComingSoon
+      class="bg-white overflow-hidden dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md"
+    />
+    <NewsletterForm
+      class="bg-white overflow-hidden dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md"
+    />
+    <FAQOffer
+      class="bg-white overflow-hidden dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md"
+    />
   </main>
 </template>

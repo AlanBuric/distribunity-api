@@ -7,7 +7,7 @@
 <template>
   <section class="bg-cover bg-center bg-no-repeat">
     <div
-      class="bg-white bg-opacity-80 backdrop-blur-sm px-5 py-6 max-w-lg md:pb-32 lg:pb-48 xl:pb-72 dark:bg-gray-800 dark:bg-opacity-80"
+      class="bg-white bg-opacity-80 dark:bg-gray-900 dark:bg-opacity-80 backdrop-blur-sm px-5 py-6 max-w-lg md:pb-32 lg:pb-48 xl:pb-72"
     >
       <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100">
         {{ t('introTitle') }}

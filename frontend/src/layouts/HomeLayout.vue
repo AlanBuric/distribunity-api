@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { RouterView } from 'vue-router';
   import HomeNavigationBar from '@/components/home/HomeNavigationBar.vue';
-  import MainFooter from '@/components/home/MainFooter.vue';
+  import HomeFooter from '@/components/home/HomeFooter.vue';
   import { onMounted, onUnmounted, ref } from 'vue';
 
   const routerViewMarginTop = ref('0px');
@@ -29,6 +29,6 @@
   <div class="flex flex-col items-center h-full">
     <HomeNavigationBar class="top-bar" />
     <RouterView :style="{ marginTop: routerViewMarginTop }" />
-    <MainFooter class="flex-1 mt-4 w-full" />
+    <HomeFooter class="flex-1 mt-4 w-full" />
   </div>
 </template>
