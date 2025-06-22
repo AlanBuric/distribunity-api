@@ -53,3 +53,7 @@ export const NO_PERMISSIONS_MESSAGE = "You don't have the permission to do that.
 export function identity<T>(value: T) {
   return value;
 }
+
+export function pickRandom(array: string[]): string {
+  return array[Math.floor(Math.random() * array.length)];
+}

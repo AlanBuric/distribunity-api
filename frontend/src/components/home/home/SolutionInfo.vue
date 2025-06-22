@@ -28,7 +28,7 @@
     "learnMore": "Learn more"
   },
   "hr-HR": {
-    "title": "Sustavi za upravljanje zalihama nužni su dio svakog poslovanja.",
+    "title": "Sustavi za upravljanje skladištima nužni su dio svakog poslovanja.",
     "description": "Od web trgovina do velikih skladišta, cilj Distribunityja je digitalizirati proces praćenja i vođenja zaliha, omogućujući pristup odabranim zaposlenicima u bilo koje vrijeme i na bilo kojem mjestu.",
     "learnMore": "Saznajte više"
   },

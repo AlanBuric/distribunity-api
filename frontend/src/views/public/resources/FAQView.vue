@@ -3,7 +3,7 @@
     {
       question: 'What is Distribunity?',
       answer:
-        'Distribunity is a web application designed to manage and monitor the inventory of a company\'s warehouse. It simplifies tracking by maintaining a single source of truth for inventory data.',
+        "Distribunity is a web application designed to manage and monitor the inventory of a company's warehouse. It simplifies tracking by maintaining a single source of truth for inventory data.",
     },
     {
       question: 'How does Distribunity differ from traditional methods?',
@@ -48,21 +48,25 @@
     {
       question: 'Where can I report issues for Distribunity?',
       answer:
-        'Support is available through documentation and user guides on the website, you can contact the support team for further assistance, and report errors at our GitHub repository\'s Issues tab; find the links at the bottom of the page.',
+        "Support is available through documentation and user guides on the website, you can contact the support team for further assistance, and report errors at our GitHub repository's Issues tab; find the links at the bottom of the page.",
     },
   ];
 </script>
 <template>
-  <main class="max-w-screen-xl w-full mx-auto p-8 flex flex-col items-center dark:bg-gray-800 bg-gray-100 text-gray-900 dark:text-white rounded-lg">
+  <main
+    class="max-w-screen-2xl w-full mx-auto p-8 flex flex-col items-center dark:bg-gray-800 bg-gray-100 text-gray-900 dark:text-white rounded-lg"
+  >
     <header class="flex justify-between items-center px-6 py-4 border-b dark:border-gray-700">
-      <h1 class="text-3xl font-bold">
-        Distribunity FAQ
-      </h1>
+      <h1 class="text-3xl font-bold">Distribunity FAQ</h1>
     </header>
 
     <div class="px-6 py-8 w-full mx-auto">
       <ol>
-        <li v-for="(faq, index) in content" :key="index" class="mb-8 list-decimal list-inside marker:text-xl">
+        <li
+          v-for="(faq, index) in content"
+          :key="index"
+          class="mb-8 list-decimal list-inside marker:text-xl"
+        >
           <h2 class="text-xl font-semibold mb-2 inline-block">
             {{ faq.question }}
           </h2>

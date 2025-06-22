@@ -11,7 +11,7 @@
     @click="store.nextTheme"
     class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full p-1"
   >
-    <MoonIcon v-if="store.theme == 'dark'" width="1.4em" height="1.4em" class="fill-gray-300" />
-    <SunIcon v-else width="1.4em" height="1.4em" class="fill-gray-800" />
+    <MoonIcon v-if="store.theme == 'dark'" class="w-5 h-5 fill-gray-300" />
+    <SunIcon v-else class="w-5 h-5 fill-gray-800" />
   </button>
 </template>

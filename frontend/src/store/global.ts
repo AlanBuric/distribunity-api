@@ -5,14 +5,14 @@ import { AuthState, LocalStorage, type LanguageTag, type Theme } from '@/types.j
 import { identity } from '@/scripts/shared.js';
 
 export const availableLanguages: ReadonlyArray<[LanguageTag, string]> = [
-  ['en-US', 'English (US)'],
+  ['en-US', 'English'],
   ['hr-HR', 'Hrvatski'],
   ['it-IT', 'Italiano'],
 ];
 
 export const defaultLanguage = availableLanguages[0][0];
 
-export function getSystemTheme(): Theme {
+function getSystemTheme(): Theme {
   return window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark' : 'light';
 }
 
@@ -24,7 +24,7 @@ function getValidTheme(theme: any): Theme {
  * Manages global states available regardless of whether the user is authenticated or not.
  */
 const useGlobalStore = defineStore('global', () => {
-  const theme = ref('light');
+  const theme = ref<Theme>('light');
   const language = ref<LanguageTag>('en-US');
 
   function setTheme(newTheme: Theme) {
@@ -55,7 +55,7 @@ const useGlobalStore = defineStore('global', () => {
     await auth.authReady;
 
     const newTheme: Theme = [
-      getValidTheme(auth.state == AuthState.LoggedIn && auth.user.theme),
+      auth.state == AuthState.LoggedIn && getValidTheme(auth.user.theme),
       getValidTheme(localStorage.getItem(LocalStorage.THEME)),
       getSystemTheme(),
     ].find(identity) as Theme;
@@ -64,15 +64,12 @@ const useGlobalStore = defineStore('global', () => {
   }
 
   function loadPreferredLanguage() {
-    const potentialMatches = new Set(
-      [localStorage.getItem(LocalStorage.LOCALE), ...window.navigator.languages].map(
-        (code) => code,
-      ),
-    );
+    const potentialMatches = new Set(availableLanguages.map(([tag]) => tag));
+    const found = [localStorage.getItem(LocalStorage.LOCALE), ...window.navigator.languages]
+      .map(identity)
+      .find((tag) => potentialMatches.has(tag as any)) as any;
 
-    setLanguage(
-      availableLanguages.find(([tag]) => potentialMatches.has(tag))?.[0] ?? defaultLanguage,
-    );
+    setLanguage(found ?? defaultLanguage);
   }
 
   loadPreferredTheme();

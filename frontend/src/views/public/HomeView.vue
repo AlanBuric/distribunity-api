@@ -7,7 +7,7 @@
 </script>
 
 <template>
-  <main class="flex flex-col gap-5 max-w-screen-xl w-full">
+  <main class="flex flex-col gap-5 max-w-screen-2xl w-full">
     <HomeIntro class="overflow-hidden border-gray-300 dark:border-gray-700 border-1 rounded-md" />
     <SolutionInfo
       class="bg-white overflow-hidden dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md"

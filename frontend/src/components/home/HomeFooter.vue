@@ -9,16 +9,14 @@
 
 <template>
   <footer
-    class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-300 flex flex-col items-center justify-between p-8 -z-10"
+    class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-300 flex flex-col items-center justify-between p-8"
   >
     <div
       id="footer-links"
-      class="max-w-screen-xl w-full flex flex-col md:flex-row justify-between mb-16 space-y-8 md:space-y-0"
+      class="max-w-screen-2xl w-full flex flex-col md:flex-row justify-between mb-16 space-y-8 md:space-y-0"
     >
       <section>
-        <h3 class="text-xl font-semibold text-black dark:text-black dark:text-gray-100 mb-4">
-          Legal
-        </h3>
+        <h3 class="text-xl font-semibold text-black dark:text-gray-100 mb-4">Legal</h3>
         <ul class="space-y-2">
           <li>
             <RouterLink
@@ -54,41 +52,9 @@
           </li>
         </ul>
       </section>
-
-      <section>
-        <h3 class="text-xl font-semibold text-black dark:text-gray-100 mb-4">External websites</h3>
-        <ul class="space-y-2">
-          <li>
-            <a
-              href="https://github.com/AlanBuric/distribunity-firebase"
-              target="_blank"
-              class="group flex space-x-3 items-center"
-            >
-              <GithubIcon class="w-8 h-8 fill-white" />
-              <p class="text-gray-400 group-hover:text-teal-400 transition duration-300">
-                Source code on GitHub
-              </p>
-            </a>
-          </li>
-        </ul>
-      </section>
-
-      <section class="max-w-64">
-        <h3 class="text-xl font-semibold text-black dark:text-gray-100 mb-4">Contacts</h3>
-        <a
-          href="https://github.com/AlanBuric/distribunity-firebase/issues"
-          target="_blank"
-          class="group flex space-x-3 items-center"
-        >
-          <GithubIcon class="w-8 h-8 fill-white" />
-          <p class="flex-1 text-gray-400 group-hover:text-teal-400 transition duration-300">
-            Report issues or request new features
-          </p>
-        </a>
-      </section>
     </div>
 
-    <section class="max-w-screen-xl w-full flex justify-between">
+    <section class="max-w-screen-2xl w-full flex justify-between">
       <div class="flex items-center space-x-6">
         <Logo class="w-10 h-10" />
         <p class="text-gray-400">
@@ -97,8 +63,8 @@
           }}
         </p>
       </div>
-      <div class="flex items-center">
-        <GithubIcon class="w-8 h-8 fill-white" />
+      <div class="flex items-center gap-x-2">
+        <GithubIcon class="w-7 h-7 fill-black dark:fill-white" />
         <span>{{ t('gitHubInfo') }}</span>
       </div>
     </section>

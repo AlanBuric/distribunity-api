@@ -5,6 +5,7 @@ import router from '@/router';
 import { createPinia } from 'pinia';
 import { createI18n } from 'vue-i18n';
 import useGlobalStore, { availableLanguages } from './store/global';
+import { pickRandom } from './scripts/shared';
 
 const application = createApp(Application).use(router).use(createPinia());
 
@@ -30,6 +31,23 @@ const i18n = createI18n({
       previous: 'Previous',
       backToTop: 'Back to top',
       next: 'Next',
+      homeIntroTitle: () =>
+        pickRandom([
+          "It's time to ditch the spreadsheets and pen & paper.",
+          'Ditch the chaos. Master your inventory.',
+        ]),
+      homeIntroDescription: () =>
+        pickRandom([
+          'Distribunity takes care of all the inventory changes, details and item tracking of your business in one place.',
+          'Stop losing track of stock with scattered spreadsheets. Distribunity centralizes your entire inventory operation—from receiving to shipping—in one intelligent platform.',
+        ]),
+      homeSignUp: () =>
+        pickRandom([
+          'Sign up for free',
+          'See it in action',
+          'Get organized today',
+          'Start your free trial',
+        ]),
     },
     'hr-HR': {
       home: 'Početna',
@@ -44,8 +62,22 @@ const i18n = createI18n({
       previous: 'Prijašnja',
       backToTop: 'Vrati me na vrh',
       next: 'Slijedeća',
+      homeIntroTitle: () =>
+        pickRandom(['Vrijeme je da se riješite proračunskih tablica i papira.']),
+      homeIntroDescription: () =>
+        pickRandom([
+          'Distribunity se brine za sve promjene u skladištu, detaljima i praćenju robe.',
+        ]),
+      homeSignUp: () => pickRandom(['Prijavite se besplatno']),
     },
-    'it-IT': {},
+    'it-IT': {
+      homeIntroTitle: () => pickRandom(['È ora di abbandonare i fogli di calcolo e la carta.']),
+      homeIntroDescription: () =>
+        pickRandom([
+          "Distribunity si occupa di tutte le modifiche all'inventario, dei dettagli e del monitoraggio degli articoli della tua attività in un unico posto.",
+        ]),
+      homeSignUp: () => pickRandom(['Iscriviti gratis']),
+    },
   },
 });
 

@@ -10,8 +10,7 @@
     const topBarElement = document.querySelector('.top-bar') as HTMLElement | null;
 
     if (topBarElement) {
-      const topBarHeight = topBarElement.offsetHeight;
-      routerViewMarginTop.value = `${topBarHeight + 20}px`;
+      routerViewMarginTop.value = `${topBarElement.offsetHeight + 20}px`;
     }
   };
 

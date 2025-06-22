@@ -10,7 +10,7 @@
 </script>
 
 <template>
-  <section class="flex flex-col-reverse md:flex-row items-center justify-evenly p-5">
+  <section class="flex p-5 flex-1">
     <ModalPopup v-if="showNewsletterForm">
       <NewsletterForm>
         <button
@@ -21,8 +21,7 @@
         </button>
       </NewsletterForm>
     </ModalPopup>
-    <img src="@/assets/phone-example.png" alt="Phone Example" class="h-[30em] max-md:hidden" />
-    <div class="text-center lg:text-left">
+    <div class="">
       <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
         {{ t('comingSoonTitle') }}
       </h2>

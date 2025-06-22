@@ -37,7 +37,7 @@
 
 <template>
   <main
-    class="max-w-screen-xl w-full mx-auto p-8 flex flex-col items-center bg-gray-200 dark:bg-gray-800 rounded-lg"
+    class="max-w-screen-2xl w-full mx-auto p-8 flex flex-col items-center bg-gray-200 dark:bg-gray-800 rounded-lg"
   >
     <BlogError
       v-if="!doesPageExist()"

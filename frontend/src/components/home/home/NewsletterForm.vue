@@ -54,7 +54,7 @@
             {{ t('agreementText') }}
           </label>
         </div>
-        <div class="space-x-3">
+        <div class="flex gap-x-3 justify-center">
           <button type="submit" class="text-lg fancy-button">{{ t('subscribe') }}</button>
           <slot />
         </div>
