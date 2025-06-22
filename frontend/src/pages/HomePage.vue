@@ -1,6 +1,6 @@
-<script lang="ts" setup>
+<script setup lang="ts">
   import { RouterView } from 'vue-router';
-  import TopBar from '@/components/home/TopBar.vue';
+  import HomeNavigationBar from '@/components/home/HomeNavigationBar.vue';
   import MainFooter from '@/components/home/MainFooter.vue';
   import { onMounted, onUnmounted, ref } from 'vue';
 
@@ -27,7 +27,7 @@
 
 <template>
   <div class="flex flex-col items-center h-full">
-    <TopBar class="top-bar" />
+    <HomeNavigationBar class="top-bar" />
     <RouterView :style="{ marginTop: routerViewMarginTop }" />
     <MainFooter class="flex-1 mt-4 w-full" />
   </div>

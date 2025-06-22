@@ -1,6 +1,10 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-active-link: #0099ff;
+}
 
 .fancy-button {
   @apply bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-bold px-6 py-3 rounded-lg shadow-md hover:shadow-md transition-transform transform hover:scale-105 hover:to-indigo-500;
@@ -19,7 +23,6 @@
   --page-width-max: 1500px;
   --page-width: min(var(--page-width-max), 100%);
   --width-breakpoint: 992px;
-  --active-link: #0099ff;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -59,9 +62,21 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(25deg, #4bf0d4, #1692be, #3a55cf);
-  background-repeat: no-repeat;
   background-attachment: fixed;
+  /* Set the default font instead of overriding everything with the '*' selector */
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
 }
 
 #app,
@@ -79,19 +94,6 @@ body {
 *::after {
   text-overflow: ellipsis;
   box-sizing: border-box;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
   text-underline-offset: 2px;
 }
 
