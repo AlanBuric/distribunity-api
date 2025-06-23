@@ -118,113 +118,121 @@
 </script>
 
 <template>
-  <HomeNavigationBar />
-  <form
-    @submit.prevent="handleUserRegistration"
-    class="w-full max-w-sm bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md px-8 py-6"
-  >
-    <h2 class="text-3xl font-light text-center mb-6 text-gray-900 dark:text-gray-100">
-      Create an account
-    </h2>
+  <div class="w-full flex flex-col min-h-dvh dark:bg-gray-800">
+    <HomeNavigationBar />
+    <div class="flex-1 flex items-center justify-center -mt-8">
+      <form
+        @submit.prevent="handleUserRegistration"
+        class="w-full max-w-sm bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md px-8 py-6"
+      >
+        <h2 class="text-3xl font-light text-center mb-6 text-gray-900 dark:text-gray-100">
+          Create an account
+        </h2>
 
-    <label for="firstName" class="block font-semibold text-gray-700 dark:text-gray-300">
-      First name:
-    </label>
-    <input
-      v-model="firstName"
-      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
-      type="text"
-      name="firstName"
-      minlength="2"
-      maxlength="40"
-      placeholder="e.g. Amelia"
-      autocomplete="given-name"
-      required
-    />
+        <label for="firstName" class="block font-semibold text-gray-700 dark:text-gray-300">
+          First name:
+        </label>
+        <input
+          v-model="firstName"
+          class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+          type="text"
+          name="firstName"
+          minlength="2"
+          maxlength="40"
+          placeholder="e.g. Amelia"
+          autocomplete="given-name"
+          required
+        />
 
-    <label for="lastName" class="block font-semibold text-gray-700 dark:text-gray-300">
-      Last name:
-    </label>
-    <input
-      v-model="lastName"
-      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
-      type="text"
-      name="lastName"
-      minlength="2"
-      maxlength="40"
-      placeholder="e.g. Wilson"
-      autocomplete="family-name"
-    />
+        <label for="lastName" class="block font-semibold text-gray-700 dark:text-gray-300">
+          Last name:
+        </label>
+        <input
+          v-model="lastName"
+          class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+          type="text"
+          name="lastName"
+          minlength="2"
+          maxlength="40"
+          placeholder="e.g. Wilson"
+          autocomplete="family-name"
+        />
 
-    <label for="email" class="block font-semibold text-gray-700 dark:text-gray-300"> Email: </label>
-    <input
-      v-model="email"
-      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
-      type="email"
-      name="email"
-      placeholder="e.g. amelia.wilson@gmail.com"
-      autocomplete="email"
-      required
-    />
+        <label for="email" class="block font-semibold text-gray-700 dark:text-gray-300">
+          Email:
+        </label>
+        <input
+          v-model="email"
+          class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+          type="email"
+          name="email"
+          placeholder="e.g. amelia.wilson@gmail.com"
+          autocomplete="email"
+          required
+        />
 
-    <label for="password" class="block font-semibold text-gray-700 dark:text-gray-300">
-      Password:
-    </label>
-    <input
-      v-model="password"
-      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
-      type="password"
-      name="password"
-      minlength="6"
-      placeholder="New password"
-      autocomplete="new-password"
-      required
-    />
+        <label for="password" class="block font-semibold text-gray-700 dark:text-gray-300">
+          Password:
+        </label>
+        <input
+          v-model="password"
+          class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+          type="password"
+          name="password"
+          minlength="6"
+          placeholder="New password"
+          autocomplete="new-password"
+          required
+        />
 
-    <p id="password-strength" class="mb-4 text-gray-600 dark:text-gray-400">
-      Password strength:
-      <span class="font-light text-gray-700 dark:text-gray-100">{{ passwordStrength.title }}</span>
-    </p>
+        <p id="password-strength" class="mb-4 text-gray-600 dark:text-gray-400">
+          Password strength:
+          <span class="font-light text-gray-700 dark:text-gray-100">{{
+            passwordStrength.title
+          }}</span>
+        </p>
 
-    <label for="password-confirm" class="block font-semibold text-gray-700 dark:text-gray-300">
-      Confirm password:
-    </label>
-    <input
-      id="password-confirm"
-      v-model="confirmPassword"
-      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
-      type="password"
-      name="password-confirm"
-      placeholder="Confirm password"
-      autocomplete="off"
-      required
-    />
-    <p v-if="passwordsMatch" :class="['mb-4', passwordsMatch.classList]">
-      {{ passwordsMatch.feedback }}
-    </p>
+        <label for="password-confirm" class="block font-semibold text-gray-700 dark:text-gray-300">
+          Confirm password:
+        </label>
+        <input
+          id="password-confirm"
+          v-model="confirmPassword"
+          class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+          type="password"
+          name="password-confirm"
+          placeholder="Confirm password"
+          autocomplete="off"
+          required
+        />
+        <p v-if="passwordsMatch" :class="['mb-4', passwordsMatch.classList]">
+          {{ passwordsMatch.feedback }}
+        </p>
 
-    <input
-      type="submit"
-      value="Sign up"
-      class="fancy-button w-full mt-8"
-      :disabled="!isAllowedToSubmit()"
-    />
+        <input
+          type="submit"
+          value="Sign up"
+          class="fancy-button w-full mt-8"
+          :disabled="!isAllowedToSubmit()"
+        />
 
-    <p
-      v-if="loginStateMessage"
-      :class="{
-        'mt-4': true,
-        'text-yellow-400': loginStateMessage.state == 'processing',
-        'text-green-400': loginStateMessage.state == 'success',
-        'text-red-400': loginStateMessage.state == 'failure',
-      }"
-    >
-      {{ loginStateMessage.message }}
-    </p>
-    <ul v-else-if="!formIssues.length" class="mt-4 text-red-600">
-      <li v-for="(issue, index) in formIssues" :key="index">
-        {{ issue }}
-      </li>
-    </ul>
-  </form>
+        <p
+          v-if="loginStateMessage"
+          :class="{
+            'mt-4': true,
+            'text-yellow-400': loginStateMessage.state == 'processing',
+            'text-green-400': loginStateMessage.state == 'success',
+            'text-red-400': loginStateMessage.state == 'failure',
+          }"
+        >
+          {{ loginStateMessage.message }}
+        </p>
+        <ul v-else-if="!formIssues.length" class="mt-4 text-red-600">
+          <li v-for="(issue, index) in formIssues" :key="index">
+            {{ issue }}
+          </li>
+        </ul>
+      </form>
+    </div>
+  </div>
 </template>

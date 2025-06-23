@@ -29,7 +29,7 @@
 <template>
   <div class="w-full flex flex-col min-h-dvh dark:bg-gray-800">
     <HomeNavigationBar />
-    <div class="flex-1 flex items-center justify-center">
+    <div class="flex-1 flex items-center justify-center -mt-10">
       <form
         @submit.prevent="handleLoginSubmit"
         class="w-full max-w-sm self-center justify-self-center bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md px-8 py-6"
