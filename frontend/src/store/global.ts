@@ -5,7 +5,7 @@ import { AuthState, LocalStorage, type LanguageTag, type Theme } from '@/types.j
 import { identity } from '@/scripts/shared.js';
 
 export const availableLanguages: ReadonlyArray<[LanguageTag, string]> = [
-  ['en-US', 'English'],
+  ['en-US', 'English (US)'],
   ['hr-HR', 'Hrvatski'],
   ['it-IT', 'Italiano'],
 ];

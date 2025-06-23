@@ -3,7 +3,7 @@ import {
   AuthState,
   LocalStorage,
   type OrganizationSelfResponse,
-  Permission,
+  type PermissionId,
   type User,
 } from '@/types';
 import axios, { type AxiosError } from 'axios';
@@ -33,6 +33,23 @@ const useAuthStore = defineStore('auth', () => {
     resolveReady = resolve;
   });
 
+  /**
+   * First time login with credentials.
+   */
+  async function logIn(email: string, password: string) {
+    return axios
+      .post<{ accessToken: string; user: User }>('/api/login', { email, password })
+      .then(({ data }) => {
+        localStorage.setItem(LocalStorage.ACCESS_TOKEN, data.accessToken);
+        user.value = data.user;
+        state.value = AuthState.LoggedIn;
+      });
+  }
+
+  /**
+   * When the access token is already present, i.e. the user has logged in
+   * but they've refreshed the page or came back a few days later.
+   */
   async function tryLogIn() {
     const accessToken = localStorage.getItem(LocalStorage.ACCESS_TOKEN);
 
@@ -92,7 +109,7 @@ const useAuthStore = defineStore('auth', () => {
     );
   }
 
-  function hasPermission(permission: Permission) {
+  function hasPermission(permission: PermissionId) {
     return isOrganizationOwner() || currentOrganization.value?.permissions.has(permission);
   }
 
@@ -104,6 +121,7 @@ const useAuthStore = defineStore('auth', () => {
     authReady,
     currentOrganization,
     signOut,
+    logIn,
     tryLogIn,
     loadOrganization,
     isOrganizationOwner,

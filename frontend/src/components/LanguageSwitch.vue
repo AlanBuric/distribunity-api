@@ -6,13 +6,13 @@
   import { LocalStorage } from '@/types';
 
   const { locale } = useI18n();
-  const open = ref(false);
+  const isDropdownOpen = ref(false);
 
   function onClickOutside(event: MouseEvent) {
-    open.value = !!(event.target as HTMLElement).closest('.lang-dropdown');
+    isDropdownOpen.value = !!(event.target as HTMLElement).closest('.lang-dropdown');
   }
 
-  watch(open, (val) => {
+  watch(isDropdownOpen, (val) => {
     if (val) window.addEventListener('click', onClickOutside);
     else window.removeEventListener('click', onClickOutside);
   });
@@ -23,16 +23,16 @@
 <template>
   <div class="relative lang-dropdown inline-block">
     <button
-      class="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-      @click.stop="open = !open"
+      class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+      @click.stop="isDropdownOpen = !isDropdownOpen"
       title="Select language"
       aria-haspopup="listbox"
-      :aria-expanded="open"
+      :aria-expanded="isDropdownOpen"
     >
       <TranslationIcon class="w-5 h-5 fill-gray-700 dark:fill-gray-300" />
     </button>
     <ul
-      v-if="open"
+      v-if="isDropdownOpen"
       class="absolute right-0 mt-2 min-w-[8rem] bg-white dark:bg-gray-800 shadow-lg rounded-xl z-40 border border-gray-200 dark:border-gray-700"
       role="listbox"
     >
@@ -43,7 +43,7 @@
         :aria-selected="locale === value"
         @click="
           locale = value;
-          open = false;
+          isDropdownOpen = false;
         "
         tabindex="0"
         role="option"

@@ -63,10 +63,15 @@
           }}
         </p>
       </div>
-      <div class="flex items-center gap-x-2">
+      <a
+        class="flex items-center gap-x-2 group"
+        href="https://github.com/AlanBuric/distribunity-api"
+        target="_blank"
+        referrerpolicy="no-referrer"
+      >
         <GithubIcon class="w-7 h-7 fill-black dark:fill-white" />
-        <span>{{ t('gitHubInfo') }}</span>
-      </div>
+        <span class="group-hover:text-teal-400 transition duration-300">{{ t('gitHubInfo') }}</span>
+      </a>
     </section>
   </footer>
 </template>

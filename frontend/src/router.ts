@@ -60,7 +60,7 @@ const router = createRouter({
           meta: {
             title: 'Distribunity | Login',
             avoidIfAuthed: {
-              name: 'home',
+              name: 'work',
             },
           },
         },
@@ -69,9 +69,9 @@ const router = createRouter({
           name: 'signup',
           component: () => import('@/views/public/SignupView.vue'),
           meta: {
-            title: 'Distribunity | Signup',
+            title: 'Distribunity | Sign up',
             avoidIfAuthed: {
-              name: 'dashboard',
+              name: 'work',
             },
           },
         },
