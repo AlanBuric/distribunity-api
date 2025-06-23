@@ -13,7 +13,11 @@ export type Theme = (typeof supportedThemes)[number];
  */
 type LanguageTagFormat = `${Lowercase<string>}-${Uppercase<string>}`;
 
-export const supportedLanguages: LanguageTagFormat[] = ['en-US', 'hr-HR', 'it-IT'] as const;
+export const supportedLanguages = [
+  'en-US',
+  'hr-HR',
+  'it-IT',
+] as const satisfies LanguageTagFormat[];
 
 export type LanguageTag = (typeof supportedLanguages)[number];
 

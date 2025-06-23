@@ -35,31 +35,31 @@
         class="w-full max-w-sm self-center justify-self-center bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md px-8 py-6"
       >
         <h2 class="text-lg font-light text-center mb-6 text-gray-900 dark:text-gray-100">
-          Welcome back!
+          {{ t('welcomeBack') }}
         </h2>
 
-        <label for="email" class="block font-semibold text-gray-700 dark:text-gray-300"
-          >Email:</label
-        >
+        <label for="email" class="block font-semibold text-gray-700 dark:text-gray-300">{{
+          t('email')
+        }}</label>
         <input
           v-model="email"
           class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
           type="email"
           name="email"
-          placeholder="e.g. amelia.wilson@gmail.com"
+          :placeholder="t('emailPlaceholder')"
           autocomplete="email"
           required
         />
 
-        <label for="password" class="block font-semibold text-gray-700 dark:text-gray-300"
-          >Password:</label
-        >
+        <label for="password" class="block font-semibold text-gray-700 dark:text-gray-300">{{
+          t('password')
+        }}</label>
         <input
           v-model="password"
-          class="w-full px-2 py-2 mt-2 mb-6 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+          class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
           type="password"
           name="password"
-          placeholder="Your password"
+          :placeholder="t('passwordPlaceholder')"
           autocomplete="current-password"
           required
         />
@@ -67,15 +67,15 @@
         <button
           type="submit"
           value="Log in"
-          class="fancy-button w-full"
+          class="fancy-button w-full mt-8"
           :disabled="isWaitingForResponse"
         >
           {{ t('signIn') }}
         </button>
         <div class="w-full flex justify-center mt-1">
-          <RouterLink to="/signup" class="text-center text-white dark:text-gray-300 underline"
-            >Create account</RouterLink
-          >
+          <RouterLink to="/signup" class="text-center text-white dark:text-gray-400 underline">{{
+            t('createAccount')
+          }}</RouterLink>
         </div>
 
         <p v-if="loginError" class="mt-4 text-red-600">
@@ -99,11 +99,45 @@
 {
   "en-US": {
     "signIn": "Sign in",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "welcomeBack": "Welcome back!",
+    "email": "Email:",
+    "emailPlaceholder": "e.g. john.smith{'@'}gmail.com",
+    "password": "Password:",
+    "passwordPlaceholder": "Your password",
+    "createAccount": "Create account",
+    "loginErrorUnknown": "Unknown error",
+    "loginErrorInvalid": "Invalid email or password.",
+    "loginErrorNetwork": "Network error. Please try again.",
+    "loginErrorRequired": "Email and password are required."
   },
   "hr-HR": {
     "signIn": "Prijavi me",
-    "signUp": "Učlani me"
+    "signUp": "Učlani me",
+    "welcomeBack": "Dobrodošli natrag!",
+    "email": "E-mail:",
+    "emailPlaceholder": "npr. ana.novak{'@'}gmail.com",
+    "password": "Lozinka:",
+    "passwordPlaceholder": "Vaša lozinka",
+    "createAccount": "Stvori račun",
+    "loginErrorUnknown": "Nepoznata greška",
+    "loginErrorInvalid": "Neispravan e-mail ili lozinka.",
+    "loginErrorNetwork": "Greška u mreži. Pokušajte ponovno.",
+    "loginErrorRequired": "E-mail i lozinka su obavezni."
+  },
+  "it-IT": {
+    "signIn": "Accedi",
+    "signUp": "Registrati",
+    "welcomeBack": "Bentornato!",
+    "email": "Email:",
+    "emailPlaceholder": "es. amelia.rossi{'@'}gmail.com",
+    "password": "Password:",
+    "passwordPlaceholder": "La tua password",
+    "createAccount": "Crea account",
+    "loginErrorUnknown": "Errore sconosciuto",
+    "loginErrorInvalid": "Email o password non validi.",
+    "loginErrorNetwork": "Errore di rete. Riprova.",
+    "loginErrorRequired": "Email e password sono obbligatori."
   }
 }
 </i18n>

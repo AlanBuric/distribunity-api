@@ -6,7 +6,7 @@
       <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100">
         {{ $t('homeIntroTitle') }}
       </h2>
-      <p class="text-xl mb-4 text-gray-700 dark:text-gray-300">
+      <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
         {{ $t('homeIntroDescription') }}
       </p>
       <RouterLink class="inline-block text-lg fancy-button" to="/signup">

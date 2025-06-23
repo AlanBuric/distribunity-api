@@ -3,6 +3,7 @@
   import { getPasswordStrength, type PasswordStrength } from '@/scripts/password-policy';
   import { useRouter } from 'vue-router';
   import axios from 'axios';
+  import HomeNavigationBar from '@/components/home/HomeNavigationBar.vue';
 
   type LoginStateMessage = {
     message: string;
@@ -117,20 +118,21 @@
 </script>
 
 <template>
+  <HomeNavigationBar />
   <form
     @submit.prevent="handleUserRegistration"
-    class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg"
+    class="w-full max-w-sm bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 border-1 rounded-md px-8 py-6"
   >
-    <h2 class="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-gray-100">
+    <h2 class="text-3xl font-light text-center mb-6 text-gray-900 dark:text-gray-100">
       Create an account
     </h2>
 
-    <label for="firstName" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
+    <label for="firstName" class="block font-semibold text-gray-700 dark:text-gray-300">
       First name:
     </label>
     <input
       v-model="firstName"
-      class="w-full p-2 mt-2 mb-4 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
       type="text"
       name="firstName"
       minlength="2"
@@ -140,12 +142,12 @@
       required
     />
 
-    <label for="lastName" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
+    <label for="lastName" class="block font-semibold text-gray-700 dark:text-gray-300">
       Last name:
     </label>
     <input
       v-model="lastName"
-      class="w-full p-2 mt-2 mb-4 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
       type="text"
       name="lastName"
       minlength="2"
@@ -154,12 +156,10 @@
       autocomplete="family-name"
     />
 
-    <label for="email" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
-      Email:
-    </label>
+    <label for="email" class="block font-semibold text-gray-700 dark:text-gray-300"> Email: </label>
     <input
       v-model="email"
-      class="w-full p-2 mt-2 mb-4 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
       type="email"
       name="email"
       placeholder="e.g. amelia.wilson@gmail.com"
@@ -167,12 +167,12 @@
       required
     />
 
-    <label for="password" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
+    <label for="password" class="block font-semibold text-gray-700 dark:text-gray-300">
       Password:
     </label>
     <input
       v-model="password"
-      class="w-full p-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
       type="password"
       name="password"
       minlength="6"
@@ -183,21 +183,16 @@
 
     <p id="password-strength" class="mb-4 text-gray-600 dark:text-gray-400">
       Password strength:
-      <span class="font-semibold text-gray-700 dark:text-gray-100">{{
-        passwordStrength.title
-      }}</span>
+      <span class="font-light text-gray-700 dark:text-gray-100">{{ passwordStrength.title }}</span>
     </p>
 
-    <label
-      for="password-confirm"
-      class="block text-lg font-medium text-gray-700 dark:text-gray-300"
-    >
+    <label for="password-confirm" class="block font-semibold text-gray-700 dark:text-gray-300">
       Confirm password:
     </label>
     <input
       id="password-confirm"
       v-model="confirmPassword"
-      class="w-full p-2 mt-2 mb-4 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+      class="w-full px-2 py-2 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-gray-100 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
       type="password"
       name="password-confirm"
       placeholder="Confirm password"
@@ -211,7 +206,7 @@
     <input
       type="submit"
       value="Sign up"
-      class="fancy-button w-full"
+      class="fancy-button w-full mt-8"
       :disabled="!isAllowedToSubmit()"
     />
 

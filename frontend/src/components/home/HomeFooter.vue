@@ -9,7 +9,7 @@
 
 <template>
   <footer
-    class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-300 flex flex-col items-center justify-between p-8 flex-1 mt-4 w-full border-t border-gray-300 dark:border-gray-700"
+    class="bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-between p-8 flex-1 mt-4 w-full border-t border-gray-300 dark:border-gray-700"
   >
     <div
       id="footer-links"
@@ -19,34 +19,22 @@
         <h3 class="text-xl font-semibold text-black dark:text-gray-100 mb-4">Legal</h3>
         <ul class="space-y-2">
           <li>
-            <RouterLink
-              to="/resources"
-              class="text-gray-400 hover:text-teal-400 transition duration-300"
-            >
+            <RouterLink to="/resources" class="hover:text-teal-400 transition duration-300">
               Terms of Service
             </RouterLink>
           </li>
           <li>
-            <RouterLink
-              to="/resources"
-              class="text-gray-400 hover:text-teal-400 transition duration-300"
-            >
+            <RouterLink to="/resources" class="hover:text-teal-400 transition duration-300">
               Privacy Policy
             </RouterLink>
           </li>
           <li>
-            <RouterLink
-              to="/resources"
-              class="text-gray-400 hover:text-teal-400 transition duration-300"
-            >
+            <RouterLink to="/resources" class="hover:text-teal-400 transition duration-300">
               Cookie Policy
             </RouterLink>
           </li>
           <li>
-            <RouterLink
-              to="/resources"
-              class="text-gray-400 hover:text-teal-400 transition duration-300"
-            >
+            <RouterLink to="/resources" class="hover:text-teal-400 transition duration-300">
               Imprint
             </RouterLink>
           </li>
@@ -57,7 +45,7 @@
     <section class="max-w-screen-2xl w-full flex justify-between">
       <div class="flex items-center space-x-6">
         <Logo class="w-10 h-10" />
-        <p class="text-gray-400">
+        <p>
           {{
             t('license') + ' &copy; ' + new Date().getFullYear() + ' Distribunity, ' + t('author')
           }}
@@ -81,12 +69,12 @@
   "en-US": {
     "license": "MIT license",
     "author": "author Alan Burić",
-    "gitHubInfo": "Source code, issues and features"
+    "gitHubInfo": "Source code and contact"
   },
   "hr-HR": {
     "license": "MIT licenca",
     "author": "autor Alan Burić",
-    "gitHubInfo": "Izvorni kod, greške i značajke"
+    "gitHubInfo": "Izvorni kod i kontakt"
   }
 }
 </i18n>

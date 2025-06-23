@@ -91,19 +91,19 @@
             class="text-lg font-light text-gray-700 dark:text-gray-300 hover:text-active-link dark:hover:text-active-link"
             to="/work"
           >
-            Dashboard
+            {{ $t('dashboard') }}
           </RouterLink>
           <RouterLink
             class="text-lg font-light text-gray-700 dark:text-gray-300 hover:text-active-link dark:hover:text-active-link"
             to="/work/settings"
           >
-            Settings
+            {{ $t('settings') }}
           </RouterLink>
           <button
             class="text-lg font-light text-gray-700 dark:text-gray-300 hover:text-active-link dark:hover:text-active-link"
             @click.prevent="logoutAndRefresh()"
           >
-            Sign out
+            {{ $t('signOut') }}
           </button>
         </template>
 

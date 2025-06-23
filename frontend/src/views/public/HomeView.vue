@@ -9,7 +9,7 @@
 
 <template>
   <div
-    class="flex flex-col items-center h-full w-full bg-no-repeat bg-radial-[at_50%_0%] from-blue-300 dark:from-blue-400 via-sky-200 to-white dark:via-blue-950 dark:to-gray-800 to-80% dark:bg-gray-800"
+    class="flex flex-col items-center h-full w-full bg-no-repeat bg-radial-[at_50%_0%] from-blue-300 dark:from-blue-400 via-sky-200 to-gray-50 dark:via-blue-950 dark:to-gray-800 to-80% dark:bg-gray-800"
   >
     <HomeNavigationBar id="top-bar" />
     <main class="flex flex-col gap-5 max-w-screen-2xl w-full">

@@ -3,13 +3,19 @@
   import { useI18n } from 'vue-i18n';
   import { availableLanguages } from '@/store/global.ts';
   import TranslationIcon from './icons/TranslationIcon.vue';
-  import { LocalStorage } from '@/types';
+  import { LocalStorage, type LanguageTag } from '@/types';
+  import { i18n } from '@/main';
 
-  const { locale } = useI18n();
+  const { t } = useI18n();
   const isDropdownOpen = ref(false);
 
   function onClickOutside(event: MouseEvent) {
     isDropdownOpen.value = !!(event.target as HTMLElement).closest('.lang-dropdown');
+  }
+
+  function onLanguageClick(language: LanguageTag) {
+    i18n.global.locale.value = language;
+    isDropdownOpen.value = false;
   }
 
   watch(isDropdownOpen, (val) => {
@@ -17,7 +23,7 @@
     else window.removeEventListener('click', onClickOutside);
   });
 
-  watch(locale, (current) => localStorage.setItem(LocalStorage.LOCALE, current));
+  watch(i18n.global.locale, (current) => localStorage.setItem(LocalStorage.LOCALE, current));
 </script>
 
 <template>
@@ -25,7 +31,7 @@
     <button
       class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition"
       @click.stop="isDropdownOpen = !isDropdownOpen"
-      title="Select language"
+      :title="t('switchLanguage')"
       aria-haspopup="listbox"
       :aria-expanded="isDropdownOpen"
     >
@@ -37,14 +43,11 @@
       role="listbox"
     >
       <li
-        v-for="[value, name] in availableLanguages"
-        :key="value"
+        v-for="[language, name] in availableLanguages"
+        :key="language"
         class="px-4 py-2 first:rounded-t-xl last:rounded-b-xl cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-        :aria-selected="locale === value"
-        @click="
-          locale = value;
-          isDropdownOpen = false;
-        "
+        :aria-selected="i18n.global.locale.value == language"
+        @click="onLanguageClick(language)"
         tabindex="0"
         role="option"
       >
@@ -53,3 +56,17 @@
     </ul>
   </div>
 </template>
+
+<i18n>
+{
+  "en-US": {
+    "switchLanguage": "Select display language"
+  },
+  "hr-HR": {
+    "switchLanguage": "Odaberi jezik prikaza"
+  },
+  "it-IT": {
+    "switchLanguage": "Seleziona la lingua di visualizzazione"
+  }
+}
+</i18n>
