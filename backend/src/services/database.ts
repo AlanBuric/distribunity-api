@@ -7,9 +7,12 @@ export async function connectDatabase() {
   database = new pg.Pool().on('error', (error) =>
     console.error('Unexpected error on idle client', error),
   );
-  database
-    .connect()
-    .then(() => console.info(`${getLoggingPrefix()} Connected to PostgreSQL database.`));
+
+  await database.connect().then(() => {
+    console.info(`${getLoggingPrefix()} Connected to PostgreSQL database.`);
+    // TODO: query insert, on conflict shut up
+    console.info(`${getLoggingPrefix()} Web application administrator account has been created.`);
+  });
 }
 
 export default function getDatabase() {

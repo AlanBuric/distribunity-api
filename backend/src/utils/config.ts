@@ -8,10 +8,13 @@ export default class EnvConfig {
   static REFRESH_TOKEN_SECRET: string;
   static REFRESH_TOKEN_EXPIRATION: string;
   /**
-   * The percentage determining the point in time in a refresh token's lifetime (e.g. 14 days)
-   * it's is eligible for replacement with a fresh one (e.g. 10.5 days given 75%).
+   * The percentage determining the point in time in a refresh token's lifetime
+   * (e.g. 14 days) it's eligible for replacement with a fresh one (e.g. 10.5 days
+   * given 75%).
    */
   static TOKEN_LIFETIME_REFRESH_THRESHOLD: number;
+  static ADMIN_EMAIL: string;
+  static ADMIN_PASSWORD: string;
 
   static initialize() {
     dotenv.config();
@@ -25,12 +28,14 @@ export default class EnvConfig {
     EnvConfig.TOKEN_LIFETIME_REFRESH_THRESHOLD = EnvConfig.parseValidFloat(
       'TOKEN_LIFETIME_REFRESH_THRESHOLD',
     );
+    EnvConfig.ADMIN_EMAIL = EnvConfig.validateEnvExistence('ADMIN_EMAIL');
+    EnvConfig.ADMIN_PASSWORD = EnvConfig.validateEnvExistence('ADMIN_PASSWORD');
   }
 
   static validateEnvExistence(name: string): string {
     if (process.env[name]) return process.env[name];
 
-    throw new Error(`Environment variable value ${name} is missing from the .env config`);
+    throw new Error(`Environment variable value ${name} is missing from the .env config or empty`);
   }
 
   static parseValidInt(name: string): number {
