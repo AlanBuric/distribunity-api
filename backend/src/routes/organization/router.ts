@@ -16,6 +16,7 @@ import RoleRouter from './role/router.js';
 import type { MinMaxOptions } from 'express-validator/lib/options.js';
 import { REDIS_COUNTRY_CODES_SET } from '../../utils/constants.js';
 import getRedis from '../../services/redis.js';
+import { Permission } from '../../types/database-types.js';
 
 const minMaxOrganizationNameLength: MinMaxOptions = { min: 1, max: 32 };
 
@@ -55,7 +56,7 @@ const OrganizationRouter = Router()
         '',
         ...createOrganizationValidatorChain().map((validator) => validator.optional()),
         handleValidationResults,
-        requirePermission('organization.edit'),
+        requirePermission(Permission.ORGANIZATION_EDIT),
         PATCH,
       )
       .use('/role', RoleRouter)

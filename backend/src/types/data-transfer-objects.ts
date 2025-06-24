@@ -24,7 +24,7 @@ export type AuthorizedLocals = {
 };
 
 export type OrganizationLocals = AuthorizedLocals & {
-  organization: DbOrganization;
+  organization: Organization;
 };
 
 export type ErrorResponse = string;

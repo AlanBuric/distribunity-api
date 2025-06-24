@@ -44,7 +44,7 @@ export const Permission = {
   ITEM_VIEW: 18,
 } as const;
 
-export type Permission = keyof typeof Permission;
+export type PermissionType = keyof typeof Permission;
 export type PermissionId = (typeof Permission)[keyof typeof Permission];
 
 export enum AuthState {

@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import type { DbOrganization, Permission } from '../../types/database-types.js';
+import type { DbOrganization, Permission, PermissionId } from '../../types/database-types.js';
 import RequestError from '../../utils/RequestError.js';
 import { camelCaseify } from '../../utils/database.js';
 import getDatabase from '../../services/database.js';
@@ -23,7 +23,7 @@ export async function getOrganizationById(id: string): Promise<Organization> {
 export async function hasPermission(
   organizationId: string,
   userId: number,
-  permission: Permission,
+  permission: PermissionId,
 ): Promise<boolean> {
   const result = await getDatabase().query(
     `SELECT 1

@@ -101,11 +101,11 @@ CREATE TABLE blog_posts (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
-  BIGINT NOT NULL REFERENCES "user"(user_id) ON DELETE SET NULL,
+  user_id BIGINT NOT NULL REFERENCES "user"(user_id) ON DELETE SET NULL,
   show_author BOOLEAN DEFAULT FALSE,
-  status post_status NOT NULL DEFAULT 'draft' CHECK (status IN ('deleted', 'draft', 'published')),
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('deleted', 'draft', 'published')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS newsletter_email (
@@ -116,27 +116,62 @@ CREATE INDEX IF NOT EXISTS user_email_idx ON "user"(email);
 CREATE INDEX IF NOT EXISTS item_name_idx ON item(name);
 CREATE INDEX IF NOT EXISTS item_attributes_idx ON item USING GIN (attributes);
 CREATE INDEX IF NOT EXISTS country_name_lower_idx ON country (LOWER(country_name));
+CREATE INDEX IF NOT EXISTS idx_blog_posts_search ON blog_posts 
+  USING GIN (to_tsvector('english', title || ' ' || content));
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Apply a trigger on every table with column updated_at for updating it upon any UPDATE
+DO $$
+DECLARE
+  table_name TEXT;
+  trigger_name TEXT;
+BEGIN
+  FOR table_name IN
+    SELECT t.table_name
+    FROM information_schema.tables t
+    JOIN information_schema.columns c ON t.table_name = c.table_name
+      WHERE t.table_schema = 'public'
+        AND t.table_type = 'BASE TABLE'
+        AND c.column_name = 'updated_at'
+  LOOP
+    trigger_name := 'update_' || replace(table_name, '"', '_') || '_updated_at';
+
+    EXECUTE format('
+      CREATE TRIGGER %I
+        BEFORE UPDATE ON %I
+        FOR EACH ROW
+        EXECUTE FUNCTION update_updated_at_column();
+      ', trigger_name, table_name);
+  END LOOP;
+END $$;
 
 INSERT INTO permission (permission_id, name) VALUES
-  (1, 'organization.delete'),
-  (2, 'organization.edit'),
-  (3, 'organization.roles.view'),
-  (4, 'organization.roles.create'),
-  (5, 'organization.roles.delete'),
-  (6, 'organization.roles.updatePermissions'),
-  (7, 'organization.members.remove'),
-  (8, 'organization.members.view'),
-  (9, 'organization.members.updateRoles'),
-  (10, 'organization.invites.create'),
-  (11, 'organization.invites.delete'),
-  (12, 'inventory.create'),
-  (13, 'inventory.view'),
-  (14, 'inventory.edit'),
-  (15, 'inventory.delete'),
-  (16, 'item.create'),
-  (17, 'item.edit'),
-  (18, 'item.delete'),
-  (19, 'item.view');
+  (1, 'organization_delete'),
+  (2, 'organization_edit'),
+  (3, 'organization_roles_view'),
+  (4, 'organization_roles_create'),
+  (5, 'organization_roles_delete'),
+  (6, 'organization_roles_updatePermissions'),
+  (7, 'organization_members_remove'),
+  (8, 'organization_members_view'),
+  (9, 'organization_members_updateRoles'),
+  (10, 'organization_invites_create'),
+  (11, 'organization_invites_delete'),
+  (12, 'inventory_create'),
+  (13, 'inventory_view'),
+  (14, 'inventory_edit'),
+  (15, 'inventory_delete'),
+  (16, 'item_create'),
+  (17, 'item_edit'),
+  (18, 'item_delete'),
+  (19, 'item_view');
 
 INSERT INTO country VALUES
   ('AF', 'Afghanistan'),

@@ -1,4 +1,4 @@
-import type { Permission } from '../types/database-types.js';
+import type { PermissionType } from '../types/database-types.js';
 import {
   REDIS_COUNTRY_CODES_SET,
   REDIS_PERMISSION_NAME,
@@ -13,7 +13,7 @@ import getRedis from './redis.js';
 
 type DbUser = { user_id: string };
 type DbCountryCode = { country_code: string };
-type DbPermission = { permission_id: number; name: Permission };
+type DbPermission = { permission_id: number; name: PermissionType };
 type DbOrganizationMember = { organization_id: number; user_id: number };
 
 export async function initializeCache() {

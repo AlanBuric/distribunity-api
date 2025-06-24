@@ -1,16 +1,4 @@
 <script setup lang="ts">
-  import { database, auth } from '@/firebase/init';
-  import {
-    collection,
-    query,
-    where,
-    limit,
-    getDocs,
-    writeBatch,
-    arrayRemove,
-    arrayUnion,
-    doc,
-  } from 'firebase/firestore';
   import { ref } from 'vue';
 
   const invitationCode = ref<string>();
@@ -24,43 +12,12 @@
       status: 'progress',
     };
 
-    invitationCode.value = invitationCode.value?.toUpperCase();
-    const organizationsRef = collection(database, 'organizations');
-    const queryOrgsWithCode = query(
-      organizationsRef,
-      where('invites', 'array-contains', invitationCode.value),
-      limit(1),
-    );
+    invitationStatus.value = {
+      text: `You've joined ${'Name'}`,
+      status: 'success',
+    };
 
-    try {
-      const snapshot = await getDocs(queryOrgsWithCode);
-
-      if (snapshot.size == 0) {
-        setInvitationFailure();
-        return;
-      }
-
-      const targetOrganization = snapshot.docs[0];
-      const batch = writeBatch(database);
-
-      batch.update(targetOrganization.ref, { invites: arrayRemove(invitationCode.value) });
-      batch.set(doc(targetOrganization.ref, 'members', auth.currentUser!.uid), {
-        roles: [],
-        joined: Date.now(),
-      });
-      batch.update(doc(database, 'users', auth.currentUser!.uid), {
-        organizations: arrayUnion(targetOrganization.ref),
-      });
-
-      await batch.commit();
-
-      invitationStatus.value = {
-        text: `You've joined ${targetOrganization.data().name}`,
-        status: 'success',
-      };
-    } catch (ignored) {
-      setInvitationFailure();
-    }
+    setInvitationFailure();
   }
 
   function setInvitationFailure() {

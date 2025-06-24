@@ -1,22 +1,15 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import Popup from '../ModalPopup.vue';
-  import { firestoreAutoId } from '@/scripts/firebase-utilities';
   import type { Country } from '@/types';
   import axios from 'axios';
+  import useAuthStore from '@/store/auth';
 
   const emit = defineEmits(['closeForm']);
+
   const countrySearchInput = ref<string>('');
   const countryResults = ref<Country[]>([]);
-  const selectedCountry = ref<Country>();
-
-  async function searchCountries() {
-    countryResults.value = await axios
-      .get<Country[]>(`/api/countries?filter=${encodeURI(countrySearchInput.value)}`)
-      .then(({ data }) => data);
-
-    selectedCountry.value = undefined;
-  }
+  const selectedCountryCode = ref<string>();
 
   const organizationCreationFeedback = ref<{
     feedback: string;
@@ -25,16 +18,16 @@
 
   const name = ref('');
 
-  async function createOrganization() {
-    if (!auth.currentUser?.uid) {
-      organizationCreationFeedback.value = {
-        feedback:
-          'We failed to authenticate you. Sign out and sign back in to try again, otherwise report this issue if it persists.',
-        status: 'failure',
-      };
+  async function searchCountries() {
+    countryResults.value = await axios
+      .get<Country[]>(`/api/countries?filter=${encodeURI(countrySearchInput.value)}`)
+      .then(({ data }) => data);
 
-      return;
-    } else if (!selectedCountry.value) {
+    selectedCountryCode.value = undefined;
+  }
+
+  async function createOrganization() {
+    if (!selectedCountryCode.value) {
       organizationCreationFeedback.value = {
         feedback: 'Please select a country.',
         status: 'failure',
@@ -48,43 +41,23 @@
       status: 'progress',
     };
 
-    try {
-      const batch = writeBatch(database);
-      const organizationId = firestoreAutoId();
-      const newOrganizationRef = doc(database, 'organizations', organizationId);
-      const ownerRef = doc(database, 'users', auth.currentUser.uid);
-
-      batch.set(newOrganizationRef, {
+    organizationCreationFeedback.value = await axios
+      .post('/api/organizations', {
         name: name.value,
-        owner: ownerRef,
-        invites: [],
-        countryCode: selectedCountry.value.countryCode,
-        country: selectedCountry.value.country,
-      });
+        countryCode: selectedCountryCode.value,
+      })
+      .then(() => {
+        emit('closeForm');
 
-      batch.set(doc(database, 'organizations', organizationId, 'members', auth.currentUser.uid), {
-        roles: [],
-        joined: Date.now(),
-      });
-
-      batch.update(ownerRef, {
-        organizations: arrayUnion(newOrganizationRef),
-      });
-
-      await batch.commit();
-
-      organizationCreationFeedback.value = {
-        feedback: `You've successfully created ${name.value}. Redirecting you.`,
-        status: 'success',
-      };
-
-      emit('closeForm');
-    } catch (ignored) {
-      organizationCreationFeedback.value = {
+        return {
+          feedback: `You've successfully created ${name.value}. Redirecting you.`,
+          status: 'success',
+        } as const;
+      })
+      .catch(() => ({
         feedback: 'We failed to create your organization; please report this issue.',
         status: 'failure',
-      };
-    }
+      }));
   }
 </script>
 
@@ -146,7 +119,7 @@
         </p>
 
         <select
-          v-model="selectedCountry"
+          v-model="selectedCountryCode"
           name="country"
           id="country"
           class="block w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
@@ -157,10 +130,10 @@
             <option disabled :value="undefined">Please select a country</option>
             <option
               v-for="country in countryResults"
-              :key="country.cca3"
-              :value="{ countryCode: country.cca3, country: country.name.common }"
+              :key="country.countryCode"
+              :value="country.countryCode"
             >
-              {{ country.name.common }}
+              {{ country.countryName }}
             </option>
           </template>
         </select>

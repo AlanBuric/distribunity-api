@@ -7,7 +7,7 @@
   import { useI18n } from 'vue-i18n';
   import useAuthStore from '@/store/auth';
   import { NO_PERMISSIONS_MESSAGE } from '@/scripts/shared';
-  import { Permission } from '@/types';
+  import { PermissionType } from '@/types';
   import axios from 'axios';
 
   const { t } = useI18n();

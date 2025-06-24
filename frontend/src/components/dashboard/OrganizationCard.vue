@@ -1,8 +1,5 @@
 <script setup lang="ts">
-  import { database, auth } from '@/firebase/init';
-  import { deleteOrganization } from '@/scripts/firebase-utilities';
-  import type { Organization, WithId } from '@/types';
-  import { getDoc, doc, updateDoc, arrayRemove } from 'firebase/firestore';
+  import type { Organization } from '@/types';
 
   const props = defineProps<{
     organizationStringRef: string;

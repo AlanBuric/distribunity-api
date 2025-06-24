@@ -10,7 +10,7 @@ import type {
 import type {
   DbOrganization,
   OrganizationMember,
-  Permission,
+  PermissionId,
   Role,
 } from '../../types/database-types.js';
 import * as OrganizationService from './service.js';
@@ -25,7 +25,7 @@ type OrganizationCreationRequest = {
   countryCode: string;
 };
 
-export function requirePermission(permission: Permission) {
+export function requirePermission(permissionId: PermissionId) {
   return async (
     request: Request,
     response: Response<any, OrganizationLocals>,
@@ -38,7 +38,7 @@ export function requirePermission(permission: Permission) {
     }
 
     if (
-      await OrganizationService.hasPermission(organizationId, response.locals.userId, permission)
+      await OrganizationService.hasPermission(organizationId, response.locals.userId, permissionId)
     ) {
       return next();
     }
