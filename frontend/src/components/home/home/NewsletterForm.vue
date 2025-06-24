@@ -31,17 +31,15 @@
         </p>
       </div>
       <form @submit.prevent="signupForNewsLetter" class="w-full max-w-md">
-        <div class="mb-4">
-          <input
-            v-model="email"
-            class="custom-input w-full px-2 py-1.5 border text-slate-700 dark:text-slate-300 border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-600 dark:bg-slate-700 dark:focus:ring-teal-400"
-            type="email"
-            name="email"
-            autocomplete="email"
-            :placeholder="t('emailPlaceholder')"
-            required
-          />
-        </div>
+        <input
+          v-model="email"
+          class="custom-input w-full mb-4 px-2 py-1.5 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-600"
+          type="email"
+          name="email"
+          autocomplete="email"
+          :placeholder="t('emailPlaceholder')"
+          required
+        />
         <div class="mb-4 flex items-center">
           <input
             type="checkbox"

@@ -7,7 +7,7 @@
 
   const props = defineProps<{
     posts: BlogPost[];
-    getPageCount: () => number;
+    pageCount: number;
   }>();
 
   function focusTopBar() {
@@ -19,37 +19,35 @@
   }
 
   function nextPageExists() {
-    return parseInt(route.query.page as string) < props.getPageCount();
+    return parseInt(route.query.page as string) < props.pageCount;
   }
 </script>
 
 <template>
-  <div>
-    <PostList :posts="props.posts" />
-    <h3
-      v-if="!nextPageExists()"
-      class="text-lg font-thin text-center mt-6 text-slate-800 dark:text-slate-300"
+  <PostList :posts="props.posts" />
+  <h3
+    v-if="!nextPageExists()"
+    class="text-lg font-thin text-center mt-6 text-slate-800 dark:text-slate-300"
+  >
+    You've arrived at the beginning of history!
+  </h3>
+  <div id="page-controls" class="flex justify-center items-center gap-4 mt-6">
+    <RouterLink
+      v-if="prevPageExists()"
+      class="fancy-button"
+      :to="{ name: 'blog', query: { page: parseInt($route.query.page as string) - 1 } }"
     >
-      You've arrived at the beginning of history!
-    </h3>
-    <div id="page-controls" class="flex justify-center items-center gap-4 mt-6">
-      <RouterLink
-        v-if="prevPageExists()"
-        class="fancy-button"
-        :to="{ name: 'blog', query: { page: parseInt($route.query.page as string) - 1 } }"
-      >
-        Previous
-      </RouterLink>
+      Previous
+    </RouterLink>
 
-      <button class="fancy-button" @click="focusTopBar">Back to top</button>
+    <button class="fancy-button" @click="focusTopBar">Back to top</button>
 
-      <RouterLink
-        v-if="nextPageExists()"
-        class="fancy-button"
-        :to="{ name: 'blog', query: { page: parseInt($route.query.page as string) + 1 } }"
-      >
-        Next
-      </RouterLink>
-    </div>
+    <RouterLink
+      v-if="nextPageExists()"
+      class="fancy-button"
+      :to="{ name: 'blog', query: { page: parseInt($route.query.page as string) + 1 } }"
+    >
+      Next
+    </RouterLink>
   </div>
 </template>

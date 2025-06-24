@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import HomeNavigationBar from '@/components/home/HomeNavigationBar.vue';
+
   const content = [
     {
       question: 'What is Distribunity?',
@@ -53,28 +55,31 @@
   ];
 </script>
 <template>
-  <main
-    class="max-w-screen-2xl w-full mx-auto p-8 flex flex-col items-center dark:bg-slate-800 bg-slate-100 text-slate-900 dark:text-white rounded-lg"
-  >
-    <header class="flex justify-between items-center px-6 py-4 border-b dark:border-slate-700">
-      <h1 class="text-3xl font-bold">Distribunity FAQ</h1>
-    </header>
+  <div class="w-full flex flex-col min-h-dvh dark:bg-slate-800">
+    <HomeNavigationBar />
+    <main
+      class="max-w-screen-2xl w-full mx-auto px-8 flex flex-col dark:bg-slate-800 bg-slate-100 text-slate-900 dark:text-white rounded-lg"
+    >
+      <header class="flex justify-between self-center px-6 py-4 border-b dark:border-slate-700">
+        <h1 class="text-3xl font-bold">Frequently Asked Questions</h1>
+      </header>
 
-    <div class="px-6 py-8 w-full mx-auto">
-      <ol>
-        <li
-          v-for="(faq, index) in content"
-          :key="index"
-          class="mb-8 list-decimal list-inside marker:text-xl"
-        >
-          <h2 class="text-xl font-semibold mb-2 inline-block">
-            {{ faq.question }}
-          </h2>
-          <p class="text-slate-700 dark:text-slate-300">
-            {{ faq.answer }}
-          </p>
-        </li>
-      </ol>
-    </div>
-  </main>
+      <div class="px-6 py-8 w-full mx-auto">
+        <ol>
+          <li
+            v-for="(faq, index) in content"
+            :key="index"
+            class="mb-8 list-decimal list-inside marker:text-xl"
+          >
+            <h2 class="text-xl font-semibold mb-2 inline-block">
+              {{ faq.question }}
+            </h2>
+            <p class="text-slate-700 dark:text-slate-300">
+              {{ faq.answer }}
+            </p>
+          </li>
+        </ol>
+      </div>
+    </main>
+  </div>
 </template>

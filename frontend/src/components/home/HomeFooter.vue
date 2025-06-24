@@ -19,22 +19,22 @@
         <h3 class="text-xl font-semibold text-black dark:text-slate-100 mb-4">Legal</h3>
         <ul class="space-y-2">
           <li>
-            <RouterLink to="/resources" class="hover:text-teal-400 transition duration-300">
+            <RouterLink to="/resources" class="hover:text-active-link transition duration-300">
               Terms of Service
             </RouterLink>
           </li>
           <li>
-            <RouterLink to="/resources" class="hover:text-teal-400 transition duration-300">
+            <RouterLink to="/resources" class="hover:text-active-link transition duration-300">
               Privacy Policy
             </RouterLink>
           </li>
           <li>
-            <RouterLink to="/resources" class="hover:text-teal-400 transition duration-300">
+            <RouterLink to="/resources" class="hover:text-active-link transition duration-300">
               Cookie Policy
             </RouterLink>
           </li>
           <li>
-            <RouterLink to="/resources" class="hover:text-teal-400 transition duration-300">
+            <RouterLink to="/resources" class="hover:text-active-link transition duration-300">
               Imprint
             </RouterLink>
           </li>
@@ -58,7 +58,9 @@
         referrerpolicy="no-referrer"
       >
         <GithubIcon class="w-7 h-7 fill-black dark:fill-white" />
-        <span class="group-hover:text-teal-400 transition duration-300">{{ t('gitHubInfo') }}</span>
+        <span class="group-hover:text-active-link transition duration-300">{{
+          t('gitHubInfo')
+        }}</span>
       </a>
     </section>
   </footer>

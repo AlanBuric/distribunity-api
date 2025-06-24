@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+  import HomeNavigationBar from '@/components/home/HomeNavigationBar.vue';
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   import BlogError from '@/components/home/blog/BlogError.vue';
@@ -36,16 +37,19 @@
 </script>
 
 <template>
-  <main
-    class="max-w-screen-2xl w-full mx-auto p-8 flex flex-col items-center bg-slate-200 dark:bg-slate-800 rounded-lg"
-  >
-    <BlogError
-      v-if="!doesPageExist()"
-      error-message="Oops! This page doesn't exist."
-      redirect-href="/blog?page=1"
-      subtitle="Let's take you back to the beginning."
-      class="text-center mt-12"
-    />
-    <BlogPage v-else :posts="posts" :get-page-count="getPageCount" :route="route" />
-  </main>
+  <div class="w-full flex flex-col min-h-dvh dark:bg-slate-800">
+    <HomeNavigationBar />
+    <main
+      class="max-w-screen-2xl w-full mx-auto p-8 flex flex-col items-center bg-slate-200 dark:bg-slate-800 rounded-lg"
+    >
+      <BlogError
+        v-if="!doesPageExist()"
+        error-message="Oops! This page doesn't exist."
+        redirect-href="/blog?page=1"
+        subtitle="Let's take you back to the beginning."
+        class="text-center mt-12"
+      />
+      <BlogPage v-else :posts="posts" :page-count="getPageCount()" />
+    </main>
+  </div>
 </template>
