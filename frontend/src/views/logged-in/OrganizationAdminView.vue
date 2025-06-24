@@ -190,18 +190,21 @@
 <template>
   <main
     v-if="organization"
-    class="flex-1 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex justify-center"
+    class="flex-1 bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100 flex justify-center"
   >
     <div class="max-w-5xl flex-grow flex flex-col items-center py-6 space-y-6">
       <h1 class="text-3xl font-semibold text-center">Organization: {{ organization.name }}</h1>
 
-      <section class="w-full bg-white dark:bg-gray-800 shadow rounded-lg px-5 py-4">
+      <section class="w-full bg-white dark:bg-slate-800 shadow rounded-lg px-5 py-4">
         <h2 class="text-2xl font-semibold mb-4">Organization Information</h2>
 
         <form @submit.prevent="saveOrganizationSettings" class="flex flex-col space-y-4">
           <div class="flex flex-col space-y-4">
             <div>
-              <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                for="name"
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              >
                 Organization name
               </label>
               <input
@@ -212,14 +215,14 @@
                 minlength="3"
                 required
                 placeholder="My Awesome Business"
-                class="mt-1 block w-full rounded-md px-3 py-2 bg-gray-100 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 shadow-sm dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md px-3 py-2 bg-slate-100 border border-slate-300 dark:bg-slate-700 dark:border-slate-600 shadow-sm dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
               />
             </div>
 
             <div>
               <label
                 for="country"
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300"
               >
                 Country
               </label>
@@ -230,7 +233,7 @@
                   placeholder="Search..."
                   type="search"
                   minlength="3"
-                  class="w-full rounded-md px-3 py-2 bg-gray-100 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 shadow-sm dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
+                  class="w-full rounded-md px-3 py-2 bg-slate-100 border border-slate-300 dark:bg-slate-700 dark:border-slate-600 shadow-sm dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -244,7 +247,7 @@
             </div>
 
             <div class="space-y-1">
-              <p class="text-sm text-gray-500 dark:text-gray-400">
+              <p class="text-sm text-slate-500 dark:text-slate-400">
                 Select your country from the list of results below.
               </p>
 
@@ -252,7 +255,7 @@
                 v-model="selectedCountry"
                 name="country"
                 id="country"
-                class="block w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
+                class="block w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 sm:text-sm"
                 required
               >
                 <option
@@ -286,7 +289,7 @@
         </form>
       </section>
 
-      <section class="w-full bg-white dark:bg-gray-800 shadow rounded-lg px-5 py-4">
+      <section class="w-full bg-white dark:bg-slate-800 shadow rounded-lg px-5 py-4">
         <h2 class="text-2xl font-semibold mb-4">Manage members</h2>
         <MemberList
           v-if="members.length"
@@ -299,14 +302,14 @@
         />
       </section>
 
-      <section class="w-full bg-white dark:bg-gray-800 shadow rounded-lg px-5 py-4 space-y-3">
+      <section class="w-full bg-white dark:bg-slate-800 shadow rounded-lg px-5 py-4 space-y-3">
         <h2 class="text-2xl font-semibold mb-4">Invite codes</h2>
         <form @submit.prevent="createInviteCode" class="flex space-x-4">
           <input
             v-model="newInviteCode"
             minlength="6"
             placeholder="Enter new invite code"
-            class="flex-1 bg-gray-100 dark:bg-gray-700 text-black dark:text-white placeholder-gray-500 appearance-none dark:placeholder-gray-400 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-active-link"
+            class="flex-1 bg-slate-100 dark:bg-slate-700 text-black dark:text-white placeholder-slate-500 appearance-none dark:placeholder-slate-400 border border-slate-300 dark:border-slate-600 rounded px-2 py-1 focus:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-active-link"
           />
           <button type="submit" class="px-3 py-2 bg-teal-500 text-white rounded">
             Create invite code
@@ -336,13 +339,13 @@
         </p>
       </section>
 
-      <section class="w-full bg-white dark:bg-gray-800 shadow rounded-lg px-5 py-4">
+      <section class="w-full bg-white dark:bg-slate-800 shadow rounded-lg px-5 py-4">
         <h2 class="text-2xl font-semibold mb-4">Manage roles</h2>
         <form @submit.prevent="createRole" class="flex space-x-4 mb-4">
           <input
             v-model="newRoleName"
             placeholder="Enter new role name"
-            class="flex-1 bg-gray-100 dark:bg-gray-700 text-black dark:text-white placeholder-gray-500 appearance-none dark:placeholder-gray-400 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-active-link"
+            class="flex-1 bg-slate-100 dark:bg-slate-700 text-black dark:text-white placeholder-slate-500 appearance-none dark:placeholder-slate-400 border border-slate-300 dark:border-slate-600 rounded px-2 py-1 focus:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-active-link"
           />
           <button type="submit" class="px-3 py-2 bg-teal-500 text-white rounded">
             Create role
@@ -350,7 +353,7 @@
         </form>
         <table class="w-full">
           <thead
-            class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400"
+            class="text-xs text-slate-700 uppercase bg-slate-200 dark:bg-slate-700 dark:text-slate-400"
           >
             <tr>
               <th scope="col" class="px-3 py-2">Name</th>
@@ -363,7 +366,7 @@
             <tr
               v-for="role in roles"
               :key="role.id"
-              class="bg-white dark:bg-gray-800 transition-all"
+              class="bg-white dark:bg-slate-800 transition-all"
             >
               <td class="px-3 py-2">
                 {{ role.name }}
@@ -379,7 +382,7 @@
                   <select
                     name="permission-to-add"
                     id="permission-to-add"
-                    class="px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:outline-none"
+                    class="px-2 py-1 rounded-md border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:outline-none"
                   >
                     <option
                       v-for="permission in Object.entries(Permission)"
@@ -421,10 +424,10 @@
         </table>
       </section>
 
-      <section class="w-full bg-white dark:bg-gray-800 shadow rounded-lg px-5 py-4">
+      <section class="w-full bg-white dark:bg-slate-800 shadow rounded-lg px-5 py-4">
         <h2 class="text-2xl font-semibold mb-1">Delete organization</h2>
 
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">This action is irreversible.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-5">This action is irreversible.</p>
 
         <button
           @click.prevent="deleteOrganizationWithValidation"

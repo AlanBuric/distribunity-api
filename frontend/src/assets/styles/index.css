@@ -7,7 +7,7 @@
 }
 
 .fancy-button {
-  @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-black dark:bg-gray-700 text-white dark:text-white hover:bg-gray-700 dark:hover:bg-gray-900 dark:border-1 dark:border-gray-600 h-10 px-4 py-2;
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-black dark:bg-slate-700 text-white dark:text-white hover:bg-slate-700 dark:hover:bg-slate-900 dark:border-1 dark:border-slate-600 h-10 px-4 py-2;
 }
 
 html,
@@ -108,9 +108,9 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--color-gray-500);
+  background-color: var(--color-slate-500);
   border-radius: 5px;
-  border: 2px solid var(--color-gray-500);
+  border: 2px solid var(--color-slate-500);
 }
 
 ::-webkit-scrollbar-track {

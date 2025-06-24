@@ -5,7 +5,7 @@
 
 <template>
   <div class="flex flex-col h-full">
-    <div class="flex-initial shadow-md z-10 flex justify-center w-full bg-white dark:bg-gray-800">
+    <div class="flex-initial shadow-md z-10 flex justify-center w-full bg-white dark:bg-slate-800">
       <NavigationBar class="max-w-screen-2xl w-full" />
     </div>
     <RouterView />

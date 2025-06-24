@@ -9,14 +9,14 @@
 
 <template>
   <footer
-    class="bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-between p-8 flex-1 mt-4 w-full border-t border-gray-300 dark:border-gray-700"
+    class="bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 flex flex-col items-center justify-between p-8 flex-1 mt-4 w-full border-t border-slate-300 dark:border-slate-700"
   >
     <div
       id="footer-links"
       class="max-w-screen-2xl w-full flex flex-col md:flex-row justify-between mb-16 space-y-8 md:space-y-0"
     >
       <section>
-        <h3 class="text-xl font-semibold text-black dark:text-gray-100 mb-4">Legal</h3>
+        <h3 class="text-xl font-semibold text-black dark:text-slate-100 mb-4">Legal</h3>
         <ul class="space-y-2">
           <li>
             <RouterLink to="/resources" class="hover:text-teal-400 transition duration-300">

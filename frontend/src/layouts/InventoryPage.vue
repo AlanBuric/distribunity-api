@@ -193,20 +193,20 @@
 
 <template>
   <div class="h-full flex flex-row items-stretch">
-    <aside class="bg-gray-100 dark:bg-gray-900 px-3 py-2">
+    <aside class="bg-slate-100 dark:bg-slate-900 px-3 py-2">
       <WorkNavigationBar />
-      <hr class="my-3 border-gray-500 dark:border-gray-300" />
-      <h2 class="mt-1 text-xl font-extrabold dark:text-gray-200">
+      <hr class="my-3 border-slate-500 dark:border-slate-300" />
+      <h2 class="mt-1 text-xl font-extrabold dark:text-slate-200">
         Organization inventory explorer
       </h2>
-      <h2 class="mt-1 text-lg font-semibold dark:text-gray-200">
+      <h2 class="mt-1 text-lg font-semibold dark:text-slate-200">
         <RouterLink :to="`/work/organizations/${organizationId}`" class="underline">
           {{ authStore.currentOrganization?.name ?? 'Unknown organization' }}
         </RouterLink>
       </h2>
       <button
         @click.prevent="createNewInventory"
-        class="cursor-pointer text-sm bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md px-3 py-1 my-4 shadow-sm hover:bg-gray-300 dark:hover:bg-gray-800 focus:outline-none"
+        class="cursor-pointer text-sm bg-slate-300 dark:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-md px-3 py-1 my-4 shadow-sm hover:bg-slate-300 dark:hover:bg-slate-800 focus:outline-none"
       >
         New inventory
       </button>
@@ -218,7 +218,7 @@
         @select-inventory="selectInventory"
         @rename-inventory="renameInventory"
       />
-      <p v-else class="text-center text-gray-500 dark:text-gray-400 mt-2">
+      <p v-else class="text-center text-slate-500 dark:text-slate-400 mt-2">
         Your organization currently has no inventories.<br />
         <button class="cursor-pointer underline" @click.prevent="createNewInventory">
           Consider creating one.
@@ -232,8 +232,8 @@
         class="flex-initial"
       />
       <div class="flex flex-1 gap-3 mx-2 mt-2 content-stretch">
-        <main class="flex-1 bg-white dark:bg-gray-800 rounded-t-lg">
-          <h2 class="p-3 text-semibold text-gray-500 dark:text-gray-400">
+        <main class="flex-1 bg-white dark:bg-slate-800 rounded-t-lg">
+          <h2 class="p-3 text-semibold text-slate-500 dark:text-slate-400">
             <RouterLink to="/work" class="underline" title="Visit this organization's dashboard">
               Organizations
             </RouterLink>
@@ -266,13 +266,13 @@
             @create-new-item="tryOpenItemCreator"
             @select-item="selectItemForViewing"
           />
-          <p v-else-if="inventories.length == 0" class="text-gray-400 text-center m-4">
+          <p v-else-if="inventories.length == 0" class="text-slate-400 text-center m-4">
             Your organization currently has no inventories.<br />
             <button class="cursor-pointer underline" @click.prevent="createNewInventory">
               Consider creating one.
             </button>
           </p>
-          <p v-else class="text-gray-400 text-center m-4">
+          <p v-else class="text-slate-400 text-center m-4">
             Select an inventory to start managing its items.
           </p>
         </main>

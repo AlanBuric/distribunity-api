@@ -6,8 +6,8 @@
   const route = useRoute();
 
   const props = defineProps<{
-    posts: BlogPost[]
-    getPageCount: () => number
+    posts: BlogPost[];
+    getPageCount: () => number;
   }>();
 
   function focusTopBar() {
@@ -28,7 +28,7 @@
     <PostList :posts="props.posts" />
     <h3
       v-if="!nextPageExists()"
-      class="text-lg font-thin text-center mt-6 text-gray-800 dark:text-gray-300"
+      class="text-lg font-thin text-center mt-6 text-slate-800 dark:text-slate-300"
     >
       You've arrived at the beginning of history!
     </h3>
@@ -41,12 +41,7 @@
         Previous
       </RouterLink>
 
-      <button
-        class="fancy-button"
-        @click="focusTopBar"
-      >
-        Back to top
-      </button>
+      <button class="fancy-button" @click="focusTopBar">Back to top</button>
 
       <RouterLink
         v-if="nextPageExists()"

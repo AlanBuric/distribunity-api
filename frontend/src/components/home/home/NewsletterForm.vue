@@ -23,10 +23,10 @@
     </h2>
     <template v-else>
       <div class="text-center mb-6">
-        <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+        <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
           {{ t('newsletterTitle') }}
         </h2>
-        <p class="text-lg text-gray-700 dark:text-gray-300">
+        <p class="text-lg text-slate-700 dark:text-slate-300">
           {{ t('newsletterDescription') }}
         </p>
       </div>
@@ -34,7 +34,7 @@
         <div class="mb-4">
           <input
             v-model="email"
-            class="custom-input w-full px-2 py-1.5 border text-gray-700 dark:text-gray-300 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-teal-400"
+            class="custom-input w-full px-2 py-1.5 border text-slate-700 dark:text-slate-300 border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-600 dark:bg-slate-700 dark:focus:ring-teal-400"
             type="email"
             name="email"
             autocomplete="email"
@@ -50,7 +50,7 @@
             class="form-checkbox h-5 w-5 text-teal-500 dark:text-teal-400"
             required
           />
-          <label for="agreement" class="ml-3 text-gray-700 dark:text-gray-300 text-sm">
+          <label for="agreement" class="ml-3 text-slate-700 dark:text-slate-300 text-sm">
             {{ t('agreementText') }}
           </label>
         </div>

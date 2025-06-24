@@ -11,11 +11,11 @@
 <template>
   <button
     @click="store.nextTheme"
-    class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full p-1"
+    class="hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full p-1"
     :title="t('switchTheme')"
   >
-    <MoonIcon v-if="store.theme == 'dark'" class="w-5 h-5 fill-gray-300" />
-    <SunIcon v-else class="w-5 h-5 fill-gray-800" />
+    <MoonIcon v-if="store.theme == 'dark'" class="w-5 h-5 fill-slate-300" />
+    <SunIcon v-else class="w-5 h-5 fill-slate-800" />
   </button>
 </template>
 

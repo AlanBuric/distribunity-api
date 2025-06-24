@@ -15,17 +15,17 @@
       <NewsletterForm>
         <button
           @click.prevent="showNewsletterForm = false"
-          class="px-6 py-3 font-medium bg-gray-100 text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 focus:outline-none"
+          class="px-6 py-3 font-medium bg-slate-100 text-slate-700 border border-slate-300 rounded-md shadow-sm hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600 dark:hover:bg-slate-600 focus:outline-none"
         >
           Close
         </button>
       </NewsletterForm>
     </ModalPopup>
     <div class="">
-      <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+      <h2 class="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
         {{ t('comingSoonTitle') }}
       </h2>
-      <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
+      <p class="text-lg text-slate-700 dark:text-slate-300 mb-4">
         {{ t('comingSoonDescription') }}
       </p>
       <button

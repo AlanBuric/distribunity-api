@@ -5,39 +5,47 @@
   import { getDoc, doc, updateDoc, arrayRemove } from 'firebase/firestore';
 
   const props = defineProps<{
-    organizationStringRef: string
+    organizationStringRef: string;
   }>();
 
   const orgRef = doc(database, props.organizationStringRef);
   const orgSnapshot = await getDoc(orgRef);
-  const organization: Organization & WithId = { ...(orgSnapshot.data() as Organization), id: orgSnapshot.id };
+  const organization: Organization & WithId = {
+    ...(orgSnapshot.data() as Organization),
+    id: orgSnapshot.id,
+  };
 
   async function leaveOrganization() {
     if (!confirm(`Are you sure you want to leave the organization ${organization.name}?`)) {
       return;
     }
 
-    await updateDoc(doc(database, 'users', auth.currentUser!.uid), { organizations: arrayRemove(orgRef) });
-  };
+    await updateDoc(doc(database, 'users', auth.currentUser!.uid), {
+      organizations: arrayRemove(orgRef),
+    });
+  }
 </script>
 
 <template>
-  <div class="block w-full md:w-1/3 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-    <h3 class="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+  <div class="block w-full md:w-1/3 bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md">
+    <h3 class="text-2xl font-bold mb-2 text-slate-900 dark:text-slate-100">
       {{ organization.name }}
     </h3>
-    <h6 class="text-lg font-medium text-gray-600 dark:text-gray-400">
+    <h6 class="text-lg font-medium text-slate-600 dark:text-slate-400">
       {{ organization.country }}
     </h6>
 
     <div class="mt-4 flex space-x-2">
-      <RouterLink :to="`/work/organization/${organization.id}/inventories`" class="text-sm bg-gray-200 text-gray-900 px-3 py-2 rounded-lg dark:bg-gray-600 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 hover:shadow-sm transition-shadow transform hover:scale-105">
+      <RouterLink
+        :to="`/work/organization/${organization.id}/inventories`"
+        class="text-sm bg-slate-200 text-slate-900 px-3 py-2 rounded-lg dark:bg-slate-600 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 hover:shadow-sm transition-shadow transform hover:scale-105"
+      >
         Go to inventories
       </RouterLink>
       <RouterLink
         :to="`/work/organization/${organization.id}`"
         v-if="organization.owner.id === auth.currentUser?.uid"
-        class="text-sm bg-gray-200 text-gray-900 px-3 py-2 rounded-lg dark:bg-gray-600 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 hover:shadow-sm transition-shadow transform hover:scale-105"
+        class="text-sm bg-slate-200 text-slate-900 px-3 py-2 rounded-lg dark:bg-slate-600 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 hover:shadow-sm transition-shadow transform hover:scale-105"
       >
         Admin page
       </RouterLink>

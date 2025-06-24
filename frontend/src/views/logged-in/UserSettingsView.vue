@@ -52,12 +52,12 @@
 
 <template>
   <main
-    class="flex-1 items-center flex flex-col p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
+    class="flex-1 items-center flex flex-col p-6 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200"
   >
     <h1 class="text-3xl font-semibold mb-4">User Settings</h1>
 
     <div class="flex flex-col lg:flex-row space-x-10">
-      <div class="h-full bg-gray-500 w-[1px]" />
+      <div class="h-full bg-slate-500 w-[1px]" />
 
       <section class="mb-8">
         <h2 class="text-xl font-semibold mb-4">Profile Settings</h2>
@@ -68,7 +68,7 @@
             <input
               type="text"
               v-model="firstName"
-              class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
+              class="px-3 py-2 border border-slate-500 rounded w-56 dark:bg-slate-700 dark:text-slate-200"
             />
           </div>
 
@@ -77,7 +77,7 @@
             <input
               type="text"
               v-model="lastName"
-              class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
+              class="px-3 py-2 border border-slate-500 rounded w-56 dark:bg-slate-700 dark:text-slate-200"
             />
           </div>
 
@@ -86,7 +86,7 @@
             <input
               type="url"
               v-model="profilePhotoURL"
-              class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
+              class="px-3 py-2 border border-slate-500 rounded w-56 dark:bg-slate-700 dark:text-slate-200"
             />
           </div>
 
@@ -94,7 +94,7 @@
             <label class="block mb-2">Language</label>
             <select
               v-model="language"
-              class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
+              class="px-3 py-2 border border-slate-500 rounded w-56 dark:bg-slate-700 dark:text-slate-200"
             >
               <option value="en-US">English</option>
               <option value="hr-HR">Croatian</option>
@@ -105,7 +105,7 @@
             <label class="block mb-2">Theme</label>
             <select
               v-model="theme"
-              class="px-3 py-2 border border-gray-500 rounded w-56 dark:bg-gray-700 dark:text-gray-200"
+              class="px-3 py-2 border border-slate-500 rounded w-56 dark:bg-slate-700 dark:text-slate-200"
             >
               <option value="dark">Dark</option>
               <option value="light">Light</option>
@@ -121,7 +121,7 @@
         </form>
       </section>
 
-      <div class="h-full bg-gray-500 w-[1px]" />
+      <div class="h-full bg-slate-500 w-[1px]" />
 
       <section class="mb-8">
         <h2 class="text-xl font-semibold mb-4">Account Settings</h2>
@@ -132,7 +132,7 @@
             <input
               type="email"
               v-model="newEmail"
-              class="px-3 py-2 border border-gray-500 rounded w-64 dark:bg-gray-700 dark:text-gray-200"
+              class="px-3 py-2 border border-slate-500 rounded w-64 dark:bg-slate-700 dark:text-slate-200"
             />
           </div>
 
@@ -156,7 +156,7 @@
         </form>
       </section>
 
-      <div class="h-full bg-gray-500 w-[1px]" />
+      <div class="h-full bg-slate-500 w-[1px]" />
 
       <section class="mb-8">
         <h2 class="text-xl font-semibold mb-4">Account deletion</h2>
@@ -169,7 +169,7 @@
               name="confirm-email"
               id="confirm-email"
               v-model="emailConfirmation"
-              class="px-3 py-2 border border-gray-500 rounded w-64 dark:bg-gray-700 dark:text-gray-200"
+              class="px-3 py-2 border border-slate-500 rounded w-64 dark:bg-slate-700 dark:text-slate-200"
             />
           </div>
 
@@ -180,7 +180,7 @@
               name="confirm-password"
               id="confirm-password"
               v-model="passwordConfirmation"
-              class="px-3 py-2 border border-gray-500 rounded w-64 dark:bg-gray-700 dark:text-gray-200"
+              class="px-3 py-2 border border-slate-500 rounded w-64 dark:bg-slate-700 dark:text-slate-200"
             />
           </div>
 
@@ -193,7 +193,7 @@
         </form>
       </section>
 
-      <div class="h-full bg-gray-500 w-[1px]" />
+      <div class="h-full bg-slate-500 w-[1px]" />
     </div>
   </main>
 </template>

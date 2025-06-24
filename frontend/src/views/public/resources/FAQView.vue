@@ -54,9 +54,9 @@
 </script>
 <template>
   <main
-    class="max-w-screen-2xl w-full mx-auto p-8 flex flex-col items-center dark:bg-gray-800 bg-gray-100 text-gray-900 dark:text-white rounded-lg"
+    class="max-w-screen-2xl w-full mx-auto p-8 flex flex-col items-center dark:bg-slate-800 bg-slate-100 text-slate-900 dark:text-white rounded-lg"
   >
-    <header class="flex justify-between items-center px-6 py-4 border-b dark:border-gray-700">
+    <header class="flex justify-between items-center px-6 py-4 border-b dark:border-slate-700">
       <h1 class="text-3xl font-bold">Distribunity FAQ</h1>
     </header>
 
@@ -70,7 +70,7 @@
           <h2 class="text-xl font-semibold mb-2 inline-block">
             {{ faq.question }}
           </h2>
-          <p class="text-gray-700 dark:text-gray-300">
+          <p class="text-slate-700 dark:text-slate-300">
             {{ faq.answer }}
           </p>
         </li>

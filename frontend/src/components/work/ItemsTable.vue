@@ -26,8 +26,8 @@
 </script>
 
 <template>
-  <table class="w-full table-fixed text-left rtl:text-right text-gray-500 dark:text-gray-400">
-    <thead class="text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+  <table class="w-full table-fixed text-left rtl:text-right text-slate-500 dark:text-slate-400">
+    <thead class="text-slate-700 uppercase bg-slate-200 dark:bg-slate-700 dark:text-slate-400">
       <tr>
         <th class="cursor-pointer px-3 py-2" scope="col">Icon</th>
         <th class="cursor-pointer px-3 py-2" scope="col">Name</th>
@@ -39,12 +39,12 @@
     </thead>
     <tbody>
       <tr v-if="queryError">
-        <td colspan="6" class="px-3 py-2 bg-white dark:bg-gray-800 text-center">
+        <td colspan="6" class="px-3 py-2 bg-white dark:bg-slate-800 text-center">
           An error occurred while trying to display data.
         </td>
       </tr>
       <tr v-else-if="isLoading">
-        <td colspan="6" class="px-3 py-2 bg-white dark:bg-gray-800 text-center">
+        <td colspan="6" class="px-3 py-2 bg-white dark:bg-slate-800 text-center">
           <LoadingAnimation />
         </td>
       </tr>
@@ -54,17 +54,17 @@
           :key="item.itemId"
           @click="$emit('selectItem', item)"
           :class="{
-            'hover:bg-gray-50 dark:hover:bg-gray-600': true,
-            'border-b dark:border-gray-700': index < items.length - 1,
-            'bg-white dark:bg-gray-800': item.itemId != props.selectedItemId,
-            'bg-gray-50 dark:bg-gray-600': item.itemId == selectedItemId,
+            'hover:bg-slate-50 dark:hover:bg-slate-600': true,
+            'border-b dark:border-slate-700': index < items.length - 1,
+            'bg-white dark:bg-slate-800': item.itemId != props.selectedItemId,
+            'bg-slate-50 dark:bg-slate-600': item.itemId == selectedItemId,
           }"
         >
           <td class="px-3 py-2">
             <img
               v-if="item.iconUrl"
               :src="item.iconUrl"
-              class="max-w-[60%] shadow-md border-gray-300 rounded-md"
+              class="max-w-[60%] shadow-md border-slate-300 rounded-md"
             />
           </td>
           <td class="px-3 py-2">{{ item.name }}</td>
@@ -80,7 +80,7 @@
         </tr>
       </template>
       <tr v-else>
-        <td colspan="6" class="px-3 py-2 bg-white dark:bg-gray-800 text-center">
+        <td colspan="6" class="px-3 py-2 bg-white dark:bg-slate-800 text-center">
           Your inventory is empty.
           <button class="underline" @click.prevent="$emit('createNewItem')">
             Consider adding some items.

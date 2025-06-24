@@ -7,10 +7,10 @@
 <template>
   <section class="px-5 py-10">
     <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+      <h2 class="text-3xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
         {{ t('title') }}
       </h2>
-      <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+      <p class="text-lg text-slate-700 dark:text-slate-300 mb-6">
         {{ t('description') }}
       </p>
       <RouterLink class="text-lg fancy-button" to="/resources">
