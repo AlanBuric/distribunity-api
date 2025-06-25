@@ -92,14 +92,21 @@ export function getJwtTokenPayload(token: string, type: TokenType): Promise<JwtP
 }
 
 export async function isTokenOnDenylist(token: string) {
-  return (await getRedis().get(`tdl:${token}`)) != null;
+  return (
+    (await getRedis()
+      .get(`tdl:${token}`)
+      .catch(() => null)) != null
+  );
 }
 
 export async function addTokenToDenylist(token: string) {
   const decoded = jwt.decode(token);
 
-  if (typeof decoded == 'object' && decoded?.exp)
-    await getRedis().set(`tdl:${token}`, 1, {
-      expiration: { type: 'EXAT', value: decoded.exp },
-    });
+  if (typeof decoded == 'object' && decoded?.exp) {
+    await getRedis()
+      .set(`tdl:${token}`, 1, {
+        expiration: { type: 'EXAT', value: decoded.exp },
+      })
+      .catch(console.error);
+  }
 }

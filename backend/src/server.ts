@@ -13,7 +13,7 @@ EnvConfig.initialize();
 
 await Promise.all([connectRedis(), connectDatabase()]).then(initializeCache);
 
-const server = createApplication().listen(EnvConfig.PORT, () =>
+const server = createApplication(getRedis()).listen(EnvConfig.PORT, () =>
   console.info(
     styleText(['blueBright', 'bold'], '✔ Distribunity service is up and running:'),
     '\n',

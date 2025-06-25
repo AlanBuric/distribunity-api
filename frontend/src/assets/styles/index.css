@@ -6,8 +6,16 @@
   --color-active-link: #0099ff;
 }
 
-.fancy-button {
-  @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-black dark:bg-slate-700 text-white dark:text-white hover:bg-slate-700 dark:hover:bg-slate-900 dark:border-1 dark:border-slate-600 h-10 px-4 py-2;
+.button-primary {
+  @apply px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-black dark:bg-slate-700 text-white dark:text-white hover:bg-slate-700 dark:hover:bg-slate-900 dark:border-1 dark:border-slate-600 h-10;
+}
+
+.styled-input {
+  @apply px-2 py-1.5 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-600 scheme-light dark:scheme-dark;
+}
+
+.styled-box {
+  @apply bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 border-1 rounded-md;
 }
 
 html,

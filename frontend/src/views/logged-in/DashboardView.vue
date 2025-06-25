@@ -4,11 +4,18 @@
   import OrganizationCard from '@/components/dashboard/OrganizationCard.vue';
   import NewOrganizationFormPopup from '@/components/popup/NewOrganizationFormPopup.vue';
   import { ref } from 'vue';
+  import useAuthStore from '@/store/auth';
+  import { useQuery } from '@/composables/query';
+  import type { Organization } from '@/types';
 
-  const user = useDocument<VuefireUser>(doc(database, 'users', auth.currentUser!.uid), {
-    maxRefDepth: 0,
-  });
+  const auth = useAuthStore();
   const isOrganizationFormOpen = ref(false);
+
+  const {
+    data: organizations,
+    queryError,
+    isLoading,
+  } = useQuery<Organization[]>('/api/organizations');
 </script>
 
 <template>
@@ -16,22 +23,20 @@
     v-if="isOrganizationFormOpen"
     @close-form="isOrganizationFormOpen = false"
   />
-  <main
-    class="flex-grow flex flex-col items-center bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100 px-4 py-6"
-  >
+  <main class="self-center flex flex-col items-center px-4">
     <div class="max-w-7xl space-y-6">
       <div class="space-y-2">
-        <h1 class="text-3xl font-semibold text-center">
-          Hello {{ auth.currentUser?.displayName }}, these are your organizations
+        <h1 class="text-3xl font-light text-center">
+          Hello {{ auth.user.firstName }}, these are your organizations
         </h1>
 
-        <h2 class="text-xl font-semibold text-center text-slate-800 dark:text-slate-200">
+        <h2 class="text-xl font-light text-center text-slate-800 dark:text-slate-200">
           Create or join an organization
         </h2>
       </div>
 
       <div class="flex flex-wrap justify-center items-stretch gap-6">
-        <div class="md:w-1/3 space-y-3 bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md">
+        <div class="md:w-1/3 space-y-3 styled-box">
           <button
             class="w-full px-3 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
             @click.prevent="isOrganizationFormOpen = true"
@@ -47,25 +52,25 @@
       </div>
 
       <div class="space-y-2">
-        <h2 class="text-xl font-semibold text-center text-slate-800 dark:text-slate-200">
+        <h2 class="text-xl font-light text-center text-slate-800 dark:text-slate-200">
           Joined and owned organizations
         </h2>
-        <p class="text-center text-lg text-slate-700 dark:text-slate-200">
+        <p class="text-center text-lg text-slate-700 dark:text-slate-400">
           {{
-            user?.organizations.length
+            organizations?.length
               ? 'Manage your organizations here.'
-              : "You don't have any organizations. Consider creating one."
+              : "You're not a member of any organization. Consider creating or joining one."
           }}
         </p>
       </div>
 
       <div class="flex flex-wrap justify-center gap-6">
-        <Transition mode="out-in" v-if="user?.organizations.length">
+        <Transition mode="out-in" v-if="organizations?.length">
           <Suspense timeout="0">
             <OrganizationCard
-              v-for="organization in user.organizations"
-              :key="organization"
-              :organization-string-ref="organization"
+              v-for="organization in organizations"
+              :key="organization.organizationId"
+              :organization="organization"
             />
 
             <template #fallback>
@@ -73,9 +78,6 @@
             </template>
           </Suspense>
         </Transition>
-        <h3 v-else class="text-2xl text-center text-slate-700 dark:text-slate-300">
-          You're not a member of any organization.
-        </h3>
       </div>
     </div>
   </main>

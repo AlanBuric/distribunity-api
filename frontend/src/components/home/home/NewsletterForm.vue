@@ -53,7 +53,7 @@
           </label>
         </div>
         <div class="flex gap-x-3 justify-center">
-          <button type="submit" class="text-lg fancy-button">{{ t('subscribe') }}</button>
+          <button type="submit" class="text-lg button-primary">{{ t('subscribe') }}</button>
           <slot />
         </div>
       </form>

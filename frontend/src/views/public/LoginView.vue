@@ -43,7 +43,7 @@
         }}</label>
         <input
           v-model="email"
-          class="w-full px-2 py-1.5 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-600"
+          class="w-full my-2 styled-input"
           type="email"
           name="email"
           :placeholder="t('emailPlaceholder')"
@@ -56,7 +56,7 @@
         }}</label>
         <input
           v-model="password"
-          class="w-full px-2 py-1.5 mt-2 mb-2 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-600"
+          class="w-full my-2 styled-input"
           type="password"
           name="password"
           :placeholder="t('passwordPlaceholder')"
@@ -67,7 +67,7 @@
         <button
           type="submit"
           value="Log in"
-          class="fancy-button w-full mt-8"
+          class="button-primary w-full mt-8"
           :disabled="isWaitingForResponse"
         >
           {{ t('signIn') }}

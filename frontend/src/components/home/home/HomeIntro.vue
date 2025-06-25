@@ -9,7 +9,7 @@
       <p class="text-lg mb-4 text-slate-700 dark:text-slate-300">
         {{ $t('homeIntroDescription') }}
       </p>
-      <RouterLink class="inline-block text-lg fancy-button" to="/signup">
+      <RouterLink class="inline-block text-lg button-primary" to="/signup">
         {{ $t('homeSignUp') }}
       </RouterLink>
     </div>

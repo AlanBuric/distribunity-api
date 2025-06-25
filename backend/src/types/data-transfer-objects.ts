@@ -18,10 +18,7 @@ export type Organization = Omit<DbOrganization, 'currencyFormat'> & {
 export type OrganizationSelfResponse = DbOrganization &
   OrganizationMember & { countryName: string; roles: Role[]; permissions: number[] };
 
-export type AuthorizedLocals = {
-  userId: number;
-  organizationIds: number[];
-};
+export type AuthorizedLocals = { userId: number };
 
 export type OrganizationLocals = AuthorizedLocals & {
   organization: Organization;

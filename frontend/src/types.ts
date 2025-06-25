@@ -1,6 +1,6 @@
 export enum LocalStorage {
   THEME = 'theme',
-  LOCALE = 'locale',
+  LANGUAGE = 'locale',
   ACCESS_TOKEN = 'accessToken',
 }
 
@@ -64,8 +64,8 @@ export type User = {
   updatedAt: string;
   firstName: string;
   lastName: string;
-  language: string;
-  theme: string;
+  language: LanguageTag;
+  theme: Theme;
   email: string;
 };
 

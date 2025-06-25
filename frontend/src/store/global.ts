@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import useAuthStore from './auth.js';
 import { AuthState, LocalStorage, type LanguageTag, type Theme } from '@/types.js';
 import { identity } from '@/scripts/shared.js';
+import axios from 'axios';
 
 export const availableLanguages: ReadonlyArray<[LanguageTag, string]> = [
   ['en-US', 'English (US)'],
@@ -32,6 +33,13 @@ const useGlobalStore = defineStore('global', () => {
     localStorage.setItem(LocalStorage.THEME, theme.value);
 
     document.documentElement.classList.toggle('dark', theme.value == 'dark');
+
+    const auth = useAuthStore();
+
+    if (auth.state == AuthState.LoggedIn && auth.user.theme != newTheme) {
+      auth.user.theme = newTheme;
+      axios.patch('/api/users/self', { theme: newTheme }).catch();
+    }
   }
 
   function nextTheme() {
@@ -65,7 +73,7 @@ const useGlobalStore = defineStore('global', () => {
 
   function loadPreferredLanguage() {
     const potentialMatches = new Set(availableLanguages.map(([tag]) => tag));
-    const found = [localStorage.getItem(LocalStorage.LOCALE), ...window.navigator.languages]
+    const found = [localStorage.getItem(LocalStorage.LANGUAGE), ...window.navigator.languages]
       .map(identity)
       .find((tag) => potentialMatches.has(tag as any)) as any;
 

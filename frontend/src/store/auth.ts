@@ -17,9 +17,9 @@ const EMPTY_USER: User = {
   updatedAt: new Date().toISOString(),
   firstName: '',
   lastName: '',
-  theme: '',
+  theme: 'light',
   email: '',
-  language: '',
+  language: 'en-US',
 };
 
 const useAuthStore = defineStore('auth', () => {
@@ -41,6 +41,7 @@ const useAuthStore = defineStore('auth', () => {
       .post<{ accessToken: string; user: User }>('/api/login', { email, password })
       .then(({ data }) => {
         localStorage.setItem(LocalStorage.ACCESS_TOKEN, data.accessToken);
+        axios.defaults.headers.authorization = `Bearer ${data.accessToken}`;
         user.value = data.user;
         state.value = AuthState.LoggedIn;
       });

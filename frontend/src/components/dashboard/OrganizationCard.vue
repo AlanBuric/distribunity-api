@@ -1,25 +1,23 @@
 <script setup lang="ts">
+  import useAuthStore from '@/store/auth';
   import type { Organization } from '@/types';
+  import axios from 'axios';
 
-  const props = defineProps<{
-    organizationStringRef: string;
-  }>();
-
-  const orgRef = doc(database, props.organizationStringRef);
-  const orgSnapshot = await getDoc(orgRef);
-  const organization: Organization & WithId = {
-    ...(orgSnapshot.data() as Organization),
-    id: orgSnapshot.id,
-  };
+  const props = defineProps<{ organization: Organization }>();
+  const auth = useAuthStore();
 
   async function leaveOrganization() {
-    if (!confirm(`Are you sure you want to leave the organization ${organization.name}?`)) {
+    if (!confirm(`Are you sure you want to leave the organization ${props.organization.name}?`)) {
       return;
     }
 
-    await updateDoc(doc(database, 'users', auth.currentUser!.uid), {
-      organizations: arrayRemove(orgRef),
-    });
+    axios.post(`/api/organizations/${props.organization.organizationId}/leave`);
+  }
+
+  async function deleteOrganization() {
+    axios.delete(
+      `/api/organization/${props.organization.organizationId}/member/${auth.user.userId}`,
+    );
   }
 </script>
 
@@ -29,26 +27,26 @@
       {{ organization.name }}
     </h3>
     <h6 class="text-lg font-medium text-slate-600 dark:text-slate-400">
-      {{ organization.country }}
+      {{ organization.countryCode }}
     </h6>
 
     <div class="mt-4 flex space-x-2">
       <RouterLink
-        :to="`/work/organization/${organization.id}/inventories`"
+        :to="`/work/organization/${organization.organizationId}/inventories`"
         class="text-sm bg-slate-200 text-slate-900 px-3 py-2 rounded-lg dark:bg-slate-600 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 hover:shadow-sm transition-shadow transform hover:scale-105"
       >
         Go to inventories
       </RouterLink>
       <RouterLink
-        :to="`/work/organization/${organization.id}`"
-        v-if="organization.owner.id === auth.currentUser?.uid"
+        :to="`/work/organization/${organization.organizationId}`"
+        v-if="organization.ownerId === auth.user.userId"
         class="text-sm bg-slate-200 text-slate-900 px-3 py-2 rounded-lg dark:bg-slate-600 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 hover:shadow-sm transition-shadow transform hover:scale-105"
       >
         Admin page
       </RouterLink>
       <button
-        v-if="organization.owner.id === auth.currentUser?.uid"
-        @click="deleteOrganization(organization)"
+        v-if="organization.ownerId == auth.user.userId"
+        @click="deleteOrganization()"
         class="text-red-600 hover:text-red-800 text-sm font-semibold px-2 py-1 hover:shadow-md transition-shadow transform hover:scale-105"
       >
         Delete

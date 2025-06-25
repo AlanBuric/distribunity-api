@@ -3,8 +3,10 @@
   import { useI18n } from 'vue-i18n';
   import { availableLanguages } from '@/store/global.ts';
   import TranslationIcon from './icons/TranslationIcon.vue';
-  import { LocalStorage, type LanguageTag } from '@/types';
+  import { AuthState, LocalStorage, type LanguageTag } from '@/types';
   import { i18n } from '@/main';
+  import axios from 'axios';
+  import useAuthStore from '@/store/auth';
 
   const { t } = useI18n();
   const isDropdownOpen = ref(false);
@@ -13,9 +15,18 @@
     isDropdownOpen.value = !!(event.target as HTMLElement).closest('.lang-dropdown');
   }
 
-  function onLanguageClick(language: LanguageTag) {
-    i18n.global.locale.value = language;
+  function selectLanguage(language: LanguageTag) {
     isDropdownOpen.value = false;
+
+    i18n.global.locale.value = language;
+    localStorage.setItem(LocalStorage.LANGUAGE, language);
+
+    const auth = useAuthStore();
+
+    if (auth.state == AuthState.LoggedIn && language != auth.user.language) {
+      axios.patch('/api/users/self', { language: language }).catch();
+      auth.user.language = language;
+    }
   }
 
   watch(isDropdownOpen, (val) => {
@@ -23,7 +34,7 @@
     else window.removeEventListener('click', onClickOutside);
   });
 
-  watch(i18n.global.locale, (current) => localStorage.setItem(LocalStorage.LOCALE, current));
+  watch(i18n.global.locale, (current) => localStorage.setItem(LocalStorage.LANGUAGE, current));
 </script>
 
 <template>
@@ -47,7 +58,7 @@
         :key="language"
         class="px-4 py-2 first:rounded-t-xl last:rounded-b-xl cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
         :aria-selected="i18n.global.locale.value == language"
-        @click="onLanguageClick(language)"
+        @click="selectLanguage(language)"
         tabindex="0"
         role="option"
       >

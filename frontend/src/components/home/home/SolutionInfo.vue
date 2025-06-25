@@ -13,7 +13,7 @@
       <p class="text-lg text-slate-700 dark:text-slate-300 mb-6">
         {{ t('description') }}
       </p>
-      <RouterLink class="text-lg fancy-button" to="/resources">
+      <RouterLink class="text-lg button-primary" to="/resources">
         {{ t('learnMore') }}
       </RouterLink>
     </div>

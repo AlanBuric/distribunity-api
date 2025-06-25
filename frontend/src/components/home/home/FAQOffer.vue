@@ -9,7 +9,7 @@
     <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
       {{ t('faqOfferTitle') }}
     </h2>
-    <RouterLink class="text-lg fancy-button" to="/resources">
+    <RouterLink class="text-lg button-primary" to="/resources">
       {{ t('visitFaq') }}
     </RouterLink>
   </section>

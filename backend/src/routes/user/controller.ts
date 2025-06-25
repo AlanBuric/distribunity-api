@@ -11,6 +11,7 @@ import { logoutUser } from '../session/controller.js';
 import getLoggingPrefix from '../../utils/logging.js';
 import { matchedData, type Meta } from 'express-validator';
 import { verifyPassword } from '../session/service.js';
+import { getSqlPatchColumns } from '../../utils/database.js';
 
 const lowercaseRegEx = /[a-z]/;
 const uppercaseRegEx = /[A-Z]/;
@@ -54,8 +55,18 @@ export async function deleteSelfUser(
   response: Response<ErrorResponse, AuthorizedLocals>,
 ) {
   await getDatabase()
-    .query(`DELETE FROM "user" WHERE user_id = $1`, [response.locals.userId])
-    .then(() => logoutUser(request, response))
+    .query(`DELETE FROM "user" WHERE user_id = $1 AND is_app_admin IS NOT TRUE`, [
+      response.locals.userId,
+    ])
+    .then(({ rowCount }) => {
+      if (!rowCount) {
+        return response
+          .status(StatusCodes.FORBIDDEN)
+          .send('Web application administrator accounts cannot be deleted.');
+      }
+
+      logoutUser(request, response);
+    })
     .catch((error) => {
       if (error.code != '23503')
         console.error(`${getLoggingPrefix()} Unhandled SQL error during user deletion`, error);
@@ -79,6 +90,8 @@ export async function changeSelfUserPassword(
 
   const user = await getUserById(response.locals.userId);
 
+  // TODO: change password, check stuff, unhash, hash...
+
   if (!verifyPassword(oldPassword, user.passwordHash))
     return response.status(StatusCodes.BAD_REQUEST).send('Wrong old password');
 }
@@ -86,4 +99,20 @@ export async function changeSelfUserPassword(
 export async function editSelfUser(
   request: Request,
   response: Response<ErrorResponse, AuthorizedLocals>,
-): Promise<any> {}
+): Promise<any> {
+  const { firstName, lastName, theme, language } = matchedData(request);
+
+  const [set, args] = getSqlPatchColumns(
+    [
+      ['firstName', firstName],
+      ['lastName', lastName],
+      ['theme', theme],
+      ['language', language],
+    ],
+    response.locals.userId,
+  );
+
+  await getDatabase().query(`UPDATE "user" SET ${set} WHERE user_id = $${args.length}`, args);
+
+  response.sendStatus(StatusCodes.NO_CONTENT);
+}

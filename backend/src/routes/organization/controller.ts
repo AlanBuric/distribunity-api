@@ -176,12 +176,15 @@ export async function PATCH(
     organizationId,
   );
 
-  await getDatabase().query(`UPDATE organization SET ${set} WHERE organization_id = $3`, args);
+  await getDatabase().query(
+    `UPDATE organization SET ${set} WHERE organization_id = ${args.length}`,
+    args,
+  );
 
   response.sendStatus(StatusCodes.OK);
 }
 
-export async function POST(
+export async function createOrganization(
   request: Request,
   response: Response<DbOrganization, AuthorizedLocals>,
 ): Promise<any> {

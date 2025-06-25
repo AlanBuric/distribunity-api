@@ -14,7 +14,7 @@
       The page you're looking for doesn't exist. Let's get you back on track.
     </p>
     <div class="flex items-center space-x-4">
-      <RouterLink to="/" class="fancy-button">Go home</RouterLink>
+      <RouterLink to="/" class="button-primary">Go home</RouterLink>
       <button
         @click="$router.back()"
         class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold px-4 py-2 rounded-lg hover:bg-slate-300"

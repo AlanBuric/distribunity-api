@@ -34,17 +34,17 @@
   <div id="page-controls" class="flex justify-center items-center gap-4 mt-6">
     <RouterLink
       v-if="prevPageExists()"
-      class="fancy-button"
+      class="button-primary"
       :to="{ name: 'blog', query: { page: parseInt($route.query.page as string) - 1 } }"
     >
       Previous
     </RouterLink>
 
-    <button class="fancy-button" @click="focusTopBar">Back to top</button>
+    <button class="button-primary" @click="focusTopBar">Back to top</button>
 
     <RouterLink
       v-if="nextPageExists()"
-      class="fancy-button"
+      class="button-primary"
       :to="{ name: 'blog', query: { page: parseInt($route.query.page as string) + 1 } }"
     >
       Next

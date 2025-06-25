@@ -6,7 +6,7 @@ import {
   GET_BY_ID,
   GET_BY_ID_AS_ADMIN,
   PATCH,
-  POST,
+  createOrganization,
   requirePermission,
   requireUserBelongsToTargetOrganization,
 } from './controller.js';
@@ -43,7 +43,7 @@ function createOrganizationValidatorChain() {
 
 const OrganizationRouter = Router()
   .get('', GET)
-  .post('', ...createOrganizationValidatorChain(), handleValidationResults, POST)
+  .post('', ...createOrganizationValidatorChain(), handleValidationResults, createOrganization)
   .use(
     '/:organizationId',
     param('organizationId').isInt(),
