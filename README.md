@@ -33,8 +33,7 @@ npm ci
 ## Development mode
 
 Development mode means that the backend API server will run 
-on your computer, while the Redis and PostgreSQL services 
-will run in Docker.
+on your computer, while the Redis and PostgreSQL services run in Docker.
 
 1. Configure your `.env` file as a copy of `.env.example`, in the `backend` directory:
 
@@ -51,7 +50,7 @@ host rather than multiple hosts when ran in a container.
 docker compose up database redis -d
 ```
 
-The `-d` flag runs the services in background.
+The `-d` option runs the services in background.
 
 3. Start the development backend and frontend servers locally
 
@@ -69,4 +68,4 @@ npm run dev
 
 ## Running in production
 
-Run `docker compose up -d`.
+Run `docker compose up -d`. Visit the IP address of the host machine in your browser.

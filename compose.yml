@@ -3,7 +3,7 @@ services:
     build: ./backend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "8080:8080"
     environment:
       PORT: ${PORT}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
@@ -36,7 +36,7 @@ services:
     build: ./frontend
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "80:80"
     networks:
       - app-network
 
@@ -44,14 +44,17 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5432"
     environment:
       POSTGRES_USER: ${PGUSER}
       POSTGRES_PASSWORD: ${PGPASSWORD}
       POSTGRES_DB: ${PGDATABASE}
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/indices.sql:/docker-entrypoint-initdb.d/02-indices.sql:ro
+      - ./database/triggers.sql:/docker-entrypoint-initdb.d/03-triggers.sql:ro
+      - ./database/data.sql:/docker-entrypoint-initdb.d/04-data.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${PGUSER} -d ${PGDATABASE}"]
       interval: 1s
@@ -64,7 +67,7 @@ services:
     image: redis:8-alpine
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "6379"
     volumes:
       - redisdata:/data
     healthcheck:
