@@ -197,8 +197,8 @@ export async function createOrganization(
 
     const result = await client.query(
       `
-    INSERT INTO organization (name, country_code, owner_id)
-    VALUES ($1, $2, $3)
+    INSERT INTO organization (name, country_code, owner_id, currency_format)
+    VALUES ($1, $2, $3, $4)
     RETURNING *`,
       [name, countryCode, response.locals.userId],
     );
@@ -212,6 +212,7 @@ export async function createOrganization(
       `,
       [response.locals.userId, organization.organizationId],
     );
+
     await client.query('COMMIT');
 
     getRedis().sAdd(

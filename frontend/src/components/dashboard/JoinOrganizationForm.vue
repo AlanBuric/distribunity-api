@@ -29,7 +29,7 @@
 </script>
 
 <template>
-  <form class="md:w-1/3 space-y-3 styled-box" @submit.prevent="joinOrganization">
+  <form class="max-w-md space-y-3 styled-box" @submit.prevent="joinOrganization">
     <input
       v-model="invitationCode"
       placeholder="Invitation code"

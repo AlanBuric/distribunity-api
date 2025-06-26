@@ -23,9 +23,16 @@
 
 <template>
   <div class="block w-full md:w-1/3 bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md">
-    <h3 class="text-2xl font-bold mb-2 text-slate-900 dark:text-slate-100">
-      {{ organization.name }}
-    </h3>
+    <div>
+      <h3 class="text-2xl font-bold mb-2 text-slate-900 dark:text-slate-100">
+        {{ organization.name }}
+      </h3>
+      <h3
+        class="text-2xl uppercase font-light text-slate-300 dark:text-slate-700 bg-blue-300 dark:bg-blue-900"
+      >
+        {{ organization.ownerId == auth.user.userId ? 'OWNED' : 'JOINED' }}
+      </h3>
+    </div>
     <h6 class="text-lg font-medium text-slate-600 dark:text-slate-400">
       {{ organization.countryCode }}
     </h6>

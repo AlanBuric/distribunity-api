@@ -1,6 +1,6 @@
-import { ColumnType, type InventoryItem, type Item } from '@/types';
+import { ColumnType, type CurrencyFormat, type InventoryItem, type Item } from '@/types';
 import { h, type VNode } from 'vue';
-
+/*
 type ColumnFunction = (item: InventoryItem) => string;
 const currencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'EUR' });
 new Intl.NumberFormat(undefined, {});
@@ -32,15 +32,7 @@ const itemColumnRegistry: Record<ColumnType, ColumnFunction> = {
 
 export function getItemColumnValue(item: Item, columnType: ColumnType | string) {
   return itemColumnRegistry[columnType](item);
-}
-
-export interface CurrencyFormat {
-  symbolPosition: 'before' | 'after';
-  decimalSeparator: string;
-  thousandSeparator: string;
-  fractionDigits: number;
-  symbol: string;
-}
+}*/
 
 export function formatCurrency(value: number, format: CurrencyFormat): string {
   let [integer, fraction = ''] = Math.abs(value).toFixed(format.fractionDigits).split('.');
@@ -51,10 +43,9 @@ export function formatCurrency(value: number, format: CurrencyFormat): string {
 
   if (format.fractionDigits > 0) formatted += format.decimalSeparator + fraction;
 
-  formatted =
-    format.symbolPosition == 'before'
-      ? `${format.symbol}${formatted}`
-      : `${formatted}${format.symbol}`;
+  formatted = format.isSymbolBefore
+    ? `${format.symbol}${formatted}`
+    : `${formatted}${format.symbol}`;
 
   if (value < 0) formatted = '-' + formatted;
 

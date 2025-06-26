@@ -30,7 +30,7 @@ export default defineConfigWithVueTs(
       'vue/multi-word-component-names': [
         'error',
         {
-          ignores: [],
+          ignores: ['Application'],
         },
       ],
     },

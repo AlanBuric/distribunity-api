@@ -38,6 +38,15 @@ function createOrganizationValidatorChain() {
           }),
       )
       .withMessage('Country not found'),
+    body('currencyFormat').isObject().withMessage('Currency format must be an object'),
+    body([
+      'currencyFormat.thousandSeparator',
+      'currencyFormat.decimalSeparator',
+      'currencyFormat.symbol',
+      'currencyFormat.symbolPosition',
+    ])
+      .isString()
+      .withMessage((_input, meta) => `${meta.path} must be a string`),
   ];
 }
 

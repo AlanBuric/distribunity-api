@@ -19,7 +19,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '',
+      path: '/',
       alias: ['/home'],
       name: 'home-view',
       component: () => import('@/layouts/HomeLayout.vue'),
@@ -78,12 +78,10 @@ const router = createRouter({
       ],
     },
     {
-      path: '/work/',
+      path: '/work',
       name: 'work',
       component: () => import('@/layouts/CommonAuthPage.vue'),
-      meta: {
-        requiresAuth: true,
-      },
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -104,7 +102,7 @@ const router = createRouter({
           },
         },
         {
-          path: 'organization/:id/',
+          path: 'organization/:id',
           children: [
             {
               path: '',
@@ -152,22 +150,12 @@ router.beforeEach(async (to) => {
   await auth.authReady;
 
   if (auth.state == AuthState.LoggedIn) {
-    if (to.path.toLowerCase().includes('/work/organization') && typeof to.params.id == 'string')
-      await auth.loadOrganization(to.params.id);
-
     if (to.meta.requiresOrganizationAdmin && !auth.isOrganizationOwner())
-      return {
-        path: '/work',
-      };
+      return { name: 'dashboard' };
 
     if (to.meta.avoidIfAuthed) return to.meta.avoidIfAuthed;
   } else if (to.meta.requiresAuth) {
-    return {
-      name: 'login',
-      query: {
-        redirect: to.fullPath,
-      },
-    };
+    return { name: 'login', query: { redirect: to.fullPath } };
   }
 });
 

@@ -1,7 +1,7 @@
 import type { DbOrganization, OrganizationMember, Role, DbUser } from './database-types.js';
 
 export interface CurrencyFormat {
-  symbolPosition: 'before' | 'after';
+  isSymbolBefore: boolean;
   decimalSeparator: string;
   thousandSeparator: string;
   fractionDigits: number;

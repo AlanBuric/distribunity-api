@@ -16,6 +16,15 @@
     queryError,
     isLoading,
   } = useQuery<Organization[]>('/api/organizations');
+
+  function getGreeting() {
+    const hour = new Date().getHours();
+
+    if (hour >= 17) return `Good evening, ${auth.user.firstName}. These are your organizations.`;
+    if (hour >= 12) return `Good afternoon, ${auth.user.firstName}. These are your organizations.`;
+
+    return `Good morning ${auth.user.firstName}, these are your organizations.`;
+  }
 </script>
 
 <template>
@@ -26,35 +35,25 @@
   <main class="self-center flex flex-col items-center px-4">
     <div class="max-w-7xl space-y-6">
       <div class="space-y-2">
-        <h1 class="text-3xl font-light text-center">
-          Hello {{ auth.user.firstName }}, these are your organizations
+        <h1 class="text-2xl font-light text-center text-black dark:text-white">
+          {{ getGreeting() }}
         </h1>
-
-        <h2 class="text-xl font-light text-center text-slate-800 dark:text-slate-200">
-          Create or join an organization
-        </h2>
       </div>
 
-      <div class="flex flex-wrap justify-center items-stretch gap-6">
-        <div class="md:w-1/3 space-y-3 styled-box">
-          <button
-            class="w-full px-3 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
-            @click.prevent="isOrganizationFormOpen = true"
-          >
-            Create an organization
-          </button>
-          <p class="text-sm text-slate-500 dark:text-slate-400 text-center">
+      <div class="w-full flex justify-center items-stretch gap-6">
+        <div class="max-w-md flex flex-col gap-y-3 styled-box">
+          <p class="text-sm text-slate-500 dark:text-slate-400">
             An organization is a company, business, or even a community, which manages one or more
             inventories.
           </p>
+          <button class="button-primary w-full" @click.prevent="isOrganizationFormOpen = true">
+            Start an organization
+          </button>
         </div>
         <JoinOrganizationForm />
       </div>
 
       <div class="space-y-2">
-        <h2 class="text-xl font-light text-center text-slate-800 dark:text-slate-200">
-          Joined and owned organizations
-        </h2>
         <p class="text-center text-lg text-slate-700 dark:text-slate-400">
           {{
             organizations?.length

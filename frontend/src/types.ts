@@ -75,7 +75,7 @@ export type Country = {
 };
 
 export type CurrencyFormat = {
-  symbolPosition: 'before' | 'after';
+  isSymbolBefore: boolean;
   decimalSeparator: string;
   thousandSeparator: string;
   fractionDigits: number;

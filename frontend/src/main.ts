@@ -9,14 +9,12 @@ import messages from './store/translations';
 import type { LanguageTag } from './types';
 
 const pinia = createPinia();
-
 const application = createApp(Application).use(router).use(pinia);
 
 useGlobalStore().loadPreferredLanguage();
 
 export const i18n = createI18n({
   legacy: false,
-  //warnHtmlInMessage: false,
   locale: useGlobalStore().language,
   fallbackLocale: 'en-US' satisfies LanguageTag,
   availableLocales: availableLanguages.map(([tag]) => tag),
