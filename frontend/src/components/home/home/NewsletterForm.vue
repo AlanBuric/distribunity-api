@@ -17,16 +17,16 @@
 </script>
 
 <template>
-  <section class="flex flex-col items-center p-6">
+  <section class="grow flex flex-col p-6 styled-box">
     <h2 v-if="submitted" class="text-2xl font-semibold text-green-500 dark:text-green-400">
       {{ t('thankYou') }}
     </h2>
     <template v-else>
-      <div class="text-center mb-6">
-        <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
           {{ t('newsletterTitle') }}
         </h2>
-        <p class="text-lg text-slate-700 dark:text-slate-300">
+        <p class="text-md text-slate-700 dark:text-slate-300">
           {{ t('newsletterDescription') }}
         </p>
       </div>
@@ -40,19 +40,19 @@
           :placeholder="t('emailPlaceholder')"
           required
         />
-        <div class="mb-4 flex items-center">
+        <div class="mb-4 flex">
           <input
             type="checkbox"
             id="agreement"
             name="agreement"
-            class="form-checkbox h-5 w-5 text-teal-500 dark:text-teal-400"
+            class="form-checkbox h-5 w-5 text-teal-500 dark:text-teal-400 dark:scheme-dark"
             required
           />
           <label for="agreement" class="ml-3 text-slate-700 dark:text-slate-300 text-sm">
             {{ t('agreementText') }}
           </label>
         </div>
-        <div class="flex gap-x-3 justify-center">
+        <div class="flex gap-x-3">
           <button type="submit" class="text-lg button-primary">{{ t('subscribe') }}</button>
           <slot />
         </div>
@@ -66,7 +66,7 @@
   "en-US": {
     "thankYou": "Thank you for subscribing to our newsletter!",
     "newsletterTitle": "Sign up for our newsletter",
-    "newsletterDescription": "Subscribe to our journey on becoming a favored choice for businesses.",
+    "newsletterDescription": "Follow our journey on becoming a favored choice for businesses.",
     "emailPlaceholder": "Your e-mail",
     "agreementText": "I allow Distribunity to save my e-mail for sending me promotions and educational content, and have the right to cancel my subscription any time.",
     "subscribe": "Subscribe",
@@ -75,7 +75,7 @@
   "hr-HR": {
     "thankYou": "Hvala što ste se pretplatili na naš newsletter!",
     "newsletterTitle": "Prijavite se na naš newsletter",
-    "newsletterDescription": "Pretplatite se na naše putovanje prema tome da postanemo omiljeni izbor za poduzeća.",
+    "newsletterDescription": "Pratite nas našem putovanju prema tome da postanemo omiljeni izbor za poduzeća.",
     "emailPlaceholder": "Vaš e-mail",
     "agreementText": "Dozvoljavam Distribunityju da spremi moj e-mail za slanje promotivnog i edukativnog sadržaja, te imam pravo otkazati pretplatu u bilo kojem trenutku.",
     "subscribe": "Pretplati se",

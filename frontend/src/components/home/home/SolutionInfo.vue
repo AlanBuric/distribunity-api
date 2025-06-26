@@ -5,8 +5,8 @@
 </script>
 
 <template>
-  <section class="px-5 py-10">
-    <div class="max-w-3xl mx-auto text-center">
+  <section class="px-5 py-10 styled-box">
+    <div class="max-w-3xl mx-auto">
       <h2 class="text-3xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
         {{ t('title') }}
       </h2>

@@ -15,7 +15,7 @@
 }
 
 .styled-box {
-  @apply p-5 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 border-1 rounded-md;
+  @apply p-5 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 border-1 rounded-md;
 }
 
 html,

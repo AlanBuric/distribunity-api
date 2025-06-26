@@ -5,7 +5,7 @@
 </script>
 
 <template>
-  <section class="flex flex-col items-center p-6">
+  <section class="flex flex-col items-center p-6 my-28">
     <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
       {{ t('faqOfferTitle') }}
     </h2>
@@ -22,7 +22,7 @@
     "visitFaq": "Visit FAQ ➝"
   },
   "hr-HR": {
-    "faqOfferTitle": "Tražite nešto drugo?",
+    "faqOfferTitle": "Tražite ostale informacije?",
     "visitFaq": "Posjetite FAQ ➝"
   },
   "it-IT": {

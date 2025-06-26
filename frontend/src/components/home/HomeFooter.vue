@@ -9,7 +9,7 @@
 
 <template>
   <footer
-    class="bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 flex flex-col items-center justify-between p-8 flex-1 mt-4 w-full border-t border-slate-300 dark:border-slate-700"
+    class="bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex flex-col items-center justify-between p-8 flex-1 w-full border-t border-slate-300 dark:border-slate-700"
   >
     <div
       id="footer-links"
