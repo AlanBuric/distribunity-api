@@ -20,7 +20,7 @@
     {
       question: 'Is Distribunity free to use?',
       answer:
-        'Yes, Distribunity is currently free to use. The application operates on Firebase’s free tier, which allows a limited number of requests per day. However, if the user base grows significantly, upgrading to a paid plan may be required to accommodate larger traffic.',
+        'Yes, Distribunity is currently free to use. The application operates on a free hosting tier, with limitations on the amounts of organizations, inventories and items. However, if the user base grows significantly, upgrading to a paid plan may be required to accommodate larger traffic.',
     },
     {
       question: 'How do I use Distribunity?',

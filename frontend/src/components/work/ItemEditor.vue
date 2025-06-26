@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-  import { database } from '@/firebase/init';
-  import type { Item, Inventory, WithId } from '@/types';
-  import { doc, updateDoc } from 'firebase/firestore';
+  import type { Item, Inventory } from '@/types';
   import { ref } from 'vue';
 
   const emit = defineEmits<{ closeForm: [] }>();

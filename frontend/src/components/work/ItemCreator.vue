@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-  import { database } from '@/firebase/init';
   import type { Item, Inventory } from '@/types';
-  import { addDoc, collection } from 'firebase/firestore';
   import { ref } from 'vue';
 
   const emit = defineEmits<{ closeForm }>();
@@ -42,7 +40,7 @@
           'organizations',
           props.organizationId,
           'inventories',
-          props.selectedInventory.id,
+          props.selectedInventory.inventoryId,
           'items',
         ),
         newItem,

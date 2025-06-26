@@ -3,7 +3,6 @@
   import Popup from '../ModalPopup.vue';
   import type { Country } from '@/types';
   import axios from 'axios';
-  import useAuthStore from '@/store/auth';
 
   const emit = defineEmits(['closeForm']);
 

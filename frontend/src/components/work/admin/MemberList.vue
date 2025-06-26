@@ -1,18 +1,15 @@
 <script setup lang="ts">
-  import { auth, database } from '@/firebase/init';
-  import type { MemberVuefire, Role, User, WithId } from '@/types';
-  import { collection, documentId, getDocs, query, QuerySnapshot, where } from 'firebase/firestore';
+  import type { OrganizationMember, Role, User } from '@/types';
   import RemovableChip from './RemovableChip.vue';
-  import { getIdFromRefString } from '@/scripts/firebase-utilities';
 
   defineEmits<{
-    kickMember: [user: User & WithId];
+    kickMember: [user: User];
     addRoleToMember: [roleId: string, memberId: string];
     removeRoleFromMember: [roleId: string, memberId: string];
   }>();
   const props = defineProps<{
-    members: MemberVuefire[];
-    roles: (Role & WithId)[];
+    members: OrganizationMember[];
+    roles: Role[];
   }>();
 
   function fetchUserData(memberIds: string[]) {

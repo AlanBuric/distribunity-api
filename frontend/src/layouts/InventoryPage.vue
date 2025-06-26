@@ -3,12 +3,11 @@
   import ItemTable from '@/components/work/ItemsTable.vue';
   import WorkNavigationBar from '@/components/work/WorkNavigationBar.vue';
   import { computed, ref } from 'vue';
-  import type { Item, Inventory, WithId } from '@/types';
+  import type { Item, Inventory } from '@/types';
   import { RouterLink, useRoute } from 'vue-router';
   import ItemCreator from '@/components/work/ItemCreator.vue';
   import ItemViewer from '@/components/work/ItemViewer.vue';
   import InventoryTable from '@/components/work/InventoriesTable.vue';
-  import { deleteInventoryRecursively } from '@/scripts/firebase-utilities';
   import WorkToolbar from '@/components/work/WorkToolbar.vue';
   import useAuthStore from '@/store/auth';
   import { NO_PERMISSIONS_MESSAGE } from '@/scripts/shared';

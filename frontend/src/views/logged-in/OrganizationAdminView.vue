@@ -2,13 +2,12 @@
   import { useRoute } from 'vue-router';
   import { ref } from 'vue';
   import MemberList from '@/components/work/admin/MemberList.vue';
-  import { deleteOrganization } from '@/scripts/firebase-utilities';
   import RemovableChip from '@/components/work/admin/RemovableChip.vue';
   import { useI18n } from 'vue-i18n';
   import useAuthStore from '@/store/auth';
   import { NO_PERMISSIONS_MESSAGE } from '@/scripts/shared';
-  import { PermissionType } from '@/types';
   import axios from 'axios';
+  import type { OrganizationMember } from '@/types';
 
   const { t } = useI18n();
   const authStore = useAuthStore();
@@ -19,7 +18,7 @@
   const rolesCollRef = collection(organizationDocRef, 'roles');
 
   const organization = useDocument<Organization>(organizationDocRef, { maxRefDepth: 0 });
-  const members = useCollection<MemberVuefire>(membersCollRef, { maxRefDepth: 0 });
+  const members = useCollection<OrganizationMember>(membersCollRef, { maxRefDepth: 0 });
   const roles = useCollection<Role>(rolesCollRef);
 
   const newRoleName = ref('');
