@@ -1,8 +1,8 @@
-import { request, Request, response, Response, type NextFunction } from 'express';
+import { Request, Response, type NextFunction } from 'express';
 import type {
   AuthorizedLocals,
   ErrorResponse,
-  UserLoginResponse,
+  UserView,
 } from '../../types/data-transfer-objects.js';
 import {
   addTokenToDenylist,
@@ -21,6 +21,9 @@ import { camelCaseify } from '../../utils/database.js';
 import getRedis from '../../services/redis.js';
 import { REDIS_USER_IDS } from '../../utils/constants.js';
 import getLoggingPrefix from '../../utils/logging.js';
+import type { IncomingHttpHeaders } from 'http';
+
+const REFRESH_COOKIE_NAME = 'refresh';
 
 type UserLoginRequest = {
   email: string;
@@ -34,7 +37,7 @@ export async function logInUser(
     UserLoginRequest,
     Record<string, never>
   >,
-  response: Response<UserLoginResponse | ErrorResponse>,
+  response: Response<UserView | ErrorResponse>,
 ): Promise<any> {
   const { email, password } = matchedData(request);
 
@@ -49,16 +52,18 @@ export async function logInUser(
 
   if (await verifyPassword(password, fullUser.passwordHash!)) {
     const { passwordHash, ...user } = fullUser;
-    const [{ token: accessToken, expiration }, refreshToken] = await Promise.all([
+    const [{ token: accessToken }, refreshToken] = await Promise.all([
       generateJwtToken(user.userId, TokenType.ACCESS),
       generateJwtToken(user.userId, TokenType.REFRESH),
     ]);
 
+    response.setHeaders(new Map([['Authorization', `Bearer ${accessToken}`]]));
+
     return response
-      .cookie('refresh', refreshToken.token, {
+      .cookie(REFRESH_COOKIE_NAME, refreshToken.token, {
         maxAge: refreshToken.expiration,
       })
-      .send({ accessToken, expiration, user });
+      .send(user);
   }
 
   response.status(StatusCodes.BAD_REQUEST).send('Incorrect password');
@@ -68,12 +73,19 @@ export async function logoutUser(request: Request, response: Response<any, Autho
   const accessToken = request.header('Authorization')?.split(' ')[1];
   const refreshToken = request.headers.cookie?.split('=')?.[1];
 
-  response.clearCookie('refresh');
+  response.clearCookie(REFRESH_COOKIE_NAME);
 
   if (refreshToken) await addTokenToDenylist(refreshToken);
   if (accessToken) await addTokenToDenylist(accessToken);
 
   response.sendStatus(StatusCodes.NO_CONTENT);
+}
+
+function extractRefreshCookie(cookies: IncomingHttpHeaders['cookie']) {
+  return cookies
+    ?.split('; ')
+    .find((cookie) => cookie.startsWith(REFRESH_COOKIE_NAME))
+    ?.split('=')?.[1];
 }
 
 /**
@@ -98,7 +110,7 @@ export async function validateAuthorizationAndRefresh(
       .send('Missing Authorization header with Bearer schema');
   }
 
-  const refreshToken = request.headers.cookie?.split('=')?.[1];
+  const refreshToken = extractRefreshCookie(request.headers.cookie);
 
   function handleMissingAttributes(iat: number | undefined, id: any) {
     const missingAttributes = [iat && 'iat', id && 'id'].map((x) => x);
@@ -107,7 +119,7 @@ export async function validateAuthorizationAndRefresh(
   }
 
   try {
-    if (await isTokenOnDenylist(accessToken)) throw 'Ignored';
+    if (await isTokenOnDenylist(accessToken)) throw 'ignored';
 
     const { iat, id } = await getJwtTokenPayload(accessToken, TokenType.ACCESS);
 
@@ -121,10 +133,10 @@ export async function validateAuthorizationAndRefresh(
 
     response.locals.userId = id;
   } catch (ignored) {
-    try {
-      if (!refreshToken || (await isTokenOnDenylist(refreshToken)))
-        return response.sendStatus(StatusCodes.UNAUTHORIZED);
+    if (!refreshToken || (await isTokenOnDenylist(refreshToken)))
+      return response.sendStatus(StatusCodes.UNAUTHORIZED);
 
+    try {
       const { iat, id }: { iat?: number; id?: number } = await getJwtTokenPayload(
         refreshToken,
         TokenType.REFRESH,
@@ -147,7 +159,7 @@ export async function validateAuthorizationAndRefresh(
           generateJwtToken(id, TokenType.REFRESH),
         ]);
 
-        response.cookie('refresh', generatedRefreshToken.token, {
+        response.cookie(REFRESH_COOKIE_NAME, generatedRefreshToken.token, {
           maxAge: generatedRefreshToken.expiration,
         });
       }
@@ -156,8 +168,9 @@ export async function validateAuthorizationAndRefresh(
 
       response.setHeader('Authorization', `Bearer ${token}`);
       response.locals.userId = id;
-    } catch (ignored2) {
-      return response.sendStatus(StatusCodes.UNAUTHORIZED);
+    } catch (error) {
+      response.clearCookie(REFRESH_COOKIE_NAME);
+      throw error;
     }
   }
 

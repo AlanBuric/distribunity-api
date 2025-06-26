@@ -47,7 +47,7 @@ host rather than multiple hosts when ran in a container.
 2. Start the services in Docker:
 
 ```
-docker compose up database redis -d
+docker compose --profile dev up -d
 ```
 
 The `-d` option runs the services in background.
@@ -68,4 +68,4 @@ npm run dev
 
 ## Running in production
 
-Run `docker compose up -d`. Visit the IP address of the host machine in your browser.
+Run `docker compose --profile prod up -d`. Visit the IP address of the host machine in your browser.

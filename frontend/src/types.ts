@@ -85,7 +85,7 @@ export type CurrencyFormat = {
 export type Organization = {
   organizationId: number;
   createdAt: string;
-  upstringdAt: string;
+  updatedAt: string;
   name: string;
   currencyFormat: CurrencyFormat;
   countryCode: string;

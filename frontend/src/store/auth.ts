@@ -6,7 +6,7 @@ import {
   type PermissionId,
   type User,
 } from '@/types';
-import axios, { type AxiosError } from 'axios';
+import axios from 'axios';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import useGlobalStore from './global';
@@ -21,6 +21,19 @@ const EMPTY_USER: User = {
   email: '',
   language: 'en-US',
 };
+
+function setAccessToken(accessToken: string) {
+  localStorage.setItem(LocalStorage.ACCESS_TOKEN, accessToken);
+  axios.defaults.headers.authorization = `Bearer ${accessToken}`;
+}
+
+axios.interceptors.response.use((response) => {
+  const newBearerAccessToken: string = response.headers.authorization;
+
+  if (newBearerAccessToken) setAccessToken(newBearerAccessToken.split(' ', 2)[1]);
+
+  return response;
+});
 
 const useAuthStore = defineStore('auth', () => {
   const state = ref<AuthState>(AuthState.Loading);
@@ -37,14 +50,10 @@ const useAuthStore = defineStore('auth', () => {
    * First time login with credentials.
    */
   async function logIn(email: string, password: string) {
-    return axios
-      .post<{ accessToken: string; user: User }>('/api/login', { email, password })
-      .then(({ data }) => {
-        localStorage.setItem(LocalStorage.ACCESS_TOKEN, data.accessToken);
-        axios.defaults.headers.authorization = `Bearer ${data.accessToken}`;
-        user.value = data.user;
-        state.value = AuthState.LoggedIn;
-      });
+    return axios.post<User>('/api/login', { email, password }).then(({ data }) => {
+      user.value = data;
+      state.value = AuthState.LoggedIn;
+    });
   }
 
   /**
@@ -69,10 +78,9 @@ const useAuthStore = defineStore('auth', () => {
         user.value = data;
         state.value = AuthState.LoggedIn;
       })
-      .catch((error: AxiosError) => {
+      .catch(() => {
         state.value = AuthState.LoggedOut;
-
-        if (error?.status == 401) localStorage.removeItem(LocalStorage.ACCESS_TOKEN);
+        localStorage.removeItem(LocalStorage.ACCESS_TOKEN);
       });
 
     useGlobalStore().loadPreferredTheme();

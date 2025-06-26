@@ -79,7 +79,7 @@ async function initializerUserSet(start: bigint) {
       await Promise.all(rows.map(({ user_id }) => redis.sAdd(REDIS_USER_IDS, user_id)));
 
       console.info(
-        `${getLoggingPrefix()} Redis set of ${rowCount} user IDs in ${getElapsedTime(start)} ms.`,
+        `${getLoggingPrefix()} Redis set of ${rowCount} user IDs initialized in ${getElapsedTime(start)} ms.`,
       );
     });
 }

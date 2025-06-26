@@ -72,15 +72,15 @@ export function getJwtTokenPayload(token: string, type: TokenType): Promise<JwtP
     type == TokenType.ACCESS ? EnvConfig.ACCESS_TOKEN_SECRET : EnvConfig.REFRESH_TOKEN_SECRET;
 
   return new Promise<JwtPayload>((resolve, reject) => {
-    jwt.verify(token, tokenSecret, (err, decoded) => {
-      if (err?.name == 'TokenExpiredError') {
+    jwt.verify(token, tokenSecret, (error, decoded) => {
+      if (error?.name == 'TokenExpiredError') {
         addTokenToDenylist(token);
         return reject(
           new RequestError(StatusCodes.UNAUTHORIZED, 'Authorization session has expired'),
         );
       }
 
-      if (err || !decoded || typeof decoded === 'string' || !decoded.id) {
+      if (error || !decoded || typeof decoded === 'string' || !decoded.id) {
         return reject(
           new RequestError(StatusCodes.BAD_REQUEST, 'Missing or malformed session token'),
         );

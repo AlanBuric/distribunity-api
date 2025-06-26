@@ -1,6 +1,20 @@
-import { Request, Response } from 'express';
+import { Request, Response, type NextFunction } from 'express';
 import { matchedData } from 'express-validator';
 import getDatabase from '../../services/database.js';
+import type { AuthorizedLocals } from '../../types/data-transfer-objects.js';
+import { StatusCodes } from 'http-status-codes';
+
+export function requireApplicationAdmin(
+  request: Request,
+  response: Response<AuthorizedLocals>,
+  next: NextFunction,
+) {
+  if (response.locals.userId == 1) {
+    return next();
+  }
+
+  response.sendStatus(StatusCodes.FORBIDDEN);
+}
 
 export async function searchBlogPosts(request: Request, response: Response) {
   const { query } = matchedData<{ query: string }>(request);

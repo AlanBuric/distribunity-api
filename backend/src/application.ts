@@ -47,7 +47,7 @@ export default function createApplication(redisClient?: ReturnType<typeof create
         .use('/organizations', OrganizationRouter)
         .use('/blog-posts', BlogPostRouter)
         .use('/countries', CountryRouter)
-        .use('/newsletter', NewsletterRouter)
-        .use(handleError),
+        .use('/newsletter', NewsletterRouter),
+      handleError,
     );
 }

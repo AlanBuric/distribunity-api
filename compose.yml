@@ -1,5 +1,6 @@
 services:
   backend:
+    profiles: [prod]
     build: ./backend
     restart: unless-stopped
     ports:
@@ -33,6 +34,7 @@ services:
       - app-network
   
   frontend:
+    profiles: [prod]
     build: ./frontend
     restart: unless-stopped
     ports:
@@ -41,6 +43,7 @@ services:
       - app-network
 
   database:
+    profiles: [prod]
     image: postgres:17-alpine
     restart: unless-stopped
     ports:
@@ -63,7 +66,14 @@ services:
     networks:
       - app-network
   
+  database-dev:
+    extends: database
+    profiles: [dev]
+    ports:
+      - "5432:5432"
+  
   redis:
+    profiles: [prod]
     image: redis:8-alpine
     restart: unless-stopped
     ports:
@@ -77,6 +87,12 @@ services:
       retries: 5
     networks:
       - app-network
+  
+  redis-dev:
+    extends: redis
+    profiles: [dev]
+    ports:
+      - "6379:6379"
 
 volumes:
   pgdata:

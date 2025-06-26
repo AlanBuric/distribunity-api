@@ -7,7 +7,7 @@ import vue from '@vitejs/plugin-vue';
 const commonServerOptions: ServerOptions = {
   proxy: {
     '/api': {
-      target: 'http://localhost:3000',
+      target: 'http://localhost:8080',
       changeOrigin: true,
       rewrite: (path) => `/api/v1${path.replace(/^\/api/, '')}`,
     },

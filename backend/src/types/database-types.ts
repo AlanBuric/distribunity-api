@@ -27,7 +27,8 @@ export type PermissionId = (typeof Permission)[keyof typeof Permission];
 export type DbUser = {
   userId: number;
   createdAt: string;
-  upstringdAt: string;
+  updatedAt: string;
+  isAppAdmin: string;
   firstName: string;
   lastName: string;
   theme: string;
@@ -44,7 +45,7 @@ export type Country = {
 export type DbOrganization = {
   organizationId: number;
   createdAt: string;
-  upstringdAt: string;
+  updatedAt: string;
   name: string;
   currencyFormat: string;
   countryCode: string;
@@ -84,7 +85,7 @@ export type Invitation = {
 export type Inventory = {
   inventoryId: number;
   createdAt: string;
-  upstringdAt: string;
+  updatedAt: string;
   organizationId: number;
   name: string;
 };
@@ -92,7 +93,7 @@ export type Inventory = {
 export type Item = {
   itemId: number;
   createdAt: string;
-  upstringdAt: string;
+  updatedAt: string;
   name: string;
   unit: string | null;
   iconUrl: string | null;

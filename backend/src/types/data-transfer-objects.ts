@@ -39,7 +39,3 @@ export type AccessTokenResponse = {
 };
 
 export type UserView = Omit<DbUser, 'passwordHash'>;
-
-export type UserLoginResponse = AccessTokenResponse & {
-  user: UserView;
-};
