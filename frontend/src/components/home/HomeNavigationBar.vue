@@ -5,7 +5,6 @@
   import LanguageSwitch from '@/components/LanguageSwitch.vue';
   import { useRouter } from 'vue-router';
   import { AuthState } from '@/types';
-  import { ref } from 'vue';
 
   defineProps<{ hideBlog?: boolean }>();
 
@@ -15,8 +14,6 @@
   function logoutAndRefresh() {
     auth.signOut().finally(() => router.go(0));
   }
-
-  const searchValue = ref<string>('');
 </script>
 
 <template>
@@ -62,15 +59,6 @@
         >
           {{ $t('blog') }}
         </RouterLink>
-      </div>
-      <div class="flex items-center gap-3">
-        <input
-          name="search"
-          placeholder="Search..."
-          type="search"
-          :value="searchValue"
-          class="max-w-36 max-lg:hidden bg-slate-100 dark:bg-slate-700 text-black dark:text-white placeholder-slate-500 appearance-none dark:placeholder-slate-400 border border-slate-300 dark:border-slate-600 rounded px-2 py-1 pl-8 focus:bg-slate-100 dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-active-link"
-        />
 
         <template v-if="auth.state == AuthState.LoggedOut">
           <RouterLink
@@ -115,12 +103,6 @@
 </template>
 ks
 <style scoped>
-  input[name='search'] {
-    background-image: url('/src/assets/search.svg');
-    background-position: 5px 3px;
-    background-repeat: no-repeat;
-  }
-
   .router-link-exact-active {
     color: var(--color-active-link);
   }

@@ -1,55 +1,113 @@
 <script lang="ts" setup>
   import HomeNavigationBar from '@/components/home/HomeNavigationBar.vue';
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import BlogError from '@/components/home/blog/BlogError.vue';
-  import BlogPage from '@/components/home/blog/BlogPage.vue';
-  import { type BlogPost } from '@/types';
+  import { type PageResponse, type PublishedBlogPostPreview } from '@/types';
+  import { useQuery } from '@/composables/query';
+  import LoadingAnimation from '@/components/icons/LoadingAnimation.vue';
+  import BlogPostList from '@/components/home/blog/BlogPostList.vue';
+  import AddIcon from '@/components/icons/AddIcon.vue';
+  import useAuthStore from '@/store/auth';
 
   const route = useRoute();
+  const isApplicationAdmin = useAuthStore().user.isAppAdmin;
 
-  const postsPerPage = 10;
-  const posts = ref<BlogPost[]>([
-    {
-      id: '1',
-      title: 'Welcome to Distribunity!',
-      description: '',
-      date: new Date(2024, 3, 7, 12, 0),
-    },
-    {
-      id: '2',
-      title: 'Distribunity planned as a Mobile and Desktop application',
-      description: '',
-      date: new Date(2024, 3, 14, 14, 23),
-    },
-  ]);
+  const search = ref('');
+  const filter = ref('');
+  const page = ref((Number(route.query.page) || 1) - 1);
+  const limit = ref(10);
+  const query = computed(() => {
+    let url = `/api/blog-posts/search`;
 
-  posts.value = posts.value.sort((obj2, obj1) => obj1.date.getTime() - obj2.date.getTime());
+    if (isApplicationAdmin) url += '/admin';
 
-  function getPageCount() {
-    return Math.ceil(posts.value.length / postsPerPage);
-  }
+    url += `?page=${page.value}&limit=${limit.value}`;
 
-  function doesPageExist() {
-    const page = parseInt(route.query.page as string);
-    return page > 0 && page <= getPageCount();
+    if (filter.value) url += `&filter=${encodeURIComponent(filter.value)}`;
+
+    return url;
+  });
+
+  const { data, isLoading, queryError } = useQuery<PageResponse<PublishedBlogPostPreview>>(query);
+
+  function onSearchKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter') {
+      filter.value = search.value;
+      page.value = 0;
+    }
   }
 </script>
 
 <template>
-  <div class="w-full flex flex-col min-h-dvh dark:bg-slate-800">
+  <div class="w-full flex flex-col min-h-dvh">
     <HomeNavigationBar />
-    <main
-      class="max-w-screen-2xl w-full mx-auto p-8 flex flex-col items-center bg-slate-200 dark:bg-slate-800 rounded-lg"
-    >
-      <BlogError
-        v-if="!doesPageExist()"
-        error-message="Oops! This page doesn't exist."
-        redirect-href="/blog?page=1"
-        subtitle="Let's take you back to the beginning."
-        class="text-center mt-12"
-      />
-      <BlogPage v-else :posts="posts" :page-count="getPageCount()" />
+    <main class="max-w-screen-2xl w-full mx-auto px-8 flex flex-col items-center">
+      <h3 class="font-light text-2xl text-slate-900 dark:text-slate-100 mb-4">
+        Distribunity blog posts
+      </h3>
+      <div class="w-full flex justify-center gap-2 mb-6">
+        <input
+          name="search"
+          placeholder="Search..."
+          type="search"
+          v-model="search"
+          @keydown="onSearchKeydown"
+          class="py-1.5 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-slate-100 dark:bg-slate-700 dark:text-slate-100 border-slate-300 dark:border-slate-600 scheme-light dark:scheme-dark font-extralight text-sm max-w-md w-full pl-8 pr-2"
+        />
+        <RouterLink v-if="isApplicationAdmin" class="button-primary" to="/blog-post"
+          ><AddIcon /><span>New post</span></RouterLink
+        >
+      </div>
+      <LoadingAnimation v-if="isLoading" class="w-10 mt-4" />
+      <p
+        v-else-if="queryError"
+        class="text-lg font-light text-center mt-6 text-slate-800 dark:text-slate-300"
+      >
+        Sorry, an error occurred while searching. Please report this issue.
+      </p>
+      <template v-else>
+        <BlogPostList :posts="data!.data" />
+        <p
+          v-if="page >= Math.ceil(data!.total / limit)"
+          class="text-lg font-light text-center mt-6 text-slate-800 dark:text-slate-300"
+        >
+          You've arrived at the beginning of history!
+        </p>
+      </template>
+      <div class="flex justify-center items-center gap-4 mt-6">
+        <select
+          class="px-4 py-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus:ring-2 focus:ring-active-link disabled:opacity-50 disabled:pointer-events-none bg-black dark:bg-slate-700 text-white dark:text-white hover:bg-slate-700 dark:hover:bg-slate-900 dark:border-1 dark:border-slate-600 h-10"
+          v-model="limit"
+        >
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <RouterLink
+          :disabled="page <= 1"
+          class="button-primary"
+          :to="{ name: 'blog', query: { page: page - 1 } }"
+        >
+          Previous
+        </RouterLink>
+
+        <RouterLink
+          :disabled="data == null || page >= Math.ceil(data.total / limit)"
+          class="button-primary"
+          :to="{ name: 'blog', query: { page: page + 1 } }"
+        >
+          Next
+        </RouterLink>
+      </div>
     </main>
   </div>
 </template>
+
+<style scoped>
+  input[name='search'] {
+    background-image: url('/src/assets/search.svg');
+    background-position: 5px 6px;
+    background-repeat: no-repeat;
+  }
+</style>

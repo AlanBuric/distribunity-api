@@ -1,18 +1,17 @@
 import pg, { type Pool } from 'pg';
 import getLoggingPrefix from '../utils/logging.js';
 import EnvConfig from '../utils/config.js';
-import type { UserRegistrationRequest } from '../types/data-transfer-objects.js';
 import { hashPassword } from '../routes/session/service.js';
 
 let database: Pool | undefined = undefined;
 
-async function registerAdminUser(registration: UserRegistrationRequest) {
-  const hashedPassword = await hashPassword(registration.password);
+async function registerAdminUser() {
+  const hashedPassword = await hashPassword(EnvConfig.ADMIN_PASSWORD);
 
   const { rowCount } = await getDatabase().query(
-    `INSERT INTO "user" (first_name, last_name, email, password_hash)
-      VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`,
-    [registration.firstName, registration.lastName, registration.email, hashedPassword],
+    `INSERT INTO "user" (user_id, first_name, last_name, email, is_app_admin, password_hash)
+      VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`,
+    [1, 'Admin', 'Admin', EnvConfig.ADMIN_EMAIL, true, hashedPassword],
   );
 
   return !!rowCount;
@@ -26,12 +25,7 @@ export async function connectDatabase() {
   await database.connect().then(async () => {
     console.info(`${getLoggingPrefix()} Connected to PostgreSQL database.`);
 
-    const wasAdminCreated = await registerAdminUser({
-      firstName: 'Admin',
-      lastName: 'Admin',
-      email: EnvConfig.ADMIN_EMAIL,
-      password: EnvConfig.ADMIN_PASSWORD,
-    });
+    const wasAdminCreated = await registerAdminUser();
 
     if (wasAdminCreated) {
       console.info(`${getLoggingPrefix()} Web application administrator account has been created.`);

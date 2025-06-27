@@ -33,7 +33,7 @@
       <form @submit.prevent="signupForNewsLetter" class="w-full max-w-md">
         <input
           v-model="email"
-          class="custom-input w-full mb-4 px-2 py-1.5 border rounded-lg focus:ring-2 focus:ring-active-link focus:outline-none bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-600"
+          class="styled-input w-full mb-4"
           type="email"
           name="email"
           autocomplete="email"

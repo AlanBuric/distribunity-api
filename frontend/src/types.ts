@@ -62,6 +62,7 @@ export type User = {
   userId: number;
   createdAt: string;
   updatedAt: string;
+  isAppAdmin: boolean;
   firstName: string;
   lastName: string;
   language: LanguageTag;
@@ -162,11 +163,31 @@ export type SettingsSection = {
   displayName: string;
 };
 
-export type BlogPost = {
-  id: string;
-  description: string;
-  date: string;
+type BlogPostCommons = {
+  blogPostId: string;
   title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+// Blog posts from the non-admin's view
+export type PublishedBlogPostPreview = BlogPostCommons & {
+  authorName?: string;
+};
+
+export type PublishedBlogPost = PublishedBlogPostPreview & {
+  content: string;
+};
+
+// Blog posts from the admin's view
+export type FullBlogPostPreview = BlogPostCommons & {
+  authorName: string;
+  isDraft: boolean;
+};
+
+export type FullBlogPost = FullBlogPostPreview & {
+  content: string;
 };
 
 export type OrganizationSelfResponse = Organization &
@@ -174,4 +195,9 @@ export type OrganizationSelfResponse = Organization &
 
 export type AdaptedSelfOrganization = Omit<OrganizationSelfResponse, 'permission'> & {
   permissions: Set<number>;
+};
+
+export type PageResponse<T> = {
+  total: number;
+  data: T[];
 };

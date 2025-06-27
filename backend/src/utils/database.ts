@@ -12,7 +12,7 @@ export function camelCaseify<T2 extends object>(object: object): T2 {
   ) as T2;
 }
 
-type NullableStringOrNumber = string | number | undefined | null;
+type NullablePrimitive = string | boolean | number | undefined | null;
 
 /**
  * Usage:
@@ -30,9 +30,9 @@ type NullableStringOrNumber = string | number | undefined | null;
  * and an array of values to pass to the pg package query array of argument values
  */
 export function getSqlPatchColumns(
-  map: [string, NullableStringOrNumber][],
-  ...extraArgs: NullableStringOrNumber[]
-): [string, NullableStringOrNumber[]] {
+  map: [string, NullablePrimitive][],
+  ...extraArgs: NullablePrimitive[]
+): [string, NullablePrimitive[]] {
   map = map.filter(([, value]) => value != null);
 
   const columnSetters = map.map(([key], index) => `${key} = $${index + 1}`).join(', ');

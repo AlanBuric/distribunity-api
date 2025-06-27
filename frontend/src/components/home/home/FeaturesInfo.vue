@@ -8,16 +8,16 @@
     'inventories',
     'items',
     'teamManagement',
-    'apiIntegration',
-    'realTimeUpdates',
-    'scalableSolution',
     'secureAccess',
+    'apiIntegration',
+    'scalableSolution',
+    'realTimeUpdates',
   ];
 </script>
 
 <template>
   <div>
-    <h2 class="text-3xl font-light text-center text-black dark:text-white">
+    <h2 class="text-3xl font-semibold text-center text-black dark:text-white">
       {{ t('features.title') }}
     </h2>
     <div
@@ -27,7 +27,7 @@
         <h4 class="text-black dark:text-white text-lg mb-2.5">
           {{ t(`features.${feature}.title`) }}
         </h4>
-        <p class="text-base text-slate-600 dark:text-slate-400">
+        <p class="font-light text-slate-600 dark:text-slate-400">
           {{ t(`features.${feature}.description`) }}
         </p>
       </div>
@@ -39,7 +39,7 @@
 {
   "en-US": {
     "features": {
-      "title": "💡 Features",
+      "title": "Features",
       "organizations": {
         "title": "Organizations",
         "description": "Create and manage your business structure. Invite team members and assign role-based permissions for secure access control."
@@ -50,7 +50,7 @@
       },
       "items": {
         "title": "Items",
-        "description": "Add, edit, and monitor individual products. Track quantities, set alerts, and maintain detailed item histories."
+        "description": "Add, edit, and monitor individual products. Track quantities, add attributes, and maintain detailed item histories."
       },
       "teamManagement": {
         "title": "Team management",
@@ -76,7 +76,7 @@
   },
   "hr-HR": {
     "features": {
-      "title": "💡 Značajke",
+      "title": "Značajke",
       "organizations": {
         "title": "Organizacije",
         "description": "Stvorite i upravljajte strukturom svog poslovanja. Pozovite članove tima i dodijelite dozvole temeljene na ulogama za sigurnu kontrolu pristupa."
@@ -87,7 +87,7 @@
       },
       "items": {
         "title": "Artikli",
-        "description": "Dodajte, uredite i pratite pojedinačne proizvode. Pratite količine, postavite upozorenja i održavajte detaljnu povijest artikala."
+        "description": "Dodajte, uredite i pratite pojedinačne proizvode. Pratite količine, dodajte detalje i održavajte detaljnu povijest artikala."
       },
       "teamManagement": {
         "title": "Upravljanje timom",
@@ -113,7 +113,7 @@
   },
   "it-IT": {
     "features": {
-      "title": "💡 Funzionalità",
+      "title": "Funzionalità",
       "organizations": {
         "title": "Organizzazioni",
         "description": "Crea e gestisci la struttura del tuo business. Invita membri del team e assegna permessi basati sui ruoli per un controllo sicuro degli accessi."

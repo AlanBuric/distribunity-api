@@ -39,3 +39,45 @@ export type AccessTokenResponse = {
 };
 
 export type UserView = Omit<DbUser, 'passwordHash'>;
+
+export type PageResponse<T> = {
+  total: number;
+  data: T[];
+};
+
+type BlogPostCommons = {
+  blogPostId: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+// Blog posts from the non-admin's view
+export type PublishedBlogPostPreview = BlogPostCommons & {
+  authorName?: string;
+};
+
+export type PublishedBlogPost = PublishedBlogPostPreview & {
+  content: string;
+};
+
+// Blog posts from the admin's view
+export type FullBlogPostPreview = BlogPostCommons & {
+  authorName: string;
+  isDraft: boolean;
+};
+
+export type FullBlogPost = FullBlogPostPreview & {
+  content: string;
+};
+
+export type BlogPostCreate = {
+  title: string;
+  description: string;
+  content: string;
+  isDraft: boolean;
+  showAuthor: boolean;
+};
+
+export type BlogPostUpdate = Partial<BlogPostCreate> & { blogPostId: number };

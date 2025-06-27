@@ -8,6 +8,7 @@ export function useQuery<T>(url: MaybeRefOrGetter<string>) {
 
   function fetchData() {
     data.value = null;
+    queryError.value = null;
     isLoading.value = true;
 
     axios

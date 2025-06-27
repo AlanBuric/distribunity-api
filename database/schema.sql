@@ -102,13 +102,14 @@ CREATE TABLE IF NOT EXISTS inventory_item (
   PRIMARY KEY (inventory_id, item_id)
 );
 
-CREATE TABLE blog_posts (
-  id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS blog_post (
+  blog_post_id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
   content TEXT NOT NULL,
   user_id BIGINT NOT NULL REFERENCES "user"(user_id) ON DELETE SET NULL,
-  show_author BOOLEAN DEFAULT FALSE,
-  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('deleted', 'draft', 'published')),
+  show_author BOOLEAN NOT NULL DEFAULT FALSE,
+  is_draft BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

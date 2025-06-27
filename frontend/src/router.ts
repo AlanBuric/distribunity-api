@@ -39,9 +39,7 @@ const router = createRouter({
               path: '',
               name: 'resources',
               component: () => import('@/views/public/resources/FAQView.vue'),
-              meta: {
-                title: 'Distribunity | Resources',
-              },
+              meta: { title: 'Distribunity | Resources' },
             },
           ],
         },
@@ -49,9 +47,13 @@ const router = createRouter({
           path: 'blog',
           name: 'blog',
           component: () => import('@/views/public/BlogView.vue'),
-          meta: {
-            title: 'Distribunity | Blog',
-          },
+          meta: { title: 'Distribunity | Blog' },
+        },
+        {
+          path: 'blog-post',
+          name: 'blog-post',
+          component: () => import('@/views/admin/NewBlogPostView.vue'),
+          meta: { title: 'Distribunity | New blog post', requiresAuth: true },
         },
         {
           path: 'login',
@@ -59,9 +61,7 @@ const router = createRouter({
           component: () => import('@/views/public/LoginView.vue'),
           meta: {
             title: 'Distribunity | Login',
-            avoidIfAuthed: {
-              name: 'work',
-            },
+            avoidIfAuthed: { name: 'work' },
           },
         },
         {
@@ -70,9 +70,7 @@ const router = createRouter({
           component: () => import('@/views/public/SignupView.vue'),
           meta: {
             title: 'Distribunity | Sign up',
-            avoidIfAuthed: {
-              name: 'work',
-            },
+            avoidIfAuthed: { name: 'work' },
           },
         },
       ],

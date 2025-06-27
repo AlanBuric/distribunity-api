@@ -55,13 +55,13 @@
   ];
 </script>
 <template>
-  <div class="w-full flex flex-col min-h-dvh dark:bg-slate-800">
+  <div class="w-full flex flex-col min-h-dvh">
     <HomeNavigationBar />
     <main
       class="max-w-screen-2xl w-full mx-auto px-8 flex flex-col dark:bg-slate-800 bg-slate-100 text-slate-900 dark:text-white rounded-lg"
     >
       <header class="flex justify-between self-center px-6 py-4 border-b dark:border-slate-700">
-        <h1 class="text-3xl font-bold">Frequently Asked Questions</h1>
+        <h1 class="text-3xl font-light">Frequently Asked Questions</h1>
       </header>
 
       <div class="px-6 py-8 w-full mx-auto">
@@ -71,7 +71,7 @@
             :key="index"
             class="mb-8 list-decimal list-inside marker:text-xl"
           >
-            <h2 class="text-xl font-semibold mb-2 inline-block">
+            <h2 class="text-xl mb-2 inline-block">
               {{ faq.question }}
             </h2>
             <p class="text-slate-700 dark:text-slate-300">

@@ -19,6 +19,7 @@ import getRedis from '../../services/redis.js';
 import { Permission } from '../../types/database-types.js';
 
 const minMaxOrganizationNameLength: MinMaxOptions = { min: 1, max: 32 };
+const fractionDigitsLimit: MinMaxOptions = { min: 0, max: 6 };
 
 function createOrganizationValidatorChain() {
   return [
@@ -43,10 +44,17 @@ function createOrganizationValidatorChain() {
       'currencyFormat.thousandSeparator',
       'currencyFormat.decimalSeparator',
       'currencyFormat.symbol',
-      'currencyFormat.symbolPosition',
     ])
       .isString()
       .withMessage((_input, meta) => `${meta.path} must be a string`),
+    body('currencyFormat.isSymbolBefore')
+      .isBoolean()
+      .withMessage('isSymbolBefore must be a boolean')
+      .toBoolean(),
+    body('currencyFormat.fractionDigits')
+      .isInt(fractionDigitsLimit)
+      .withMessage('Fraction digits must be between 0 and 6')
+      .toInt(),
   ];
 }
 

@@ -4,7 +4,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col items-center h-full">
+  <div class="flex flex-col items-center h-full gap-y-20">
     <RouterView />
     <HomeFooter />
   </div>
