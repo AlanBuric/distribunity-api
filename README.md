@@ -7,6 +7,9 @@ invite other users with invitation codes or join other organizations, manage inv
 manage items inside the inventories; organization admins can manage their organizations' members, organizations' roles,
 roles' permissions and the roles assigned to the members.
 
+> [!CAUTION]
+> This repository will be renamed to `distribunity` after the current `distribunity` repository is renamed to `distribunity-firebase`. Besides the backend API initially, it now contains the frontend so that it functions as a monorepo.
+
 ## Web Applications course
 
 --------------------
