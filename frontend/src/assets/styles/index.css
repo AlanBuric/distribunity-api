@@ -1,0 +1,132 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-active-link: #0099ff;
+}
+
+.button-primary {
+  @apply px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 disabled:bg-slate-600 disabled:dark:bg-slate-600 disabled:pointer-events-none bg-black dark:bg-slate-700 text-white dark:text-white hover:bg-slate-700 dark:hover:bg-slate-900 dark:border-1 dark:border-slate-600 h-10;
+}
+
+.styled-input {
+  @apply px-2 py-1.5 border rounded-lg transition-colors focus:ring-2 focus:ring-active-link focus:outline-none bg-slate-100 dark:bg-slate-700 dark:text-slate-100 border-slate-300 dark:border-slate-600 scheme-light dark:scheme-dark font-extralight text-sm;
+}
+
+.styled-box {
+  @apply p-5 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 border-1 rounded-md;
+}
+
+html,
+body {
+  min-height: 100%;
+  width: 100%;
+  scroll-behavior: smooth;
+  margin: 0;
+}
+
+#app,
+.layout {
+  margin: 0px;
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-attachment: fixed;
+  /* Set the default font instead of overriding everything with the '*' selector */
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+}
+
+#app,
+.layout {
+  width: 100%;
+  height: 100%;
+}
+
+.layout {
+  display: flex;
+}
+
+*,
+*::before,
+*::after {
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+  text-underline-offset: 2px;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+a,
+input[type='submit'],
+button {
+  cursor: pointer;
+}
+
+/* @supports (scrollbar-color: auto) {
+  body {
+    scrollbar-color: #e7e7e7 #00b7bd;
+  }
+} */
+/* 
+@supports selector(::-webkit-scrollbar) {
+  body::-webkit-scrollbar-thumb {
+    background: unset;
+    border-radius: 10px;
+  }
+
+  body::-webkit-scrollbar {
+    background: #e7e7e7;
+    width: 15px;
+  }
+} */
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-slate-500);
+  border-radius: 5px;
+  border: 2px solid var(--color-slate-500);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}

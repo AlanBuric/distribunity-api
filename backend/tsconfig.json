@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "NodeNext",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -14,6 +16,12 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests"
+  ]
 }

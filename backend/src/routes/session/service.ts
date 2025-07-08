@@ -1,16 +1,16 @@
-import { StatusCodes } from "http-status-codes";
-import jwt from "jsonwebtoken";
-import ms, { type StringValue } from "ms";
-import PasswordHasher from "../../utils/PasswordHasher.js";
-import RequestError from "../../utils/RequestError.js";
-import { validateConfigValue } from "../../utils/config.js";
-import redis from "../../services/redis.js";
+import { StatusCodes } from 'http-status-codes';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
+import ms, { type StringValue } from 'ms';
+import PasswordHasher from '../../utils/PasswordHasher.js';
+import RequestError from '../../utils/RequestError.js';
+import getRedis from '../../services/redis.js';
+import EnvConfig from '../../utils/config.js';
 
 // Specification: https://datatracker.ietf.org/doc/html/rfc6749
 
 export enum TokenType {
-  ACCESS = "ACCESS",
-  REFRESH = "REFRESH",
+  ACCESS = 'ACCESS',
+  REFRESH = 'REFRESH',
 }
 
 export type GeneratedToken = {
@@ -20,12 +20,11 @@ export type GeneratedToken = {
 
 const passwordHasher = new PasswordHasher(16);
 
-export function generateJwtToken(
-  userId: number,
-  type: TokenType
-): Promise<GeneratedToken> {
-  const tokenSecret = validateConfigValue(`${type}_TOKEN_SECRET`);
-  const tokenExpiration = validateConfigValue(`${type}_TOKEN_EXPIRATION`);
+export function generateJwtToken(userId: number, type: TokenType): Promise<GeneratedToken> {
+  const [tokenSecret, tokenExpiration] =
+    type == TokenType.ACCESS
+      ? [EnvConfig.ACCESS_TOKEN_SECRET, EnvConfig.ACCESS_TOKEN_EXPIRATION]
+      : [EnvConfig.REFRESH_TOKEN_SECRET, EnvConfig.REFRESH_TOKEN_EXPIRATION];
 
   return new Promise<GeneratedToken>((resolve, reject) => {
     jwt.sign(
@@ -33,77 +32,81 @@ export function generateJwtToken(
       tokenSecret,
       { expiresIn: tokenExpiration as StringValue },
       async (err, token) => {
-        if (err) {
-          return reject(err);
-        }
+        if (err) return reject(err);
 
-        if (!token) {
+        if (!token)
           return reject(
             new RequestError(
               StatusCodes.INTERNAL_SERVER_ERROR,
-              `Failed to generate ${type.toLowerCase()} token`
-            )
+              `Failed to generate ${type.toLowerCase()} token`,
+            ),
           );
-        }
 
         resolve({
           token,
           expiration: ms(tokenExpiration as StringValue) * 1000,
         });
-      }
+      },
     );
   });
+}
+
+export function isEligibleForRefresh(issuedAtTime: number) {
+  const tokenExpirationLength = ms(EnvConfig.REFRESH_TOKEN_EXPIRATION as ms.StringValue);
+  const thresholdTime =
+    issuedAtTime * 1000 + tokenExpirationLength * EnvConfig.TOKEN_LIFETIME_REFRESH_THRESHOLD;
+
+  return thresholdTime <= Date.now();
 }
 
 export function hashPassword(password: string): Promise<string> {
   return passwordHasher.hashPassword(password);
 }
 
-export function verifyPassword(
-  password: string,
-  hash: string
-): Promise<boolean> {
+export function verifyPassword(password: string, hash: string): Promise<boolean> {
   return passwordHasher.verifyPassword(password, hash);
 }
 
-export async function getUserIdFromToken(
-  token: string,
-  type: TokenType
-): Promise<number> {
-  const tokenSecret = validateConfigValue(`${type}_TOKEN_SECRET`);
+export function getJwtTokenPayload(token: string, type: TokenType): Promise<JwtPayload> {
+  const tokenSecret =
+    type == TokenType.ACCESS ? EnvConfig.ACCESS_TOKEN_SECRET : EnvConfig.REFRESH_TOKEN_SECRET;
 
-  return new Promise<number>((resolve, reject) => {
-    jwt.verify(token, tokenSecret, (err, decoded) => {
-      if (err && err.name === "TokenExpiredError") {
+  return new Promise<JwtPayload>((resolve, reject) => {
+    jwt.verify(token, tokenSecret, (error, decoded) => {
+      if (error?.name == 'TokenExpiredError') {
+        addTokenToDenylist(token);
         return reject(
-          new RequestError(StatusCodes.BAD_REQUEST, "Your token has expired")
+          new RequestError(StatusCodes.UNAUTHORIZED, 'Authorization session has expired'),
         );
       }
 
-      if (err || !decoded || typeof decoded === "string" || !decoded.id) {
+      if (error || !decoded || typeof decoded === 'string' || !decoded.id) {
         return reject(
-          new RequestError(
-            StatusCodes.BAD_REQUEST,
-            "Missing or malformed access token"
-          )
+          new RequestError(StatusCodes.BAD_REQUEST, 'Missing or malformed session token'),
         );
       }
 
-      resolve(decoded.id);
+      resolve(decoded);
     });
   });
 }
 
 export async function isTokenOnDenylist(token: string) {
-  return (await redis.get(`tdl:${token}`)) != null;
+  return (
+    (await getRedis()
+      .get(`tdl:${token}`)
+      .catch(() => null)) != null
+  );
 }
 
-export async function addTokenToDenylist(cookie: string) {
-  const decoded = jwt.decode(cookie);
+export async function addTokenToDenylist(token: string) {
+  const decoded = jwt.decode(token);
 
-  if (typeof decoded == "object" && decoded?.exp) {
-    await redis.set(`tdl:${cookie}`, 1, {
-      expiration: { type: "EXAT", value: decoded.exp },
-    });
+  if (typeof decoded == 'object' && decoded?.exp) {
+    await getRedis()
+      .set(`tdl:${token}`, 1, {
+        expiration: { type: 'EXAT', value: decoded.exp },
+      })
+      .catch(console.error);
   }
 }
