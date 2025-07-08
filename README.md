@@ -24,7 +24,7 @@ roles' permissions and the roles assigned to the members.
 - **Backend:** HTTP(S) REST API Express server running on Node
 - **Database:** PostgreSQL, without an ORM
 - **Cache:** Redis for authentication token blocklists, and database enums and common operations
-- **Frontend:** Vue, Pinia, Vite
+- **Frontend:** Vue, Pinia, Vite, Tailwind CSS
 - **Deployment:** Docker
 
 ## Project setup
